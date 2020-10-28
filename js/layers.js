@@ -9,9 +9,14 @@ function getPointGen() {
     }
     baseGain = baseGain.times(upgradeEffect("xp", 12));
     baseGain = baseGain.times(upgradeEffect("xp", 14));
+    baseGain = baseGain.times(upgradeEffect("xp", 21));
 
     let powPower = new Decimal(2);
-	let gain = Decimal.div(baseGain , Decimal.pow(new Decimal(2), player.points));
+    let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
+    let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
+    gain = min(gain1, exponentLevelGainLimitOnce)
+
+
 	return gain
 }
 
@@ -48,7 +53,7 @@ addLayer("xp", {
         layerShown(){return true},
 
         upgrades: {
-            rows: 1,
+            rows: 2,
             cols: 5,
             11: {
                 title: "Bonus level gain",
@@ -102,12 +107,28 @@ addLayer("xp", {
             15: {
                 title: "Level to XP",
                 description: "XP gain is multiplied by 1 + (level^2)/100",
-                cost: new Decimal(20),
-                currencyLocation: player.points,
+                cost: new Decimal(18),
+                currencyDisplayName: "levels",
+                currencyInternalName: "points",
+                currencyLayer: "",
                 unlocked() { return (hasUpgrade(this.layer, 14))},
                 effect() {
                     if (hasUpgrade(this.layer, 15)) {
                         let eff = player.points.times(player.points).div(100).plus(1);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+            21: {
+                title: "Faster levels I",
+                description: "Multiplies level gain by 10",
+                cost: new Decimal(100000),
+                unlocked() { return (hasUpgrade(this.layer, 15))},
+                effect() {
+                    if (hasUpgrade(this.layer, 21)) {
+                        let eff = new Decimal(10);
                         return eff;
                     }
                     else return new Decimal(1);
