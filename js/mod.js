@@ -35,11 +35,13 @@ function getPointGen() {
 		return new Decimal(0)
 
 	let gain = new Decimal(1);
+	let gain = Decimal.div(new Decimal(1) , Decimal.pow(Decimal.plus(player.points, player.powPower), new Decimal(2)));
 	return gain
 }
 
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
+	powPower : new Decimal(2),
 }}
 
 // Display extra things at the top of the page
