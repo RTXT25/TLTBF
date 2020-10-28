@@ -158,7 +158,7 @@ addLayer("xp", {
                 title: "Longer Runs",
                 description: "Level gain in multiplied by XP gain",
                 cost: new Decimal(100000),
-                unlocked() { return (hasUpgrade(this.layer, 21))},
+                unlocked() { return (hasUpgrade(this.layer, 22))},
                 effect() {
                     if (hasUpgrade(this.layer, 23)) {
                         let eff = player[this.layer].resetGain.plus(1).pow(0.11);
