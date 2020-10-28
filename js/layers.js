@@ -14,7 +14,7 @@ function getPointGen() {
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
-    gain = min(gain1, exponentLevelGainLimitOnce)
+    gain = Decimal.min(gain1, exponentLevelGainLimitOnce)
 
 
 	return gain
