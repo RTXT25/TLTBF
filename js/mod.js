@@ -1,13 +1,13 @@
 let modInfo = {
-	name: "The ??? Tree",
+	name: "The Leveling Tree",
 	id: "mymod",
-	author: "nobody",
-	pointsName: "points",
+	author: "denisolenison",
+	pointsName: "levels",
 	discordName: "",
 	discordLink: "",
-	changelogLink: "https://github.com/Acamaeda/The-Modding-Tree/blob/master/changelog.md",
-    offlineLimit: 1,  // In hours
-    initialStartPoints: new Decimal (10) // Used for hard resets and new players
+	changelogLink: "https://github.com/denisolenison/The-Modding-Tree/blob/master/changelog.md",
+    offlineLimit: 24,  // In hours
+    initialStartPoints: new Decimal (0) // Used for hard resets and new players
 }
 
 // Set your version in num and name
@@ -34,7 +34,7 @@ function getPointGen() {
 	if(!canGenPoints())
 		return new Decimal(0)
 
-	let gain = new Decimal(1)
+	let gain = new Decimal(1);
 	return gain
 }
 
