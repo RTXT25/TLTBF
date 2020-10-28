@@ -11,6 +11,7 @@ function getPointGen() {
     baseGain = baseGain.times(upgradeEffect("xp", 14));
     baseGain = baseGain.times(upgradeEffect("xp", 21));
     baseGain = baseGain.times(upgradeEffect("xp", 23));
+    baseGain = baseGain.times(upgradeEffect("g", 11));
 
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
@@ -43,6 +44,7 @@ addLayer("xp", {
             mult = mult.times(upgradeEffect("xp", 13));
             mult = mult.times(upgradeEffect("xp", 15));
             mult = mult.times(upgradeEffect("xp", 22));
+            mult = mult.times(upgradeEffect("g", 12));
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -193,28 +195,61 @@ addLayer("xp", {
 addLayer("g", {
     name: "gold", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "G", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 1, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 6, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
-        unlocked: false,
+        unlocked: true,
         points: new Decimal(0),
         total: new Decimal(0),
     }},
     color: "#FFE333",
-    requires: new Decimal(1000000), // Can be a function that takes requirement increases into account
-    resource: "experience", // Name of prestige currency
+    requires: new Decimal(20), // Can be a function that takes requirement increases into account
+    resource: "gold", // Name of prestige currency
     baseResource: "levels", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 1.5, // Prestige currency exponent
+    exponent: 3, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
+        mult = mult.times(upgradeEffect("g", 11));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
+    upgrades: {
+        rows: 1,
+        cols: 5,
+        11: {
+            title: "Moneys give levels",
+            description: "Gold and Level gain is multiplied by 10",
+            cost: new Decimal(1),
+            unlocked() { return player[this.layer].unlocked },
+            effect() { 
+                if (hasUpgrade(this.layer, 11)) {
+                    let eff = new Decimal(10);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+        },
+        12: {
+            title: "Gold -> Exp",
+            description: "Total gold boosts exp gain",
+            cost: new Decimal(100),
+            unlocked() { return (hasUpgrade(this.layer, 11)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 12)) {
+                    let eff = player[this.layer].total.div(10).pow(0.2);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+        },
+    },
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
-    layerShown(){hasUpgrade("xp", 25)},
+    layerShown(){return hasUpgrade("xp", 25)},
 })
