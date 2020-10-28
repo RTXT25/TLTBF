@@ -86,6 +86,7 @@ addLayer("xp", {
                 effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
                     if (hasUpgrade(this.layer, 13)) {
                         let eff = player[this.layer].points.add(1).ln().div(10).add(1);
+                        eff = eff.pow(upgradeEffect("xp", 24));
                         return eff;
                     }
                     else return new Decimal(1);
@@ -157,16 +158,31 @@ addLayer("xp", {
             23: {
                 title: "Longer Runs",
                 description: "Level gain in multiplied by XP gain",
-                cost: new Decimal(100000),
+                cost: new Decimal(200000),
                 unlocked() { return (hasUpgrade(this.layer, 22))},
                 effect() {
                     if (hasUpgrade(this.layer, 23)) {
-                        let eff = player[this.layer].resetGain.plus(1).pow(0.11);
+                        let gainGet = tmp[this.layer].resetGain;
+                        let eff = Decimal.plus(gainGet, new Decimal(1)).pow(0.11);
                         return eff;
                     }
                     else return new Decimal(1);
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+            24: {
+                title: "More and More XP",
+                description: "XP to XP effect is powered to (level / 10)",
+                cost: new Decimal(500000),
+                unlocked() { return (hasUpgrade(this.layer, 23))},
+                effect() {
+                    if (hasUpgrade(this.layer, 24)) {
+                        let eff = player.points.div(10);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format("^"+this.effect()) }, // Add formatting to the effect
             },
         },
 })
