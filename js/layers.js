@@ -10,6 +10,7 @@ function getPointGen() {
     baseGain = baseGain.times(upgradeEffect("xp", 12));
     baseGain = baseGain.times(upgradeEffect("xp", 14));
     baseGain = baseGain.times(upgradeEffect("xp", 21));
+    baseGain = baseGain.times(upgradeEffect("xp", 23));
 
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
@@ -41,6 +42,7 @@ addLayer("xp", {
             mult = new Decimal(1);
             mult = mult.times(upgradeEffect("xp", 13));
             mult = mult.times(upgradeEffect("xp", 15));
+            mult = mult.times(upgradeEffect("xp", 22));
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -93,7 +95,7 @@ addLayer("xp", {
             14: {
                 title: "Level to Level",
                 description: "Level gain is multiplied by your level + 1",
-                cost: new Decimal(50000),
+                cost: new Decimal(5000),
                 unlocked() { return (hasUpgrade(this.layer, 13))},
                 effect() {
                     if (hasUpgrade(this.layer, 14)) {
@@ -107,7 +109,7 @@ addLayer("xp", {
             15: {
                 title: "Level to XP",
                 description: "XP gain is multiplied by 1 + (level^2)/100",
-                cost: new Decimal(18),
+                cost: new Decimal(15),
                 currencyDisplayName: "levels",
                 currencyInternalName: "points",
                 currencyLayer: "",
@@ -124,11 +126,42 @@ addLayer("xp", {
             21: {
                 title: "Faster levels I",
                 description: "Multiplies level gain by 10",
-                cost: new Decimal(100000),
+                cost: new Decimal(25000),
                 unlocked() { return (hasUpgrade(this.layer, 15))},
                 effect() {
                     if (hasUpgrade(this.layer, 21)) {
                         let eff = new Decimal(10);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+            22: {
+                title: "Faster XP I",
+                description: "Multiplies XP gain by 10",
+                cost: new Decimal(20),
+                currencyDisplayName: "levels",
+                currencyInternalName: "points",
+                currencyLayer: "",
+                unlocked() { return (hasUpgrade(this.layer, 21))},
+                effect() {
+                    if (hasUpgrade(this.layer, 22)) {
+                        let eff = new Decimal(10);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            },
+            23: {
+                title: "Longer Runs",
+                description: "Level gain in multiplied by XP gain",
+                cost: new Decimal(100000),
+                unlocked() { return (hasUpgrade(this.layer, 21))},
+                effect() {
+                    if (hasUpgrade(this.layer, 23)) {
+                        let eff = player[this.layer].resetGain.plus(1).pow(0.11);
                         return eff;
                     }
                     else return new Decimal(1);
