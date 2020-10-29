@@ -325,6 +325,9 @@ addLayer("g", {
         mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
 
         mult = mult.tetrate((hasUpgrade("l", 23)) ? upgradeEffect("l", 23) : new Decimal(1));
+        
+        mult = mult.times((hasUpgrade("g", 31)) ? upgradeEffect("g", 31) : new Decimal(1));
+        mult = mult.times((hasUpgrade("g", 32)) ? upgradeEffect("g", 32) : new Decimal(1));
 
         return mult
     },
@@ -445,6 +448,27 @@ addLayer("g", {
                 return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        31: {
+            title: "Gold was pretty slow",
+            description: "Multiplies gold gain by log10(max loot + 100)/2",
+            cost: new Decimal(1e16),
+            unlocked() { return (hasUpgrade("l", 35) && hasUpgrade("g", 25)) },
+            effect() { 
+                let eff = player.l.best.plus(100).log10().div(2);
+                return eff;
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        32: {
+            title: "More Gold!",
+            description: "Multiplies gold gain 10",
+            cost: new Decimal(1e17),
+            unlocked() { return (hasUpgrade("g", 31)) },
+            effect() { 
+                let eff = new Decimal(10);
+                return eff;
+            },
         },
     },
 
@@ -696,13 +720,13 @@ addLayer("l", {
         34: {
             title: "It feels even better",
             description: "Upgrade 3,1 power goes from 1/5 to 1/3",
-            cost: new Decimal(1200000),
+            cost: new Decimal(1000000),
             unlocked() { return (hasUpgrade(this.layer, 33)) },
         },
         35: {
             title: "It is really good",
             description: "Upgrade 3,1 power goes from 1/3 to 1/2. Unlocks new rows of xp and gold upgrades.",
-            cost: new Decimal(1500000),
+            cost: new Decimal(1000000),
             unlocked() { return (hasUpgrade(this.layer, 34)) },
         },
     },
