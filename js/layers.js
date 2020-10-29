@@ -18,6 +18,17 @@ function getPointGen() {
     baseGain = baseGain.times(upgradeEffect("g", 21));
     baseGain = baseGain.times(upgradeEffect("g", 23));
 
+    baseGain = baseGain.pow(upgradeEffect("l", 11));
+    baseGain = baseGain.pow(upgradeEffect("l", 12));
+    baseGain = baseGain.pow(upgradeEffect("l", 13));
+    baseGain = baseGain.times(upgradeEffect("l", 14));
+    baseGain = baseGain.pow(upgradeEffect("l", 15));
+
+
+    let lootEff = player.l.best.add(1).pow(0.75);
+    baseGain = baseGain.times(lootEff);
+
+
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
@@ -51,6 +62,12 @@ addLayer("xp", {
             mult = mult.times(upgradeEffect("xp", 22));
             mult = mult.times(upgradeEffect("g", 12));
             mult = mult.times(upgradeEffect("g", 21));
+            
+            mult = mult.pow(upgradeEffect("l", 13));
+            mult = mult.pow(upgradeEffect("l", 15));
+            
+            let lootEff = player.l.best.add(1).pow(0.75);
+            mult = mult.times(lootEff);
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -332,6 +349,11 @@ addLayer("g", {
         mult = mult.times(upgradeEffect("xp", 32));
         mult = mult.times(upgradeEffect("g", 21));
         mult = mult.times(upgradeEffect("g", 22));
+        mult = mult.times(upgradeEffect("g", 25));
+            
+        mult = mult.pow(upgradeEffect("l", 13));
+        mult = mult.pow(upgradeEffect("l", 15));
+
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -466,9 +488,17 @@ addLayer("g", {
         },
         25: {
             title: "What is it?",
-            description: "Unlocks new layer",
+            description: "Unlocks new layer and multiplies gold gain by π",
             cost: new Decimal(3e9),
             unlocked() { return (hasUpgrade("g", 24)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 25)) {
+                    let eff = new Decimal(3.1415926535);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
     },
 
@@ -532,28 +562,109 @@ addLayer("l", {
         },
     effectDescription() {
         eff = this.effect();
-        return "loot will help you level up much faster, your best loot will multiply your Lv & XP gain by "+format(eff)+"."
+        return "loot will help you level up much faster, your best loot will multiply your Lv & XP gain by "+format(eff)+
+        ". (You should wait at least until 100 or 1,000 for better effect)"
     },
     color: "#33D8FF",
-    requires: new Decimal(1e10), // Can be a function that takes requirement increases into account
+    requires: new Decimal(5e9), // Can be a function that takes requirement increases into account
     resource: "loot", // Name of prestige currency
     baseResource: "gold", // Name of resource prestige is based on
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 0.25, // Prestige currency exponent
+    base: 2.25,
+    canBuyMax: true,
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
-        let xpLogMult = player.xp.points.add(1).log10().div(10);
-        mult = mult.times(xpLogMult);
+        let xpLogMult = player.xp.points.add(1).log10().div(10).add(1).pow(2);
+        mult = mult.div(xpLogMult);
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        let expon = new Decimal(1);
+        expon = expon.times(upgradeEffect("l", 15));
+
+        return expon;
     },
     upgrades: {
+        rows: 5,
+        cols: 5,
+        11: {
+            title: "You listened to me",
+            description: "Base level gain is powered to ^1.1",
+            cost: new Decimal(100),
+            unlocked() { return player[this.layer].unlocked },
+            effect() { 
+                if (hasUpgrade(this.layer, 11)) {
+                    let eff = new Decimal(1.1);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        12: {
+            title: "You listened to me very well",
+            description: "Base level gain is powered to ^1.1 again",
+            cost: new Decimal(900),
+            unlocked() { return (hasUpgrade(this.layer, 11)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 12)) {
+                    let eff = new Decimal(1.1);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        13: {
+            title: "Not only levels now",
+            description: "Base level, xp & gold gain is powered to ^1.05 (before this layer effect)",
+            cost: new Decimal(2000),
+            unlocked() { return (hasUpgrade(this.layer, 12)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 13)) {
+                    let eff = new Decimal(1.05);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        14: {
+            title: "Fast road to 100 from the beginning",
+            description: "Level UP until level 100 much faster",
+            cost: new Decimal(5000),
+            unlocked() { return (hasUpgrade(this.layer, 13)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 14)) {
+                    let maxLv = new Decimal(101);
+                    let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                    eff = eff.pow(2);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        15: {
+            title: "Powered Loot",
+            description: "Loot, XP, Gold and Level gain is powered to ^1.2",
+            cost: new Decimal(20000),
+            unlocked() { return (hasUpgrade(this.layer, 14)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 15)) {
+                    let eff = new Decimal(1.2);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+        },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
-    layerShown(){return hasUpgrade("g", 25)},
+    branches: [["xp", 2], ["g", 2]],
+    layerShown(){return (hasUpgrade("g", 25) || player.l.best.gte(1))},
 })

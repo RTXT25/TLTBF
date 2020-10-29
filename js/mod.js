@@ -1,9 +1,9 @@
 let modInfo = {
 	name: "The Leveling Tree",
-	id: "mymod",
+	id: "bergloMod",
 	author: "denisolenison",
 	pointsName: "levels",
-	discordName: "",
+	discordName: "denisolenison",
 	discordLink: "",
 	changelogLink: "https://github.com/denisolenison/The-Modding-Tree/blob/master/changelog.md",
     offlineLimit: 0,  // In hours
@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.0",
+	num: "0.0.1",
 	name: "Literally nothing",
 }
 
@@ -39,7 +39,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.points.gte(new Decimal("e280000000"))
+	return hasUpgrade('l', 15);
 }
 
 
@@ -48,5 +48,5 @@ function isEndgame() {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(1000) // Default is 1 hour which is just arbitrarily large
+	return(10) // Default is 1 hour which is just arbitrarily large
 }
