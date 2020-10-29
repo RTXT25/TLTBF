@@ -31,6 +31,9 @@ function getPointGen() {
     let lootEff = player.l.best.add(1).pow(0.75);
     baseGain = baseGain.times(lootEff);
 
+    let rubyEff = player.r.points.add(1).log2().add(1).pow(3)
+    baseGain = baseGain.times(rubyEff);
+
 
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
@@ -270,13 +273,14 @@ addLayer("xp", {
                 effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                     let eff = x.times(0.01);
                     eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
+                    eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                     return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].buyables[this.id]
                     return "Cost: " + format(data.cost) + " xp\n\
                     Amount: " + player[this.layer].buyables[this.id] + "\n\
-                    Generate " + format(data.effect.times(100)) + "% gold per second, lol, it was obvious"
+                    Generate " + (data.effect.lte(10) ? format(data.effect.times(100)) + "%" : "x" + format(data.effect)) + " gold per second, lol it's kinda obvious";
                 },
                 unlocked() { return (hasUpgrade(this.layer, 35)) }, 
                 canAfford() {
@@ -328,6 +332,10 @@ addLayer("g", {
         
         mult = mult.times((hasUpgrade("g", 31)) ? upgradeEffect("g", 31) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 32)) ? upgradeEffect("g", 32) : new Decimal(1));
+        mult = mult.times((hasUpgrade("g", 35)) ? upgradeEffect("g", 35) : new Decimal(1));
+
+        let rubyEff = player.r.points.add(1).log2().add(1).pow(3)
+        mult = mult.times(rubyEff);
 
         return mult
     },
@@ -463,12 +471,35 @@ addLayer("g", {
         32: {
             title: "More Gold!",
             description: "Multiplies gold gain 10",
-            cost: new Decimal(1e17),
+            cost: new Decimal(3e16),
             unlocked() { return (hasUpgrade("g", 31)) },
             effect() { 
                 let eff = new Decimal(10);
                 return eff;
             },
+        },
+        33: {
+            title: "Loot MegaBoost!",
+            description: "Loot Exponent 4 -> 5",
+            cost: new Decimal(1e18),
+            unlocked() { return (hasUpgrade("g", 32)) },
+        },
+        34: {
+            title: "Risky but Effective",
+            description: "All passive upgrade effects are cubed",
+            cost: new Decimal(1e19),
+            unlocked() { return (hasUpgrade("g", 33)) },
+        },
+        35: {
+            title: "It will be cool in future",
+            description: "Gold gain multiplied by max(1, (lvl^2)/10000). Also unlocks new layer.",
+            cost: new Decimal(1e20),
+            unlocked() { return (hasUpgrade("g", 34)) },
+            effect() { 
+                let eff = Decimal.max(new Decimal(1), player.points.times(player.points).div(new Decimal(10000)));
+                return eff;
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
     },
 
@@ -486,13 +517,14 @@ addLayer("g", {
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                 let eff = x.times(0.01);
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
+                eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " gold\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Generate " + format(data.effect.times(100)) + "% XP per second"
+                Generate " + (data.effect.lte(10) ? format(data.effect.times(100)) + "%" : "x" + format(data.effect)) + " XP per second";
             },
             unlocked() { return (hasUpgrade(this.layer, 15)) }, 
             canAfford() {
@@ -541,7 +573,11 @@ addLayer("l", {
     baseResource: "gold", // Name of resource prestige is based on
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 0.25, // Prestige currency exponent
+    exponent() {
+        let baseExp = 0.25;
+        if (hasUpgrade("g", 33)) baseExp -= 0.05;
+        return baseExp;
+    }, // Prestige currency exponent
     base: 2.25,
     canBuyMax: true,
     gainMult() { // Calculate the multiplier for main currency from bonuses
@@ -686,11 +722,11 @@ addLayer("l", {
         31: {
             title: "> Level > Loot",
             description() {
-                let str = "Loot Gain is multiplied by 1/10th power of level";
-                if (hasUpgrade(this.layer, 32)) str = "Loot Gain is multiplied by 1/8th power of level"
-                if (hasUpgrade(this.layer, 33)) str = "Loot Gain is multiplied by 1/5th power of level"
-                if (hasUpgrade(this.layer, 34)) str = "Loot Gain is multiplied by 1/3th power of level"
-                if (hasUpgrade(this.layer, 35)) str = "Loot Gain is multiplied by 1/2th power of level"
+                let str = "Loot Gain eff. value is multiplied by 1/10th power of level (Mult. to gold -> loot)";
+                if (hasUpgrade(this.layer, 32)) str = "Loot Gain eff. value is multiplied by 1/8th power of level (Mult. to gold -> loot)"
+                if (hasUpgrade(this.layer, 33)) str = "Loot Gain eff. value is multiplied by 1/5th power of level (Mult. to gold -> loot)"
+                if (hasUpgrade(this.layer, 34)) str = "Loot Gain eff. value is multiplied by 1/3th power of level (Mult. to gold -> loot)"
+                if (hasUpgrade(this.layer, 35)) str = "Loot Gain eff. value is multiplied by 1/2th power of level (Mult. to gold -> loot)"
                 return str;
             },
             cost: new Decimal(500000),
@@ -796,4 +832,50 @@ addLayer("l", {
         },
     },
     layerShown(){return (hasUpgrade("g", 25) || player.l.best.gte(1))},
+})
+
+addLayer("r", {
+    name: "rubies", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 5, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        best: new Decimal(0),
+    }},
+    effect() {
+        eff = player[this.layer].points.add(1).log2().add(1).pow(3);
+        return eff
+        },
+    effectDescription() {
+        eff = this.effect();
+        return "Rubies make you richer! Gold gain and level gain are multiplied by "+format(eff)+
+        "x.";
+    },
+    color: "#FF335B",
+    requires: new Decimal(2e20), // Can be a function that takes requirement increases into account
+    resource: "rubies", // Name of prestige currency
+    baseResource: "gold", // Name of resource prestige is based on
+    baseAmount() {return player.g.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent() {
+        return 0.4;
+    }, // Prestige currency exponent
+    base: 3,
+    canBuyMax: true,
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1);
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        let expon = new Decimal(1);
+        return expon;
+    },
+   
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+    ],
+    branches: [["g", 3]],
+
+    layerShown(){return (hasUpgrade("g", 35) || player.r.best.gte(1))},
 })
