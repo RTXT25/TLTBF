@@ -29,13 +29,29 @@ function getPointGen() {
 
 
     let lootEff = player.l.best.add(1).pow(0.75);
+    let qEff = player.q.total.pow(0.6725).plus(1);
+    lootEff = lootEff.pow(qEff);
     baseGain = baseGain.times(lootEff);
 
-    let rubyEff = player.r.points.add(1).log2().add(1).pow(3)
+    let rubyEff = player.r.points.add(1).log2().add(1).pow(5);
+    if (hasUpgrade("r", 13)) {
+        rubyEff = rubyEff.times(Decimal.max(Decimal.times(player.r.best, player.r.best), new Decimal(1)));
+    }
+    if (hasMilestone("r", 3)) {
+        rubyEff = rubyEff.pow(2);
+    }
     baseGain = baseGain.times(rubyEff);
 
     
     baseGain = baseGain.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
+
+    if (inChallenge("q", 11)) {
+        baseGain = baseGain.pow(challengeVar("q", 11));
+    }
+    else {
+        baseGain = baseGain.pow(challengeEffect("q", 11));
+    }
+
 
 
     let powPower = new Decimal(2);
@@ -46,6 +62,7 @@ function getPointGen() {
     if (hasUpgrade("xp", 45)) powPower = new Decimal(1.66666);
 
     if (hasMilestone("r", 2)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.9)).plus(new Decimal(1));
+    if (hasUpgrade("r", 13)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.99)).plus(new Decimal(1));
 
 
     if (Decimal.gte(player.points, new Decimal(1000))) {
@@ -67,7 +84,7 @@ function getPointGen() {
 addLayer("xp", {
         name: "exp", // This is optional, only used in a few places, If absent it just uses the layer id.
         symbol: "XP", // This appears on the layer's node. Default is the id with the first letter capitalized
-        position: 0, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+        position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
         startData() { return {
             unlocked: true,
 			points: new Decimal(0),
@@ -94,9 +111,19 @@ addLayer("xp", {
             mult = mult.tetrate((hasUpgrade("l", 22)) ? upgradeEffect("l", 22) : new Decimal(1));
             
             let lootEff = player.l.best.add(1).pow(0.75);
+            let qEff = player.q.total.pow(0.6725).plus(1);
+            lootEff = lootEff.pow(qEff);
             mult = mult.times(lootEff);
             
             mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
+
+            
+            if (inChallenge("q", 11)) mult = mult.pow(challengeVar("q", 11));
+            else {
+                mult = mult.pow(challengeEffect("q", 11));
+            }
+
+
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -410,7 +437,13 @@ addLayer("g", {
         mult = mult.times((hasUpgrade("g", 32)) ? upgradeEffect("g", 32) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 35)) ? upgradeEffect("g", 35) : new Decimal(1));
 
-        let rubyEff = player.r.points.add(1).log2().add(1).pow(3)
+        let rubyEff = player.r.points.add(1).log2().add(1).pow(5);
+        if (hasUpgrade("r", 13)) {
+            rubyEff = rubyEff.times(Decimal.max(Decimal.times(player.r.best, player.r.best), new Decimal(1)));
+        }
+        if (hasMilestone("r", 3)) {
+            rubyEff = rubyEff.pow(2);
+        }
         mult = mult.times(rubyEff);
 
         
@@ -418,6 +451,11 @@ addLayer("g", {
         mult = mult.times((hasUpgrade("r", 12)) ? upgradeEffect("r", 12) : new Decimal(1));
 
         mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
+
+        if (inChallenge("q", 11)) mult = mult = mult.pow(challengeVar("q", 11));
+        else {
+            mult = mult.pow(challengeEffect("q", 11));
+        }
 
         return mult
     },
@@ -656,7 +694,7 @@ addLayer("g", {
 addLayer("l", {
     name: "loot", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "L", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 4, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
         points: new Decimal(0),
@@ -664,6 +702,8 @@ addLayer("l", {
     }},
     effect() {
         eff = player[this.layer].best.add(1).pow(0.75);
+        let qEff = player.q.total.pow(0.6725).plus(1);
+        eff = eff.pow(qEff);
         return eff
         },
     effectDescription() {
@@ -942,7 +982,7 @@ addLayer("l", {
 addLayer("r", {
     name: "rubies", // This is optional, only used in a few places, If absent it just uses the layer id.
     symbol: "R", // This appears on the layer's node. Default is the id with the first letter capitalized
-    position: 5, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    position: 8, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
     startData() { return {
         unlocked: true,
         points: new Decimal(0),
@@ -950,6 +990,9 @@ addLayer("r", {
     }},
     effect() {
         eff = player[this.layer].points.add(1).log2().add(1).pow(5);
+        if (hasUpgrade("r", 13)) {
+            eff = eff.times(Decimal.max(Decimal.times(player.r.best, player.r.best), new Decimal(1)));
+        }
         if (hasMilestone("r", 3)) {
             eff = eff.pow(2);
         }
@@ -970,6 +1013,9 @@ addLayer("r", {
         let baseExp = 3;
         if (hasMilestone("r", 3)) {
             baseExp *= 0.8;
+        }
+        if (hasUpgrade("r", 13)) {
+            baseExp *= 0.99;
         }
         return baseExp;
     }, // Prestige currency exponent
@@ -1007,6 +1053,12 @@ addLayer("r", {
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
+        13: {
+            title: "Era of Adventures",
+            description: "Decreases ruby and level exponent by 1%. Ruby bonus is multiplied by square of your best rubies. Unlocks new layer.",
+            cost: new Decimal(3),
+            unlocked() { return ((hasUpgrade(this.layer, 12) && hasUpgrade("xp", 45)) || hasUpgrade(this.layer, 13)) },
+        },
     },
 
     milestones: {
@@ -1026,7 +1078,7 @@ addLayer("r", {
         },
         3: {requirementDescription: "Get 4 max rubies",
             unlocked() {return hasMilestone("r", 2)},
-            done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].best.gte(4)}, // Used to determine when to give the milestone
             effectDescription: "Ruby exponent is decreased by 20 percent. Ruby bonus is squared.",
         },
     },
@@ -1034,7 +1086,119 @@ addLayer("r", {
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
-    branches: [["g", 3]],
+    branches: [["g", 3], ["xp", 3]],
 
     layerShown(){return (hasUpgrade("g", 35) || player.r.best.gte(1))},
+})
+
+addLayer("q", {
+    name: "quests", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "Q", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 2, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        total: new Decimal(0),
+        best: new Decimal(0),
+    }},
+    effect() {
+        eff = player[this.layer].total.pow(0.6725).plus(1);
+        return eff
+        },
+    effectDescription() {
+        eff = this.effect();
+        return "Complete quests and challenges to get more bonuses! Loot Effect Bonus: ^"+format(eff);
+    },
+    color: "#D895FC",
+    requires: new Decimal("e580"), // Can be a function that takes requirement increases into account
+    resource: "quests", // Name of prestige currency
+    baseResource: "exp", // Name of resource prestige is based on
+    baseAmount() {return player.xp.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent() {
+        let baseExp = 1.6;
+        return baseExp;
+    }, // Prestige currency exponent
+    base: 1e60,
+    canBuyMax: true,
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1.5);
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        let expon = new Decimal(1.1);
+        return expon;
+    },
+    upgrades: {
+    },
+
+    milestones: {
+        0: {requirementDescription: "Get 1 quest",
+            done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
+            effectDescription: "Welcome to the world of quests! First challenge unlocked!",
+        },
+    },
+
+    challenges: {
+        rows: 2,
+        cols: 6,
+        11: {
+            name: "Typical Challenge",
+            completionLimit: 11,
+            powers() {
+                if (challengeCompletions(this.layer, this.id) == 0) return 0.5;
+                if (challengeCompletions(this.layer, this.id) == 1) return 0.4;
+                if (challengeCompletions(this.layer, this.id) == 2) return 0.32;
+                if (challengeCompletions(this.layer, this.id) == 3) return 0.24;
+                if (challengeCompletions(this.layer, this.id) == 4) return 0.2;
+                if (challengeCompletions(this.layer, this.id) == 5) return 0.16;
+                if (challengeCompletions(this.layer, this.id) == 6) return 0.12;
+                if (challengeCompletions(this.layer, this.id) == 7) return 0.08;
+                if (challengeCompletions(this.layer, this.id) == 8) return 0.04;
+                if (challengeCompletions(this.layer, this.id) == 9) return 0.02;
+                if (challengeCompletions(this.layer, this.id) == 10) return 0.01;
+                if (challengeCompletions(this.layer, this.id) == 11) return 0.01;
+            },
+            challengeDescription() {
+                return "Level, Exp and Gold gain are powered to ^" + this.powers() + "<br>"+challengeCompletions(this.layer, this.id)
+                 + "/" + this.completionLimit + " completions";
+            },
+            unlocked() { return hasMilestone(this.layer, 0) },
+            goal: new Decimal("e1000"),
+            currencyDisplayName: "exp", // Use if using a nonstandard currency
+            currencyInternalName: "xp", // Use if using a nonstandard currency
+            currencyLayer: "xp", // Leave empty if not in a layer
+            rewards() {
+                if (challengeCompletions(this.layer, this.id) == 0) return 1;
+                if (challengeCompletions(this.layer, this.id) == 1) return 1.02;
+                if (challengeCompletions(this.layer, this.id) == 2) return 1.05;
+                if (challengeCompletions(this.layer, this.id) == 3) return 1.1;
+                if (challengeCompletions(this.layer, this.id) == 4) return 1.15;
+                if (challengeCompletions(this.layer, this.id) == 5) return 1.2;
+                if (challengeCompletions(this.layer, this.id) == 6) return 1.25;
+                if (challengeCompletions(this.layer, this.id) == 7) return 1.3;
+                if (challengeCompletions(this.layer, this.id) == 8) return 1.35;
+                if (challengeCompletions(this.layer, this.id) == 9) return 1.4;
+                if (challengeCompletions(this.layer, this.id) == 10) return 1.45;
+                if (challengeCompletions(this.layer, this.id) == 11) return 1.5;
+            },
+            rewardEffect() {
+                let rew = new Decimal(this.rewards());
+                return rew;
+            },
+            rewardDisplay() { return "^" + format(this.rewardEffect())+" to exp/levels/gold gain" },
+            countsAs: [12, 21], // Use this for if a challenge includes the effects of other challenges. Being in this challenge "counts as" being in these.
+            rewardDescription: "Common first challenge",
+            onComplete() {} // Called when you complete the challenge
+        },
+    }, 
+
+
+   
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+    ],
+    branches: [["xp", 3], ["g", 3]],
+
+    layerShown(){return (hasUpgrade("r", 13) || player.r.best.gte(1))},
 })

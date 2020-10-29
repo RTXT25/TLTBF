@@ -286,6 +286,12 @@ function challengeEffect(layer, id){
 	return (tmp[layer].challenges[id].effect)
 }
 
+function challengeVar(layer, id){
+	if (!layers[layer].challenge) return false
+
+	return (tmp[layer].challenges[id].powers)
+}
+
 function buyableEffect(layer, id){
 	if (!layers[layer].buyables) return false
 
