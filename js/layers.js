@@ -269,7 +269,7 @@ addLayer("xp", {
                 },
                 effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                     let eff = x.times(0.01);
-                    eff = eff.times(upgradeEffect("g", 24));
+                    eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                     return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -461,7 +461,7 @@ addLayer("g", {
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                 let eff = x.times(0.01);
-                eff = eff.times(upgradeEffect("g", 24));
+                eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -666,13 +666,13 @@ addLayer("l", {
 
     buyables: {
         rows: 1,
-        cols: 1,
+        cols: 2,
         showRespec: false,
         11: {
             title: "Exp Exponent", // Optional, displayed at the top in a larger font
             cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
                 let cost = Decimal.pow(new Decimal(1.5), x.pow(1.6));
-                cost = cost.times(1000000);
+                cost = cost.times(125000);
                 return cost.floor()
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
@@ -700,7 +700,7 @@ addLayer("l", {
             title: "Gold Exponent", // Optional, displayed at the top in a larger font
             cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
                 let cost = Decimal.pow(new Decimal(1.6), x.pow(1.5));
-                cost = cost.times(1000000);
+                cost = cost.times(125000);
                 return cost.floor();
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
