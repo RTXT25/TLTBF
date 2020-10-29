@@ -7,22 +7,25 @@ function getPointGen() {
     if (hasUpgrade("xp", 11)) {
         baseGain = baseGain.plus(new Decimal(1));
     }
-    baseGain = baseGain.times(upgradeEffect("xp", 12));
-    baseGain = baseGain.times(upgradeEffect("xp", 14));
-    baseGain = baseGain.times(upgradeEffect("xp", 21));
-    baseGain = baseGain.times(upgradeEffect("xp", 23));
-    baseGain = baseGain.times(upgradeEffect("g", 11));
-    baseGain = baseGain.times(upgradeEffect("xp", 31));
-    baseGain = baseGain.times(upgradeEffect("xp", 33));
-    baseGain = baseGain.times(upgradeEffect("xp", 34));
-    baseGain = baseGain.times(upgradeEffect("g", 21));
-    baseGain = baseGain.times(upgradeEffect("g", 23));
+    baseGain = baseGain.times((hasUpgrade("xp", 12)) ? upgradeEffect("xp", 12) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("xp", 14)) ? upgradeEffect("xp", 14) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("xp", 21)) ? upgradeEffect("xp", 21) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("xp", 23)) ? upgradeEffect("xp", 23) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("g", 11)) ? upgradeEffect("g", 11) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("xp", 31)) ? upgradeEffect("xp", 31) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("xp", 33)) ? upgradeEffect("xp", 33) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("xp", 34)) ? upgradeEffect("xp", 34) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("g", 21)) ? upgradeEffect("g", 21) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("g", 23)) ? upgradeEffect("g", 23) : new Decimal(1));
 
-    baseGain = baseGain.pow(upgradeEffect("l", 11));
-    baseGain = baseGain.pow(upgradeEffect("l", 12));
-    baseGain = baseGain.pow(upgradeEffect("l", 13));
-    baseGain = baseGain.times(upgradeEffect("l", 14));
-    baseGain = baseGain.pow(upgradeEffect("l", 15));
+    baseGain = baseGain.pow((hasUpgrade("l", 11)) ? upgradeEffect("l", 11) : new Decimal(1));
+    baseGain = baseGain.pow((hasUpgrade("l", 12)) ? upgradeEffect("l", 12) : new Decimal(1));
+    baseGain = baseGain.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("l", 14)) ? upgradeEffect("l", 14) : new Decimal(1));
+    baseGain = baseGain.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
+
+    baseGain = baseGain.tetrate((hasUpgrade("l", 21)) ? upgradeEffect("l", 21) : new Decimal(1));
+    baseGain = baseGain.tetrate((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
 
 
     let lootEff = player.l.best.add(1).pow(0.75);
@@ -57,21 +60,24 @@ addLayer("xp", {
         exponent: 2, // Prestige currency exponent
         gainMult() { // Calculate the multiplier for main currency from bonuses
             mult = new Decimal(1);
-            mult = mult.times(upgradeEffect("xp", 13));
-            mult = mult.times(upgradeEffect("xp", 15));
-            mult = mult.times(upgradeEffect("xp", 22));
-            mult = mult.times(upgradeEffect("g", 12));
-            mult = mult.times(upgradeEffect("g", 21));
+            mult = mult.times((hasUpgrade("xp", 13)) ? upgradeEffect("xp", 13) : new Decimal(1));
+            mult = mult.times((hasUpgrade("xp", 15)) ? upgradeEffect("xp", 15) : new Decimal(1));
+            mult = mult.times((hasUpgrade("xp", 22)) ? upgradeEffect("xp", 22) : new Decimal(1));
+            mult = mult.times((hasUpgrade("g", 12)) ? upgradeEffect("g", 12) : new Decimal(1));
+            mult = mult.times((hasUpgrade("g", 21)) ? upgradeEffect("g", 21) : new Decimal(1));
             
-            mult = mult.pow(upgradeEffect("l", 13));
-            mult = mult.pow(upgradeEffect("l", 15));
+            mult = mult.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
+            mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
+
+            mult = mult.tetrate((hasUpgrade("l", 22)) ? upgradeEffect("l", 22) : new Decimal(1));
             
             let lootEff = player.l.best.add(1).pow(0.75);
             mult = mult.times(lootEff);
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
-            return new Decimal(1)
+            let expon = buyableEffect("l", 11);
+            return expon;
         },
         row: 0, // Row the layer is in on the tree (0 is the first row)
         layerShown(){return true},
@@ -91,12 +97,9 @@ addLayer("xp", {
                 cost: new Decimal(50),
                 unlocked() { return (hasUpgrade(this.layer, 11))},
                 effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
-                    if (hasUpgrade(this.layer, 12)) {
-                        let eff = player[this.layer].points.div(10).add(1);
-                        if (eff.gte(100)) eff = eff.div(100).log2().plus(100)
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = player[this.layer].points.div(10).add(1);
+                    if (eff.gte(100)) eff = eff.div(100).log2().plus(100)
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -106,12 +109,9 @@ addLayer("xp", {
                 cost: new Decimal(1000),
                 unlocked() { return (hasUpgrade(this.layer, 12))},
                 effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
-                    if (hasUpgrade(this.layer, 13)) {
-                        let eff = player[this.layer].points.add(1).ln().div(10).add(1);
-                        eff = eff.pow(upgradeEffect("xp", 24));
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = player[this.layer].points.add(1).ln().div(10).add(1);
+                    eff = eff.pow(upgradeEffect("xp", 24));
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -121,11 +121,8 @@ addLayer("xp", {
                 cost: new Decimal(5000),
                 unlocked() { return (hasUpgrade(this.layer, 13))},
                 effect() {
-                    if (hasUpgrade(this.layer, 14)) {
-                        let eff = player.points.plus(1);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = player.points.plus(1);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -138,11 +135,8 @@ addLayer("xp", {
                 currencyLayer: "",
                 unlocked() { return (hasUpgrade(this.layer, 14))},
                 effect() {
-                    if (hasUpgrade(this.layer, 15)) {
-                        let eff = player.points.times(player.points).div(100).plus(1);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = player.points.times(player.points).div(100).plus(1);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -152,11 +146,8 @@ addLayer("xp", {
                 cost: new Decimal(25000),
                 unlocked() { return (hasUpgrade(this.layer, 15))},
                 effect() {
-                    if (hasUpgrade(this.layer, 21)) {
-                        let eff = new Decimal(10);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = new Decimal(10);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -169,11 +160,8 @@ addLayer("xp", {
                 currencyLayer: "",
                 unlocked() { return (hasUpgrade(this.layer, 21))},
                 effect() {
-                    if (hasUpgrade(this.layer, 22)) {
-                        let eff = new Decimal(10);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = new Decimal(10);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -183,12 +171,9 @@ addLayer("xp", {
                 cost: new Decimal(200000),
                 unlocked() { return (hasUpgrade(this.layer, 22))},
                 effect() {
-                    if (hasUpgrade(this.layer, 23)) {
-                        let gainGet = tmp[this.layer].resetGain;
-                        let eff = Decimal.plus(gainGet, new Decimal(1)).pow(0.11);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let gainGet = tmp[this.layer].resetGain;
+                    let eff = Decimal.plus(gainGet, new Decimal(1)).pow(0.11);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
             },
@@ -198,11 +183,8 @@ addLayer("xp", {
                 cost: new Decimal(500000),
                 unlocked() { return (hasUpgrade(this.layer, 23))},
                 effect() {
-                    if (hasUpgrade(this.layer, 24)) {
-                        let eff = player.points.div(10);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = player.points.div(10);
+                    return eff;
                 },
                 effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
             },
@@ -218,13 +200,10 @@ addLayer("xp", {
                 cost: new Decimal(5e7),
                 unlocked() { return (hasUpgrade("g", 15))},
                 effect() {
-                    if (hasUpgrade(this.layer, 31)) {
-                        let maxLv = new Decimal(31);
-                        let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
-                        eff = eff.pow(3);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let maxLv = new Decimal(31);
+                    let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                    eff = eff.pow(3);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
             },
@@ -237,11 +216,8 @@ addLayer("xp", {
                 currencyLayer: "",
                 unlocked() { return (hasUpgrade("xp", 31))},
                 effect() {
-                    if (hasUpgrade(this.layer, 32)) {
-                        let eff = player.points.div(10).plus(1)
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = player.points.div(10).plus(1)
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
             },
@@ -251,11 +227,8 @@ addLayer("xp", {
                 cost: new Decimal(1e9),
                 unlocked() { return (hasUpgrade("xp", 32))},
                 effect() {
-                    if (hasUpgrade(this.layer, 33)) {
-                        let eff = new Decimal(100);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let eff = new Decimal(100);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
             },
@@ -265,13 +238,10 @@ addLayer("xp", {
                 cost: new Decimal(1e10),
                 unlocked() { return (hasUpgrade("xp", 33))},
                 effect() {
-                    if (hasUpgrade(this.layer, 34)) {
-                        let maxLv = new Decimal(41);
-                        let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
-                        eff = eff.pow(4);
-                        return eff;
-                    }
-                    else return new Decimal(1);
+                    let maxLv = new Decimal(41);
+                    let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                    eff = eff.pow(4);
+                    return eff;
                 },
                 effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
             },
@@ -344,20 +314,23 @@ addLayer("g", {
     exponent: 3, // Prestige currency exponent
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
-        mult = mult.times(upgradeEffect("g", 11));
-        mult = mult.times(upgradeEffect("g", 13));
-        mult = mult.times(upgradeEffect("xp", 32));
-        mult = mult.times(upgradeEffect("g", 21));
-        mult = mult.times(upgradeEffect("g", 22));
-        mult = mult.times(upgradeEffect("g", 25));
+        mult = mult.times((hasUpgrade("g", 11)) ? upgradeEffect("g", 11) : new Decimal(1));
+        mult = mult.times((hasUpgrade("g", 13)) ? upgradeEffect("g", 13) : new Decimal(1));
+        mult = mult.times((hasUpgrade("xp", 32)) ? upgradeEffect("xp", 32) : new Decimal(1));
+        mult = mult.times((hasUpgrade("g", 21)) ? upgradeEffect("g", 21) : new Decimal(1));
+        mult = mult.times((hasUpgrade("g", 22)) ? upgradeEffect("g", 22) : new Decimal(1));
+        mult = mult.times((hasUpgrade("g", 25)) ? upgradeEffect("g", 25) : new Decimal(1));
             
-        mult = mult.pow(upgradeEffect("l", 13));
-        mult = mult.pow(upgradeEffect("l", 15));
+        mult = mult.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
+        mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
+
+        mult = mult.tetrate((hasUpgrade("l", 23)) ? upgradeEffect("l", 23) : new Decimal(1));
 
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        return new Decimal(1)
+        let expon = buyableEffect("l", 12);
+        return expon
     },
     upgrades: {
         rows: 5,
@@ -368,11 +341,8 @@ addLayer("g", {
             cost: new Decimal(1),
             unlocked() { return player[this.layer].unlocked },
             effect() { 
-                if (hasUpgrade(this.layer, 11)) {
-                    let eff = new Decimal(10);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = new Decimal(10);
+                return eff;
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
         },
@@ -382,12 +352,9 @@ addLayer("g", {
             cost: new Decimal(100),
             unlocked() { return (hasUpgrade(this.layer, 11)) },
             effect() { 
-                if (hasUpgrade(this.layer, 12)) {
-                    let eff = player[this.layer].total.div(10).pow(0.2);
-                    eff = eff.pow(upgradeEffect("g", 14))
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = player[this.layer].total.div(10).pow(0.2);
+                eff = eff.pow(upgradeEffect("g", 14))
+                return eff;
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
         },
@@ -397,11 +364,8 @@ addLayer("g", {
             cost: new Decimal(250),
             unlocked() { return (hasUpgrade(this.layer, 12)) },
             effect() { 
-                if (hasUpgrade(this.layer, 13)) {
-                    let eff = player.xp.points.plus(10).log10();
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = player.xp.points.plus(10).log10();
+                return eff;
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
         },
@@ -411,11 +375,8 @@ addLayer("g", {
             cost: new Decimal(1000),
             unlocked() { return (hasUpgrade(this.layer, 13)) },
             effect() { 
-                if (hasUpgrade(this.layer, 14)) {
-                    let eff = player.g.points.plus(10).log10().pow(0.7);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = player.g.points.plus(10).log10().pow(0.7);
+                return eff;
             },
             effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
         },
@@ -434,11 +395,8 @@ addLayer("g", {
             cost: new Decimal(100000),
             unlocked() { return (hasUpgrade("xp", 35)) },
             effect() { 
-                if (hasUpgrade(this.layer, 21)) {
-                    let eff = player.points.plus(1);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = player.points.plus(1);
+                return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
@@ -448,11 +406,8 @@ addLayer("g", {
             cost: new Decimal(1e7),
             unlocked() { return (hasUpgrade("g", 21)) },
             effect() { 
-                if (hasUpgrade(this.layer, 22)) {
-                    let eff = player.xp.points.plus(10).log10();
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = player.xp.points.plus(10).log10();
+                return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
@@ -462,13 +417,10 @@ addLayer("g", {
             cost: new Decimal(2.5e8),
             unlocked() { return (hasUpgrade("g", 22)) },
             effect() { 
-                if (hasUpgrade(this.layer, 23)) {
-                    let maxLv = new Decimal(101);
-                        let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
-                        eff = eff.pow(1.75);
-                        return eff;
-                }
-                else return new Decimal(1);
+                let maxLv = new Decimal(101);
+                let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                eff = eff.pow(1.75);
+                return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
@@ -478,11 +430,8 @@ addLayer("g", {
             cost: new Decimal(1e9),
             unlocked() { return (hasUpgrade("g", 23)) },
             effect() { 
-                if (hasUpgrade(this.layer, 24)) {
-                    let eff = player.points.plus(10).log10();
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = player.points.plus(10).log10();
+                return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
@@ -492,11 +441,8 @@ addLayer("g", {
             cost: new Decimal(3e9),
             unlocked() { return (hasUpgrade("g", 24)) },
             effect() { 
-                if (hasUpgrade(this.layer, 25)) {
-                    let eff = new Decimal(3.1415926535);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = new Decimal(3.1415926535);
+                return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
@@ -578,11 +524,13 @@ addLayer("l", {
         mult = new Decimal(1);
         let xpLogMult = player.xp.points.add(1).log10().div(10).add(1).pow(2);
         mult = mult.div(xpLogMult);
+
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         let expon = new Decimal(1);
-        expon = expon.times(upgradeEffect("l", 15));
+        expon = expon.times((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
+        expon = expon.tetrate((hasUpgrade("l", 24)) ? upgradeEffect("l", 24) : new Decimal(1));
 
         return expon;
     },
@@ -595,11 +543,8 @@ addLayer("l", {
             cost: new Decimal(100),
             unlocked() { return player[this.layer].unlocked },
             effect() { 
-                if (hasUpgrade(this.layer, 11)) {
-                    let eff = new Decimal(1.1);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = new Decimal(1.1);
+                return eff;
             },
             effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
@@ -609,11 +554,8 @@ addLayer("l", {
             cost: new Decimal(900),
             unlocked() { return (hasUpgrade(this.layer, 11)) },
             effect() { 
-                if (hasUpgrade(this.layer, 12)) {
-                    let eff = new Decimal(1.1);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = new Decimal(1.1);
+                return eff;
             },
             effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
@@ -623,11 +565,8 @@ addLayer("l", {
             cost: new Decimal(2000),
             unlocked() { return (hasUpgrade(this.layer, 12)) },
             effect() { 
-                if (hasUpgrade(this.layer, 13)) {
-                    let eff = new Decimal(1.05);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = new Decimal(1.05);
+                return eff;
             },
             effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
@@ -637,13 +576,10 @@ addLayer("l", {
             cost: new Decimal(5000),
             unlocked() { return (hasUpgrade(this.layer, 13)) },
             effect() { 
-                if (hasUpgrade(this.layer, 14)) {
-                    let maxLv = new Decimal(101);
-                    let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
-                    eff = eff.pow(2);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let maxLv = new Decimal(101);
+                let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                eff = eff.pow(2);
+                return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
@@ -653,18 +589,140 @@ addLayer("l", {
             cost: new Decimal(10000),
             unlocked() { return (hasUpgrade(this.layer, 14)) },
             effect() { 
-                if (hasUpgrade(this.layer, 15)) {
-                    let eff = new Decimal(1.2);
-                    return eff;
-                }
-                else return new Decimal(1);
+                let eff = new Decimal(1.2);
+                return eff;
             },
             effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        21: {
+            title: "Are you ready for 200?",
+            description: "level gain is tetrated by 1.001",
+            cost: new Decimal(100),
+            currencyDisplayName: "levels",
+            currencyInternalName: "points",
+            currencyLayer: "",
+            unlocked() { return (hasUpgrade(this.layer, 15)) },
+            effect() { 
+                return new Decimal(1.001);
+            },
+            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        22: {
+            title: "It's more powerful as it seems",
+            description: "XP gain is tetrated by 1.001",
+            cost: new Decimal(105),
+            currencyDisplayName: "levels",
+            currencyInternalName: "points",
+            currencyLayer: "",
+            unlocked() { return (hasUpgrade(this.layer, 21)) },
+            effect() { 
+                return new Decimal(1.001);
+            },
+            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        23: {
+            title: "Golden Mine",
+            description: "Gold gain is tetrated by 1.001",
+            cost: new Decimal(110),
+            currencyDisplayName: "levels",
+            currencyInternalName: "points",
+            currencyLayer: "",
+            unlocked() { return (hasUpgrade(this.layer, 22)) },
+            effect() { 
+                return new Decimal(1.001);
+            },
+            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        24: {
+            title: "Loot Loot Loot",
+            description: "Loot gain is tetrated by 1.001",
+            cost: new Decimal(115),
+            currencyDisplayName: "levels",
+            currencyInternalName: "points",
+            currencyLayer: "",
+            unlocked() { return (hasUpgrade(this.layer, 23)) },
+            effect() { 
+                return new Decimal(1.001);
+            },
+            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+        },
+        25: {
+            title: "Loot Era",
+            description: "Unlocks two buyable upgrades and loot gain is xp gain is tetrated by 1.0005",
+            cost: new Decimal(120),
+            currencyDisplayName: "levels",
+            currencyInternalName: "points",
+            currencyLayer: "",
+            unlocked() { return (hasUpgrade(this.layer, 24)) },
+            effect() { 
+                return new Decimal(1.0005);
+            },
         },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
     branches: [["xp", 2], ["g", 2]],
+
+    buyables: {
+        rows: 1,
+        cols: 1,
+        showRespec: false,
+        11: {
+            title: "Exp Exponent", // Optional, displayed at the top in a larger font
+            cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                let cost = Decimal.pow(new Decimal(1.5), x.pow(1.6));
+                cost = cost.times(1000000);
+                return cost.floor()
+            },
+            effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
+                let eff = x.times(0.01).plus(1);
+                return eff;
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " loot\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                XP Gain is powered to ^" + format(data.effect)
+            },
+            unlocked() { return (hasUpgrade(this.layer, 25)) }, 
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+            buy() { 
+                cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)	
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+            },
+        },
+
+        12: {
+            title: "Gold Exponent", // Optional, displayed at the top in a larger font
+            cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                let cost = Decimal.pow(new Decimal(1.6), x.pow(1.5));
+                cost = cost.times(1000000);
+                return cost.floor();
+            },
+            effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
+                let eff = x.times(0.01).plus(1);
+                return eff;
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " loot\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Gold Gain is powered to ^" + format(data.effect)
+            },
+            unlocked() { return (hasUpgrade(this.layer, 25)) }, 
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+            buy() { 
+                cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)	
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+            },
+        },
+    },
     layerShown(){return (hasUpgrade("g", 25) || player.l.best.gte(1))},
 })
