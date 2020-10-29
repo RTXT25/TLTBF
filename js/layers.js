@@ -36,9 +36,16 @@ function getPointGen() {
 
 
     let powPower = new Decimal(2);
+    if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
+    if (Decimal.gte(player.points, new Decimal(1000))) {
+        powPower.plus(player.points.sub(new Decimal(1000).div(new Decimal(1000))));
+    }
+
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
-    gain = Decimal.min(gain1, exponentLevelGainLimitOnce)
+    let newPowPower = powPower.add(exponentLevelGainLimitOnce.div(new Decimal(1000)));
+    let newExponentLevelGainLimitOnce = baseGain.plus(1).log(newPowPower);
+    gain = Decimal.min(gain1, newExponentLevelGainLimitOnce)
 
 
 	return gain
@@ -66,6 +73,7 @@ addLayer("xp", {
             mult = mult.times((hasUpgrade("xp", 13)) ? upgradeEffect("xp", 13) : new Decimal(1));
             mult = mult.times((hasUpgrade("xp", 15)) ? upgradeEffect("xp", 15) : new Decimal(1));
             mult = mult.times((hasUpgrade("xp", 22)) ? upgradeEffect("xp", 22) : new Decimal(1));
+            mult = mult.times((hasUpgrade("xp", 25)) ? upgradeEffect("xp", 25) : new Decimal(1));
             mult = mult.times((hasUpgrade("g", 12)) ? upgradeEffect("g", 12) : new Decimal(1));
             mult = mult.times((hasUpgrade("g", 21)) ? upgradeEffect("g", 21) : new Decimal(1));
             
@@ -192,10 +200,19 @@ addLayer("xp", {
                 effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
             },
             25: {
-                title: "G means Gold",
-                description: "Unlocks Gold Layer",
+                title() { 
+                    return (!hasMilestone("r", 0) ? "G means Gold" : "Woah, a new upgrade here?");
+                },
+                description() {
+                    return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^sqrt(rubies)");
+                },
                 cost: new Decimal(2500000),
                 unlocked() { return (hasUpgrade(this.layer, 24))},
+                effect() {
+                    let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.5))
+                    return (hasMilestone("r", 0) ? eff : new Decimal(1));
+                },
+                effectDisplay() { return (hasMilestone("r", 0) ? format(this.effect()) + "x" : "") }, // Add formatting to the effect
             },
             31: {
                 title: "Fast Start",
@@ -257,6 +274,12 @@ addLayer("xp", {
                 currencyLayer: "",
                 unlocked() { return (hasUpgrade("xp", 34))},
             },
+            41: {
+                title: "Level Boost",
+                description: "Base Lvl. Exponent: 2 -> 1.9 (It goes much harder after lv 1000)",
+                cost: new Decimal("e250"),
+                unlocked() { return (hasUpgrade("l", 35))},
+            },
         },
 
         buyables: {
@@ -274,6 +297,7 @@ addLayer("xp", {
                     let eff = x.times(0.01);
                     eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                     eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
+                    if (hasMilestone("r", 1)) eff = eff.times(1.5);
                     return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -287,7 +311,9 @@ addLayer("xp", {
                     return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
                 buy() { 
                     cost = tmp[this.layer].buyables[this.id].cost
-                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                    if (!hasMilestone("r", 1)) {
+                        player[this.layer].points = player[this.layer].points.sub(cost);
+                    }
                     player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
                     player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
                 },
@@ -295,7 +321,7 @@ addLayer("xp", {
         },
 
         update(diff) {
-            generatePoints("xp", diff * buyableEffect("g", 11));
+            generatePoints("xp", diff * (buyableEffect("g", 11) + (hasMilestone("r", 0) ? 1 : 0)));
         }
 
 })
@@ -336,6 +362,10 @@ addLayer("g", {
 
         let rubyEff = player.r.points.add(1).log2().add(1).pow(3)
         mult = mult.times(rubyEff);
+
+        
+        mult = mult.times((hasUpgrade("r", 11)) ? upgradeEffect("r", 11) : new Decimal(1));
+        mult = mult.times((hasUpgrade("r", 12)) ? upgradeEffect("r", 12) : new Decimal(1));
 
         return mult
     },
@@ -382,14 +412,25 @@ addLayer("g", {
         },
         14: {
             title: "More XP from gold",
-            description: "Upgrade 1,2 effect is powered to log10(gold + 10)^0.7",
             cost: new Decimal(1000),
+            softcap() { return new Decimal(10) },
             unlocked() { return (hasUpgrade(this.layer, 13)) },
             effect() { 
-                let eff = player.g.points.plus(10).log10().pow(0.7);
+                let teff = player.g.points.plus(10).log10().pow(0.7);
+                if (teff.gte(this.softcap())) {
+                    eff = teff.sub(this.softcap()).div(100).plus(this.softcap());
+                }
+                else {
+                    eff = teff;
+                }
                 return eff;
             },
-            effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
+            description() {
+                return (this.effect().gte(this.softcap()) ? "Upgrade 1,2 effect is powered based on gold" : "Upgrade 1,2 effect is powered to log10(gold + 10)^0.7");
+            },
+            effectDisplay() { 
+                return "^"+format(this.effect()) + (this.effect().gte(this.softcap()) ? " (softcapped)" : "");
+            }, 
         },
         15: {
             title: "You can't buy this once",
@@ -518,6 +559,7 @@ addLayer("g", {
                 let eff = x.times(0.01);
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
+                if (hasMilestone("r", 1)) eff = eff.times(1.5);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -531,7 +573,9 @@ addLayer("g", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy() { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                player[this.layer].points = player[this.layer].points.sub(cost)	
+                if (!hasMilestone("r", 1)) {
+                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
@@ -539,13 +583,21 @@ addLayer("g", {
     },
 
     update(diff) {
-        generatePoints("g", diff * buyableEffect("xp", 11));
+        generatePoints("g", diff * (buyableEffect("xp", 11) + (hasMilestone("r", 0) ? 1 : 0)));
+        if (hasMilestone("r", 1)) {
+            if (layers.g.buyables[11].canAfford()) {
+                layers.g.buyables[11].buy();
+            }
+            if (layers.xp.buyables[11].canAfford()) {
+                layers.xp.buyables[11].buy();
+            }
+        }
     },
 
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
-    layerShown(){return hasUpgrade("xp", 25)},
+    layerShown(){return (hasUpgrade("xp", 25) || hasMilestone("r", 0))},
 })
 
 
@@ -859,17 +911,53 @@ addLayer("r", {
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        return 0.4;
+        return 3;
     }, // Prestige currency exponent
-    base: 3,
+    base: 2500,
     canBuyMax: true,
     gainMult() { // Calculate the multiplier for main currency from bonuses
-        mult = new Decimal(1);
+        mult = new Decimal(1.5);
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
-        let expon = new Decimal(1);
+        let expon = new Decimal(1.25);
         return expon;
+    },
+    upgrades: {
+        rows: 5,
+        cols: 5,
+        11: {
+            title: "Make it easier",
+            description: "Multiplies gold gain by 1,000",
+            cost: new Decimal(1),
+            unlocked() { return player[this.layer].unlocked },
+            effect() { 
+                let eff = new Decimal(1000);
+                return eff;
+            },
+        },
+        12: {
+            title: "I think this mult is close to previous now",
+            description: "Multiplies gold gain by (lvl+1)^1.34",
+            cost: new Decimal(2),
+            unlocked() { return (hasUpgrade(this.layer, 11)) },
+            effect() { 
+                let eff = player.points.plus(1).pow(1.34);
+                return eff;
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+    },
+
+    milestones: {
+        0: {requirementDescription: "Get 1 max ruby",
+            done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
+            effectDescription: "Adds additional 100% to passive gold and xp gain. Keeps gold layer unlocked.",
+        },
+        1: {requirementDescription: "Get 2 max ruby",
+        done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
+        effectDescription: "Passive upgrades doesn't cost anything. Also they are 1.5x times more efficient and are bought automatically.",
+    },
     },
    
     row: 1, // Row the layer is in on the tree (0 is the first row)
