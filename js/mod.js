@@ -48,5 +48,5 @@ function isEndgame() {
 
 // You can change this if you have things that can be messed up by long tick lengths
 function maxTickLength() {
-	return(1) // Default is 1 hour which is just arbitrarily large
+	return(25) // Default is 1 hour which is just arbitrarily large
 }

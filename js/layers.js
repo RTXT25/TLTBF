@@ -58,7 +58,7 @@ function getPointGen() {
         baseGain = baseGain.tetrate(challengeVar("q", 12));
     }
 
-
+    console.log(baseGain);
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
@@ -377,6 +377,12 @@ addLayer("xp", {
                 cost: (new Decimal("e466")).times(new Decimal(1)),
                 unlocked() { return (hasUpgrade("xp", 44))},
             },
+            51: {
+                title: "Get more loot from XP",
+                description: "XP multiplier to loot gain is powered to ^2",
+                cost: (new Decimal("e1100")).times(new Decimal(1)),
+                unlocked() { return (hasUpgrade("xp", 45) && hasMilestone("q", 4))},
+            },
         },
 
         buyables: {
@@ -417,13 +423,13 @@ addLayer("xp", {
             },
         },
 
-        update(diff) {
+        /*update(diff) {
             generatePoints("xp", diff * (buyableEffect("g", 11) + (hasMilestone("r", 0) ? 1 : 0)));
-        },
+        },*/
 
         automate() {
             if (player["xp"].autoBuyXP) {
-                for (let x = 10; x <= 40; x += 10){ 
+                for (let x = 10; x <= 50; x += 10){ 
                     for (let y = 1; y <= 5; y++) {
                         var z = x + y
                         if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && hasMilestone("q", 1) && layers["xp"].upgrades[z].unlocked()===true) {
@@ -788,6 +794,7 @@ addLayer("l", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
         let xpLogMult = player.xp.points.add(1).log10().div(10).add(1).pow(2);
+        if (hasUpgrade("xp", 51)) xpLogMult = xpLogMult.pow(2);
         mult = mult.div(xpLogMult);
         mult = mult.div((hasUpgrade("l", 31)) ? upgradeEffect("l", 31) : new Decimal(1));
         mult = mult.div((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
