@@ -329,6 +329,7 @@ addLayer("g", {
         mult = mult.times(upgradeEffect("g", 13));
         mult = mult.times(upgradeEffect("xp", 32));
         mult = mult.times(upgradeEffect("g", 21));
+        mult = mult.times(upgradeEffect("g", 22));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -405,12 +406,26 @@ addLayer("g", {
         },
         21: {
             title: "Stronk Buff",
-            description: "Multiplies XP, gold and lv gain buy value of your level + 1",
+            description: "Multiplies XP, gold and lv gain by value of your level + 1",
             cost: new Decimal(100000),
             unlocked() { return (hasUpgrade("xp", 35)) },
             effect() { 
                 if (hasUpgrade(this.layer, 21)) {
                     let eff = player.points.plus(1);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        22: {
+            title: "Even More Gold",
+            description: "Multiplies Gold by log10(xp + 10)",
+            cost: new Decimal(1e7),
+            unlocked() { return (hasUpgrade("g", 21)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 22)) {
+                    let eff = player.xp.points.plus(10).log10();
                     return eff;
                 }
                 else return new Decimal(1);
@@ -436,7 +451,7 @@ addLayer("g", {
             },
             display() { // Everything else displayed in the buyable button after the title
                 let data = tmp[this.layer].buyables[this.id]
-                return "Cost: " + format(data.cost) + " gold\n\
+                return "Cost: " + format(data.cost) + " xp\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
                 Generate " + format(data.effect.times(100)) + "% XP per second"
             },
