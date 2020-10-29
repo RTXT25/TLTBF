@@ -1163,7 +1163,7 @@ addLayer("q", {
                 return "Level, Exp and Gold gain are powered to ^" + this.powers() + "<br>"+challengeCompletions(this.layer, this.id)
                  + "/" + this.completionLimit + " completions";
             },
-            unlocked() { return hasMilestone(this.layer, 0) },
+            unlocked() { return hasMilestone("q", 0) },
             goal: new Decimal("e1000"),
             currencyDisplayName: "exp", // Use if using a nonstandard currency
             currencyInternalName: "xp", // Use if using a nonstandard currency
@@ -1187,7 +1187,6 @@ addLayer("q", {
                 return rew;
             },
             rewardDisplay() { return "^" + format(this.rewardEffect())+" to exp/levels/gold gain" },
-            countsAs: [12, 21], // Use this for if a challenge includes the effects of other challenges. Being in this challenge "counts as" being in these.
             rewardDescription: "Common first challenge",
             onComplete() {} // Called when you complete the challenge
         },
@@ -1200,5 +1199,5 @@ addLayer("q", {
     ],
     branches: [["xp", 3], ["g", 3]],
 
-    layerShown(){return (hasUpgrade("r", 13) || player.r.best.gte(1))},
+    layerShown(){return (hasUpgrade("r", 13) || player.q.best.gte(1))},
 })
