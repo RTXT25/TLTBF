@@ -24,8 +24,8 @@ function getPointGen() {
     baseGain = baseGain.times((hasUpgrade("l", 14)) ? upgradeEffect("l", 14) : new Decimal(1));
     baseGain = baseGain.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
 
-    baseGain = baseGain.tetrate((hasUpgrade("l", 21)) ? upgradeEffect("l", 21) : new Decimal(1));
-    baseGain = baseGain.tetrate((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
+    baseGain = baseGain.pow((hasUpgrade("l", 21)) ? upgradeEffect("l", 21) : new Decimal(1));
+    baseGain = baseGain.pow((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
 
 
     let lootEff = player.l.best.add(1).pow(0.75);
@@ -57,7 +57,7 @@ function getPointGen() {
     if (inChallenge("q", 12)) {
         baseGain = baseGain.tetrate(challengeVar("q", 12));
     }
-    
+
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
@@ -67,11 +67,11 @@ function getPointGen() {
 
     if (hasMilestone("r", 2)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.9)).plus(new Decimal(1));
     if (hasUpgrade("r", 13)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.99)).plus(new Decimal(1));
-    powPower.sub(new Decimal(1)).times(layers.q.challenges[12].rewardEffect()).plus(new Decimal(1));
+    powPower = powPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
 
 
-    if (Decimal.gte(player.points, new Decimal(1000))) {
-        powPower.plus(player.points.sub(new Decimal(1000).div(new Decimal(1000))));
+    if (Decimal.gte(player.points, new Decimal(3000))) {
+        powPower = powPower.plus(player.points.sub(new Decimal(3000)).div(new Decimal(1000)));
     }
 
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
@@ -82,10 +82,9 @@ function getPointGen() {
 
     if (Decimal.lte(gain, new Decimal(1e-3))) {
         let decDiff = gain.div(new Decimal(1e-3));
-        let logBack = decDiff.log(newPowPower);
-        player.points = Decimal.max(new Decimal(0), player.points.plus(logBack));
+        let logBack = Decimal.min(decDiff.log(newPowPower), new Decimal(0));
+        player.points = Decimal.max(new Decimal(player.points.div(1.25)), player.points.plus(logBack));
     }
-
 	return gain
 }
 
@@ -118,7 +117,7 @@ addLayer("xp", {
             mult = mult.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
             mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
 
-            mult = mult.tetrate((hasUpgrade("l", 22)) ? upgradeEffect("l", 22) : new Decimal(1));
+            mult = mult.pow((hasUpgrade("l", 22)) ? upgradeEffect("l", 22) : new Decimal(1));
             
             let lootEff = player.l.best.add(1).pow(0.75);
             let qEff = player.q.total.pow(0.6725).plus(1);
@@ -347,7 +346,7 @@ addLayer("xp", {
             },
             41: {
                 title: "Level Boost",
-                description: "Base Lvl. Exponent: 2 -> 1.9 (It goes much harder after lv 1000)",
+                description: "Base Lvl. Exponent: 2 -> 1.9 (It goes much harder after lv 3,000)",
                 cost: new Decimal("e250"),
                 unlocked() { return (hasUpgrade("xp", 35) && hasUpgrade("l", 35))},
             },
@@ -468,7 +467,7 @@ addLayer("g", {
         mult = mult.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
         mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
 
-        mult = mult.tetrate((hasUpgrade("l", 23)) ? upgradeEffect("l", 23) : new Decimal(1));
+        mult = mult.pow((hasUpgrade("l", 23)) ? upgradeEffect("l", 23) : new Decimal(1));
         
         mult = mult.times((hasUpgrade("g", 31)) ? upgradeEffect("g", 31) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 32)) ? upgradeEffect("g", 32) : new Decimal(1));
@@ -868,66 +867,66 @@ addLayer("l", {
         },
         21: {
             title: "Are you ready for 200?",
-            description: "level gain is tetrated by 1.001",
+            description: "level gain is powered by 1.02",
             cost: new Decimal(100),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 15)) },
             effect() { 
-                return new Decimal(1.001);
+                return new Decimal(1.02);
             },
-            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
         22: {
             title: "It's more powerful as it seems",
-            description: "XP gain is tetrated by 1.001",
+            description: "XP gain is powered by 1.03",
             cost: new Decimal(105),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 21)) },
             effect() { 
-                return new Decimal(1.001);
+                return new Decimal(1.03);
             },
-            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
         23: {
             title: "Golden Mine",
-            description: "Gold gain is tetrated by 1.001",
+            description: "Gold gain is powered by 1.05",
             cost: new Decimal(110),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 22)) },
             effect() { 
-                return new Decimal(1.001);
+                return new Decimal(1.05);
             },
-            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
         24: {
             title: "Loot Loot Loot",
-            description: "Loot gain is tetrated by 1.001",
+            description: "Loot gain is powered by 1.1",
             cost: new Decimal(115),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 23)) },
             effect() { 
-                return new Decimal(1.001);
+                return new Decimal(1.1);
             },
-            effectDisplay() { return "^^" + format(this.effect()) }, // Add formatting to the effect
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
         25: {
             title: "Loot Era",
-            description: "Unlocks two buyable upgrades and loot gain is xp gain is tetrated by 1.0005",
+            description: "Unlocks two buyable upgrades and loot gain & xp gain is powered by 1.03",
             cost: new Decimal(120),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 24)) },
             effect() { 
-                return new Decimal(1.0005);
+                return new Decimal(1.03);
             },
         },
         31: {
