@@ -281,7 +281,8 @@ addLayer("xp", {
                     return cost.floor()
                 },
                 effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
-                    let eff = x.times(0.01)
+                    let eff = x.times(0.01);
+                    eff = eff.times(upgradeEffect("g", 24));
                     return eff;
                 },
                 display() { // Everything else displayed in the buyable button after the title
@@ -449,6 +450,26 @@ addLayer("g", {
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
+        24: {
+            title: "Better passives",
+            description: "Passive upgrades effects are multiplied by log10(lv + 10)",
+            cost: new Decimal(1e9),
+            unlocked() { return (hasUpgrade("g", 23)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 24)) {
+                    let eff = player.points.plus(10).log10();
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        25: {
+            title: "What is it?",
+            description: "Unlocks new layer",
+            cost: new Decimal(3e9),
+            unlocked() { return (hasUpgrade("g", 24)) },
+        },
     },
 
     buyables: {
@@ -463,7 +484,8 @@ addLayer("g", {
                 return cost.floor()
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
-                let eff = x.times(0.01)
+                let eff = x.times(0.01);
+                eff = eff.times(upgradeEffect("g", 24));
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -492,4 +514,46 @@ addLayer("g", {
     hotkeys: [
     ],
     layerShown(){return hasUpgrade("xp", 25)},
+})
+
+
+addLayer("l", {
+    name: "loot", // This is optional, only used in a few places, If absent it just uses the layer id.
+    symbol: "L", // This appears on the layer's node. Default is the id with the first letter capitalized
+    position: 3, // Horizontal position within a row. By default it uses the layer id and sorts in alphabetical order
+    startData() { return {
+        unlocked: true,
+        points: new Decimal(0),
+        best: new Decimal(0),
+    }},
+    effect() {
+        eff = player[this.layer].best.add(1).pow(0.75);
+        return eff
+        },
+    effectDescription() {
+        eff = this.effect();
+        return "loot will help you level up much faster, your best loot will multiply your Lv & XP gain by "+format(eff)+"."
+    },
+    color: "#33D8FF",
+    requires: new Decimal(1e10), // Can be a function that takes requirement increases into account
+    resource: "loot", // Name of prestige currency
+    baseResource: "gold", // Name of resource prestige is based on
+    baseAmount() {return player.g.points}, // Get the current amount of baseResource
+    type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    exponent: 0.25, // Prestige currency exponent
+    gainMult() { // Calculate the multiplier for main currency from bonuses
+        mult = new Decimal(1);
+        let xpLogMult = player.xp.points.add(1).log10().div(10);
+        mult = mult.times(xpLogMult);
+        return mult
+    },
+    gainExp() { // Calculate the exponent on main currency from bonuses
+        return new Decimal(1)
+    },
+    upgrades: {
+    },
+    row: 1, // Row the layer is in on the tree (0 is the first row)
+    hotkeys: [
+    ],
+    layerShown(){return hasUpgrade("g", 25)},
 })
