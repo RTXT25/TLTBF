@@ -39,6 +39,10 @@ function getPointGen() {
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
     if (hasUpgrade("xp", 43)) powPower = new Decimal(1.75);
+
+    if (hasMilestone("r", 2)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.9)).plus(new Decimal(1));
+
+
     if (Decimal.gte(player.points, new Decimal(1000))) {
         powPower.plus(player.points.sub(new Decimal(1000).div(new Decimal(1000))));
     }
@@ -981,10 +985,21 @@ addLayer("r", {
             done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
             effectDescription: "Adds additional 100% to passive gold and xp gain. Keeps gold layer unlocked.",
         },
-        1: {requirementDescription: "Get 2 max ruby",
-        done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
-        effectDescription: "Passive upgrades doesn't cost anything. Also they are 1.5x times more efficient and are bought automatically.",
-    },
+        1: {requirementDescription: "Get 2 max rubies",
+            unlocked() {return hasMilestone("r", 0)},
+            done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
+            effectDescription: "Passive upgrades doesn't cost anything. Also they are 1.5x times more efficient and are bought automatically.",
+        },
+        2: {requirementDescription: "Get 3 max rubies",
+            unlocked() {return hasMilestone("r", 1)},
+            done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
+            effectDescription: "Base level exponent is decreased by 10 percent.",
+        },
+        3: {requirementDescription: "Get 5 max rubies",
+            unlocked() {return hasMilestone("r", 2)},
+            done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
+            effectDescription: "Не ебу пока)",
+        },
     },
    
     row: 1, // Row the layer is in on the tree (0 is the first row)
