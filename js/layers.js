@@ -650,7 +650,7 @@ addLayer("l", {
         15: {
             title: "Powered Loot",
             description: "Loot, XP, Gold and Level gain is powered to ^1.2",
-            cost: new Decimal(20000),
+            cost: new Decimal(10000),
             unlocked() { return (hasUpgrade(this.layer, 14)) },
             effect() { 
                 if (hasUpgrade(this.layer, 15)) {
