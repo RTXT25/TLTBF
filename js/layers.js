@@ -34,11 +34,16 @@ function getPointGen() {
     let rubyEff = player.r.points.add(1).log2().add(1).pow(3)
     baseGain = baseGain.times(rubyEff);
 
+    
+    baseGain = baseGain.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
+
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
     if (hasUpgrade("xp", 43)) powPower = new Decimal(1.75);
+    if (hasUpgrade("xp", 44)) powPower = new Decimal(1.7);
+    if (hasUpgrade("xp", 45)) powPower = new Decimal(1.66666);
 
     if (hasMilestone("r", 2)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.9)).plus(new Decimal(1));
 
@@ -90,6 +95,8 @@ addLayer("xp", {
             
             let lootEff = player.l.best.add(1).pow(0.75);
             mult = mult.times(lootEff);
+            
+            mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -301,15 +308,27 @@ addLayer("xp", {
             },
             42: {
                 title: "Meta Level Boost",
-                description: "Base Lvl. Exponent: 1.9 -> 1.8 (It goes much harder after lv 1000)",
+                description: "Base Lvl. Exponent: 1.9 -> 1.8",
                 cost: new Decimal("e320"),
                 unlocked() { return (hasUpgrade("xp", 41))},
             },
             43: {
                 title: "Extra Level Boost",
-                description: "Base Lvl. Exponent: 1.8 -> 1.75 (It goes much harder after lv 1000)",
+                description: "Base Lvl. Exponent: 1.8 -> 1.75",
                 cost: (new Decimal("e444")).times(new Decimal(4.444444)),
                 unlocked() { return (hasUpgrade("xp", 42))},
+            },
+            44: {
+                title: "Super Level Boost",
+                description: "Base Lvl. Exponent: 1.75 -> 1.7",
+                cost: (new Decimal("e456")).times(new Decimal(1.23456)),
+                unlocked() { return (hasUpgrade("xp", 43))},
+            },
+            45: {
+                title: "How fast do you level up?",
+                description: "Base Lvl. Exponent: 1.7 -> 1.666. Multiplies xp, gold, level and loot gain eff. value by 1,000",
+                cost: (new Decimal("e466")).times(new Decimal(1)),
+                unlocked() { return (hasUpgrade("xp", 44))},
             },
         },
 
@@ -397,6 +416,8 @@ addLayer("g", {
         
         mult = mult.times((hasUpgrade("r", 11)) ? upgradeEffect("r", 11) : new Decimal(1));
         mult = mult.times((hasUpgrade("r", 12)) ? upgradeEffect("r", 12) : new Decimal(1));
+
+        mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
 
         return mult
     },
@@ -668,6 +689,7 @@ addLayer("l", {
         let xpLogMult = player.xp.points.add(1).log10().div(10).add(1).pow(2);
         mult = mult.div(xpLogMult);
         mult = mult.div((hasUpgrade("l", 31)) ? upgradeEffect("l", 31) : new Decimal(1));
+        mult = mult.div((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
 
         return mult
     },
@@ -927,7 +949,10 @@ addLayer("r", {
         best: new Decimal(0),
     }},
     effect() {
-        eff = player[this.layer].points.add(1).log2().add(1).pow(3);
+        eff = player[this.layer].points.add(1).log2().add(1).pow(5);
+        if (hasMilestone("r", 3)) {
+            eff = eff.pow(2);
+        }
         return eff
         },
     effectDescription() {
@@ -942,7 +967,11 @@ addLayer("r", {
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        return 3;
+        let baseExp = 3;
+        if (hasMilestone("r", 3)) {
+            baseExp *= 0.8;
+        }
+        return baseExp;
     }, // Prestige currency exponent
     base: 2500,
     canBuyMax: true,
@@ -995,10 +1024,10 @@ addLayer("r", {
             done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
             effectDescription: "Base level exponent is decreased by 10 percent.",
         },
-        3: {requirementDescription: "Get 5 max rubies",
+        3: {requirementDescription: "Get 4 max rubies",
             unlocked() {return hasMilestone("r", 2)},
             done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
-            effectDescription: "Не ебу пока)",
+            effectDescription: "Ruby exponent is decreased by 20 percent. Ruby bonus is squared.",
         },
     },
    
