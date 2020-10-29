@@ -1320,7 +1320,7 @@ addLayer("q", {
             unlocked() { return (hasMilestone("q", 0) || inChallenge("q", 12)) },
             goal(){
                 if (challengeCompletions(this.layer, this.id) == 0) return new Decimal("1e625");
-                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(1e99999);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal("1e888");
                 if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(1e99999);
                 if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(1e99999);
                 if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(1e99999);
