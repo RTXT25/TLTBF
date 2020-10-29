@@ -524,7 +524,7 @@ addLayer("l", {
         mult = new Decimal(1);
         let xpLogMult = player.xp.points.add(1).log10().div(10).add(1).pow(2);
         mult = mult.div(xpLogMult);
-        mult = mult.times((hasUpgrade("l", 31)) ? upgradeEffect("l", 31) : new Decimal(1));
+        mult = mult.div((hasUpgrade("l", 31)) ? upgradeEffect("l", 31) : new Decimal(1));
 
         return mult
     },
@@ -661,14 +661,49 @@ addLayer("l", {
         },
         31: {
             title: "> Level > Loot",
-            description: "Loot Gain is multiplied by 1/10th power of level",
+            description() {
+                let str = "Loot Gain is multiplied by 1/10th power of level";
+                if (hasUpgrade(this.layer, 32)) str = "Loot Gain is multiplied by 1/8th power of level"
+                if (hasUpgrade(this.layer, 33)) str = "Loot Gain is multiplied by 1/5th power of level"
+                if (hasUpgrade(this.layer, 34)) str = "Loot Gain is multiplied by 1/3th power of level"
+                if (hasUpgrade(this.layer, 35)) str = "Loot Gain is multiplied by 1/2th power of level"
+                return str;
+            },
             cost: new Decimal(500000),
             unlocked() { return (hasUpgrade(this.layer, 25)) },
             effect() {
-                let eff = player.points.pow(new Decimal(0.1));
+                let eff = player.points.plus(1).pow(new Decimal(0.1));
+                if (hasUpgrade(this.layer, 32)) eff = player.points.plus(1).pow(new Decimal(0.125));
+                if (hasUpgrade(this.layer, 33)) eff = player.points.plus(1).pow(new Decimal(0.2));
+                if (hasUpgrade(this.layer, 34)) eff = player.points.plus(1).pow(new Decimal(0.3333));
+                if (hasUpgrade(this.layer, 35)) eff = player.points.plus(1).pow(new Decimal(0.5));
                 return eff;
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        32: {
+            title: "Inversed Power Decremention",
+            description: "Upgrade 3,1 power goes from 1/10 to 1/8",
+            cost: new Decimal(1000000),
+            unlocked() { return (hasUpgrade(this.layer, 31)) },
+        },
+        33: {
+            title: "It feels better",
+            description: "Upgrade 3,1 power goes from 1/8 to 1/5",
+            cost: new Decimal(1500000),
+            unlocked() { return (hasUpgrade(this.layer, 32)) },
+        },
+        34: {
+            title: "It feels even better",
+            description: "Upgrade 3,1 power goes from 1/5 to 1/3",
+            cost: new Decimal(2000000),
+            unlocked() { return (hasUpgrade(this.layer, 33)) },
+        },
+        35: {
+            title: "It is really good",
+            description: "Upgrade 3,1 power goes from 1/3 to 1/2. Unlocks new rows of xp and gold upgrades.",
+            cost: new Decimal(3000000),
+            unlocked() { return (hasUpgrade(this.layer, 34)) },
         },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
