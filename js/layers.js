@@ -12,6 +12,10 @@ function getPointGen() {
     baseGain = baseGain.times(upgradeEffect("xp", 21));
     baseGain = baseGain.times(upgradeEffect("xp", 23));
     baseGain = baseGain.times(upgradeEffect("g", 11));
+    baseGain = baseGain.times(upgradeEffect("xp", 31));
+    baseGain = baseGain.times(upgradeEffect("xp", 33));
+    baseGain = baseGain.times(upgradeEffect("xp", 34));
+    baseGain = baseGain.times(upgradeEffect("g", 21));
 
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
@@ -45,6 +49,7 @@ addLayer("xp", {
             mult = mult.times(upgradeEffect("xp", 15));
             mult = mult.times(upgradeEffect("xp", 22));
             mult = mult.times(upgradeEffect("g", 12));
+            mult = mult.times(upgradeEffect("g", 21));
             return mult
         },
         gainExp() { // Calculate the exponent on main currency from bonuses
@@ -54,7 +59,7 @@ addLayer("xp", {
         layerShown(){return true},
 
         upgrades: {
-            rows: 2,
+            rows: 5,
             cols: 5,
             11: {
                 title: "Bonus level gain",
@@ -189,7 +194,117 @@ addLayer("xp", {
                 cost: new Decimal(2500000),
                 unlocked() { return (hasUpgrade(this.layer, 24))},
             },
+            31: {
+                title: "Fast Start",
+                description: "Level UP much faster before Lv.30",
+                cost: new Decimal(5e7),
+                unlocked() { return (hasUpgrade("g", 15))},
+                effect() {
+                    if (hasUpgrade(this.layer, 31)) {
+                        let maxLv = new Decimal(31);
+                        let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                        eff = eff.pow(3);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+            },
+            32: {
+                title: "Yeae, you reached 30!",
+                description: "Gold gain is multiplied by (lv/10)+1",
+                cost: new Decimal(30),
+                currencyDisplayName: "levels",
+                currencyInternalName: "points",
+                currencyLayer: "",
+                unlocked() { return (hasUpgrade("xp", 31))},
+                effect() {
+                    if (hasUpgrade(this.layer, 32)) {
+                        let eff = player.points.div(10).plus(1)
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+            },
+            33: {
+                title: "Faster Levels II",
+                description: "Multiplies level gain by 100",
+                cost: new Decimal(1e9),
+                unlocked() { return (hasUpgrade("xp", 32))},
+                effect() {
+                    if (hasUpgrade(this.layer, 33)) {
+                        let eff = new Decimal(100);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+            },
+            34: {
+                title: "To Level 40!",
+                description: "Level UP much too faster before Lv.40",
+                cost: new Decimal(1e10),
+                unlocked() { return (hasUpgrade("xp", 33))},
+                effect() {
+                    if (hasUpgrade(this.layer, 34)) {
+                        let maxLv = new Decimal(41);
+                        let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                        eff = eff.pow(4);
+                        return eff;
+                    }
+                    else return new Decimal(1);
+                },
+                effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+            },
+            35: {
+                title: "So close",
+                description: "Unlocks XP buyable upgrade and a new row of gold upgrades",
+                cost: new Decimal(39.9),
+                currencyDisplayName: "levels",
+                currencyInternalName: "points",
+                currencyLayer: "",
+                unlocked() { return (hasUpgrade("xp", 34))},
+            },
         },
+
+        buyables: {
+            rows: 1,
+            cols: 1,
+            showRespec: false,
+            11: {
+                title: "Passive Gold", // Optional, displayed at the top in a larger font
+                cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                    let cost = Decimal.pow(new Decimal(2.5), x.pow(1.25));
+                    cost = cost.times(1e11);
+                    return cost.floor()
+                },
+                effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
+                    let eff = x.times(0.01)
+                    return eff;
+                },
+                display() { // Everything else displayed in the buyable button after the title
+                    let data = tmp[this.layer].buyables[this.id]
+                    return "Cost: " + format(data.cost) + " gold\n\
+                    Amount: " + player[this.layer].buyables[this.id] + "\n\
+                    Generate " + format(data.effect.times(100)) + "% gold per second, lol, it was obvious"
+                },
+                unlocked() { return (hasUpgrade(this.layer, 35)) }, 
+                canAfford() {
+                    return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+                buy() { 
+                    cost = tmp[this.layer].buyables[this.id].cost
+                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                    player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+                },
+            },
+        },
+
+        update(diff) {
+            generatePoints("xp", diff * buyableEffect("g", 11));
+        }
+
 })
 
 addLayer("g", {
@@ -211,16 +326,19 @@ addLayer("g", {
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
         mult = mult.times(upgradeEffect("g", 11));
+        mult = mult.times(upgradeEffect("g", 13));
+        mult = mult.times(upgradeEffect("xp", 32));
+        mult = mult.times(upgradeEffect("g", 21));
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         return new Decimal(1)
     },
     upgrades: {
-        rows: 1,
+        rows: 5,
         cols: 5,
         11: {
-            title: "Moneys give levels",
+            title: "Moneys give levels give moneys",
             description: "Gold and Level gain is multiplied by 10",
             cost: new Decimal(1),
             unlocked() { return player[this.layer].unlocked },
@@ -241,13 +359,103 @@ addLayer("g", {
             effect() { 
                 if (hasUpgrade(this.layer, 12)) {
                     let eff = player[this.layer].total.div(10).pow(0.2);
+                    eff = eff.pow(upgradeEffect("g", 14))
                     return eff;
                 }
                 else return new Decimal(1);
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
         },
+        13: {
+            title: "You still need XP",
+            description: "Gold gain is multiplied by log10(xp + 10)",
+            cost: new Decimal(250),
+            unlocked() { return (hasUpgrade(this.layer, 12)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 13)) {
+                    let eff = player.xp.points.plus(10).log10();
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+        },
+        14: {
+            title: "More XP from gold",
+            description: "Upgrade 1,2 effect is powered to log10(gold + 10)^0.7",
+            cost: new Decimal(1000),
+            unlocked() { return (hasUpgrade(this.layer, 13)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 14)) {
+                    let eff = player.g.points.plus(10).log10().pow(0.7);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
+        },
+        15: {
+            title: "You can't buy this once",
+            description: "Unlocks first buyable upgrade and a new row of xp upgrades",
+            cost: new Decimal(28),
+            currencyDisplayName: "levels",
+            currencyInternalName: "points",
+            currencyLayer: "",
+            unlocked() { return (hasUpgrade(this.layer, 14)) },
+        },
+        21: {
+            title: "Stronk Buff",
+            description: "Multiplies XP, gold and lv gain buy value of your level + 1",
+            cost: new Decimal(100000),
+            unlocked() { return (hasUpgrade("xp", 35)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 21)) {
+                    let eff = player.points.plus(1);
+                    return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
     },
+
+    buyables: {
+        rows: 1,
+        cols: 1,
+        showRespec: false,
+        11: {
+            title: "Passive XP", // Optional, displayed at the top in a larger font
+            cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                let cost = Decimal.pow(new Decimal(2), x.pow(1.2));
+                cost = cost.times(1000);
+                return cost.floor()
+            },
+            effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
+                let eff = x.times(0.01)
+                return eff;
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " gold\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Generate " + format(data.effect.times(100)) + "% XP per second"
+            },
+            unlocked() { return (hasUpgrade(this.layer, 15)) }, 
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+            buy() { 
+                cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)	
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+            },
+        },
+    },
+
+    update(diff) {
+        generatePoints("g", diff * buyableEffect("xp", 11));
+    },
+
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
