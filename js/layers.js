@@ -186,7 +186,7 @@ addLayer("xp", {
             14: {
                 title: "Level to Level",
                 description: "Level gain is multiplied by your level + 1",
-                cost: new Decimal(5000),
+                cost: new Decimal(3000),
                 unlocked() { return (hasUpgrade(this.layer, 13))},
                 effect() {
                     let eff = player.points.plus(1);
@@ -211,7 +211,7 @@ addLayer("xp", {
             21: {
                 title: "Faster levels I",
                 description: "Multiplies level gain by 10",
-                cost: new Decimal(25000),
+                cost: new Decimal(15000),
                 unlocked() { return (hasUpgrade(this.layer, 15))},
                 effect() {
                     let eff = new Decimal(10);
@@ -236,7 +236,7 @@ addLayer("xp", {
             23: {
                 title: "Longer Runs",
                 description: "Level gain in multiplied by XP gain",
-                cost: new Decimal(200000),
+                cost: new Decimal(150000),
                 unlocked() { return (hasUpgrade(this.layer, 22))},
                 effect() {
                     let gainGet = tmp[this.layer].resetGain;
@@ -248,7 +248,7 @@ addLayer("xp", {
             24: {
                 title: "More and More XP",
                 description: "XP to XP effect is powered to (level / 10)",
-                cost: new Decimal(500000),
+                cost: new Decimal(300000),
                 softcap() { return new Decimal(50) },
                 unlocked() { return (hasUpgrade(this.layer, 23))},
                 effect() {
@@ -276,7 +276,7 @@ addLayer("xp", {
                 description() {
                     return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^sqrt(rubies)");
                 },
-                cost: new Decimal(2500000),
+                cost: new Decimal(1000000),
                 unlocked() { return (hasUpgrade(this.layer, 24))},
                 effect() {
                     let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.5))
@@ -527,7 +527,7 @@ addLayer("g", {
             unlocked() { return (hasUpgrade(this.layer, 11)) },
             effect() { 
                 let eff = player[this.layer].total.div(10).pow(0.2);
-                eff = eff.pow(upgradeEffect("g", 14));
+                if (hasUpgrade(this.layer, 14)) eff = eff.pow(upgradeEffect("g", 14));
                 if (eff.gte(new Decimal("1e125"))) {
                     eff = eff.div(new Decimal("1e125")).pow(0.05).times(new Decimal("1e125"));
                     //softcap
