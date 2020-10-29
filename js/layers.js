@@ -696,13 +696,13 @@ addLayer("l", {
         34: {
             title: "It feels even better",
             description: "Upgrade 3,1 power goes from 1/5 to 1/3",
-            cost: new Decimal(1300000),
+            cost: new Decimal(1200000),
             unlocked() { return (hasUpgrade(this.layer, 33)) },
         },
         35: {
             title: "It is really good",
             description: "Upgrade 3,1 power goes from 1/3 to 1/2. Unlocks new rows of xp and gold upgrades.",
-            cost: new Decimal(2000000),
+            cost: new Decimal(1500000),
             unlocked() { return (hasUpgrade(this.layer, 34)) },
         },
     },
