@@ -40,6 +40,8 @@ function getPointGen() {
     if (hasMilestone("r", 3)) {
         rubyEff = rubyEff.pow(2);
     }
+    rubyEff = rubyEff.pow(layers.q.challenges[13].rewardEffect());
+
     baseGain = baseGain.times(rubyEff);
 
     
@@ -80,7 +82,6 @@ function getPointGen() {
     let newExponentLevelGainLimitOnce = baseGain.plus(1).log(newPowPower);
     gain = Decimal.min(gain1, newExponentLevelGainLimitOnce)
 
-    console.log(gain);
     if (Decimal.lte(gain, new Decimal(1e-3))) {
         let decDiff = gain.div(new Decimal(1e-3));
         let logBack = decDiff.log(newPowPower);
@@ -135,6 +136,13 @@ addLayer("xp", {
             }
             if (inChallenge("q", 12)) mult = mult.tetrate(challengeVar("q", 12));
 
+            if (inChallenge("q", 13)) mult = mult.times(new Decimal(0));
+
+            //soft cap
+            if (mult.gte(new Decimal("e1000"))) {
+                let softCapDivider = mult.log10().sub(999).pow(mult.log10().sub(999).div(250).plus(2));
+                mult = mult.div(softCapDivider);
+            }
 
             return mult
         },
@@ -283,7 +291,7 @@ addLayer("xp", {
                 title: "Fast Start",
                 description: "Level UP much faster before Lv.30",
                 cost: new Decimal(5e7),
-                unlocked() { return (hasUpgrade("g", 15))},
+                unlocked() { return ((hasUpgrade("g", 15) && hasUpgrade("xp", 25)) || inChallenge("q", 14)) },
                 effect() {
                     let maxLv = new Decimal(31);
                     let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
@@ -411,7 +419,20 @@ addLayer("xp", {
 
         update(diff) {
             generatePoints("xp", diff * (buyableEffect("g", 11) + (hasMilestone("r", 0) ? 1 : 0)));
-        }
+        },
+
+        automate() {
+            if (player["xp"].autoBuyXP) {
+                for (let x = 10; x <= 40; x += 10){ 
+                    for (let y = 1; y <= 5; y++) {
+                        var z = x + y
+                        if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && hasMilestone("q", 1) && layers["xp"].upgrades[z].unlocked()===true) {
+                            buyUpg("xp", z);
+                        }
+                    }
+                }
+            }
+        },
 
 })
 
@@ -456,6 +477,8 @@ addLayer("g", {
         if (hasMilestone("r", 3)) {
             rubyEff = rubyEff.pow(2);
         }
+        rubyEff = rubyEff.pow(layers.q.challenges[13].rewardEffect());
+        
         mult = mult.times(rubyEff);
 
         
@@ -469,6 +492,10 @@ addLayer("g", {
             mult = mult.pow(layers.q.challenges[11].rewardEffect());
         }
         if (inChallenge("q", 12)) mult = mult = mult.tetrate(challengeVar("q", 12));
+
+        
+        if (inChallenge("q", 14)) mult = mult.times(new Decimal(0));
+
 
         return mult
     },
@@ -497,10 +524,16 @@ addLayer("g", {
             unlocked() { return (hasUpgrade(this.layer, 11)) },
             effect() { 
                 let eff = player[this.layer].total.div(10).pow(0.2);
-                eff = eff.pow(upgradeEffect("g", 14))
+                eff = eff.pow(upgradeEffect("g", 14));
+                if (eff.gte(new Decimal("1e125"))) {
+                    eff = eff.div(new Decimal("1e125")).pow(0.05).times(new Decimal("1e125"));
+                    //softcap
+                }
                 return eff;
             },
-            effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
+            effectDisplay() { 
+                return format(this.effect())+"x " + ((this.effect().gte(new Decimal("1e125"))) ? " (softcapped) " : ""); 
+            }, // Add formatting to the effect
         },
         13: {
             title: "You still need XP",
@@ -548,7 +581,7 @@ addLayer("g", {
             title: "Stronk Buff",
             description: "Multiplies XP, gold and lv gain by value of your level + 1",
             cost: new Decimal(100000),
-            unlocked() { return (hasUpgrade("xp", 35)) },
+            unlocked() { return ((hasUpgrade("xp", 35) && hasUpgrade("g", 15)) || inChallenge("q", 13)) },
             effect() { 
                 let eff = player.points.plus(1);
                 return eff;
@@ -697,6 +730,19 @@ addLayer("g", {
         }
     },
 
+    automate() {
+        if (player["g"].autoBuyGold) {
+            for (let x = 10; x <= 30; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    var z = x + y
+                    if (!hasUpgrade("g", z) && canAffordUpgrade("g", z) && hasMilestone("q", 2) && layers["g"].upgrades[z].unlocked()===true) {
+                        buyUpg("g", z);
+                    }
+                }
+            }
+        }
+    },
+
     row: 0, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
@@ -717,6 +763,7 @@ addLayer("l", {
         eff = player[this.layer].best.add(1).pow(0.75);
         let qEff = player.q.total.pow(0.6725).plus(1);
         eff = eff.pow(qEff);
+        eff = eff.pow((hasMilestone("q", 1) ? new Decimal(2) : new Decimal(1)));
         return eff
         },
     effectDescription() {
@@ -730,6 +777,7 @@ addLayer("l", {
     baseResource: "gold", // Name of resource prestige is based on
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    resetsNothing: () => (hasMilestone("q", 3)),
     exponent() {
         let baseExp = 0.25;
         if (hasUpgrade("g", 33)) baseExp -= 0.05;
@@ -1009,6 +1057,7 @@ addLayer("r", {
         if (hasMilestone("r", 3)) {
             eff = eff.pow(2);
         }
+        eff = eff.pow(layers.q.challenges[13].rewardEffect());
         return eff
         },
     effectDescription() {
@@ -1017,7 +1066,11 @@ addLayer("r", {
         "x.";
     },
     color: "#FF335B",
-    requires: new Decimal(2e20), // Can be a function that takes requirement increases into account
+    requires() {
+        let baseVal = new Decimal(2e20);
+        baseVal = baseVal.div(layers.q.challenges[14].rewardEffect());
+        return baseVal;
+    }, // Can be a function that takes requirement increases into account
     resource: "rubies", // Name of prestige currency
     baseResource: "gold", // Name of resource prestige is based on
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
@@ -1148,14 +1201,40 @@ addLayer("q", {
     milestones: {
         0: {requirementDescription: "Get 1 quest",
             done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
-            effectDescription: "Welcome to the world of quests! First challenge unlocked!",
+            effectDescription: "Welcome to the world of quests! First two challenges unlocked!",
+        },
+        1: {requirementDescription: "Get 2 quests",
+            toggles: [
+                ["xp", "autoBuyXP"]
+            ],
+            unlocked() {return hasMilestone("q", 0)},
+            done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
+            effectDescription: "Loot effect power is powered to ^2, makes it really powerful. Also, now you can automate buying xp upgrades.",
+        },
+        2: {requirementDescription: "Get 3 quests",
+            toggles: [
+                ["g", "autoBuyGold"]
+            ],
+            unlocked() {return hasMilestone("q", 1)},
+            done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
+            effectDescription: "You can automate buying gold upgrades. Unlocks two next challenges.",
+        },
+        3: {requirementDescription: "Get 4 quests",
+            unlocked() {return hasMilestone("q", 2)},
+            done() {return player[this.layer].best.gte(4)}, // Used to determine when to give the milestone
+            effectDescription: "Loot prestiging resets nothing.",
+        },
+        4: {requirementDescription: "Get 5 quests",
+            unlocked() {return hasMilestone("q", 3)},
+            done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
+            effectDescription: "Unlocks 5 last XP upgrades.",
         },
     },
 
 
     challenges: {
-        rows: 1,
-        cols: 2,
+        rows: 2,
+        cols: 5,
         11: {
             name: "Typical Challenge",
             completionLimit: 11,
@@ -1180,7 +1259,7 @@ addLayer("q", {
             unlocked() { return (hasMilestone("q", 0) || inChallenge("q", 11)) },
             goal(){
                 if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(1e40);
-                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(1e99999);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(1e32);
                 if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(1e99999);
                 if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(1e99999);
                 if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(1e99999);
@@ -1240,7 +1319,7 @@ addLayer("q", {
             },
             unlocked() { return (hasMilestone("q", 0) || inChallenge("q", 12)) },
             goal(){
-                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(1e99999);
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal("1e625");
                 if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(1e99999);
                 if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(1e99999);
                 if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(1e99999);
@@ -1277,6 +1356,106 @@ addLayer("q", {
             rewardDisplay() { return "Base Level Exponent reduced by " + 
             format(this.rewardEffect().times(new Decimal(100)))+"%" },
             rewardDescription: "Decrease base level exponent, it will help you level up faster until Lv.1000.",
+            onComplete() {} // Called when you complete the challenge
+        },
+        13: {
+            name: "No XP",
+            completionLimit: 12,
+            challengeDescription() {
+                return "You can't get any xp in this challenge (gold upgrades can be unlocked)" + "<br>"+challengeCompletions(this.layer, this.id)
+                 + "/" + this.completionLimit + " completions";
+            },
+            unlocked() { return (hasMilestone("q", 2) || inChallenge("q", 13)) },
+            goal(){
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(135);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(99999);
+            },
+            currencyDisplayName: "level", // Use if using a nonstandard currency
+            currencyInternalName: "points", // Use if using a nonstandard currency
+            currencyLayer: "", // Leave empty if not in a layer
+            rewards() {
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(1);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(2);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(3);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(4);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(5);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(6);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(7);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(8);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(9);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(10);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(11);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(12);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(15);
+            },
+            rewardEffect() {
+                let rew = new Decimal(this.rewards());
+                return rew;
+            },
+            rewardDisplay() { return "Ruby effect is powered to ^" + 
+            format(this.rewardEffect()) },
+            rewardDescription: "Rubies are stronger now!",
+            onComplete() {} // Called when you complete the challenge
+        },
+        14: {
+            name: "No Gold",
+            completionLimit: 12,
+            challengeDescription() {
+                return "You can't get any gold in this challenge (xp upgrades can be unlocked)" + "<br>"+challengeCompletions(this.layer, this.id)
+                 + "/" + this.completionLimit + " completions";
+            },
+            unlocked() { return (hasMilestone("q", 2) || inChallenge("q", 14)) },
+            goal(){
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(99999);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(99999);
+            },
+            currencyDisplayName: "level", // Use if using a nonstandard currency
+            currencyInternalName: "points", // Use if using a nonstandard currency
+            currencyLayer: "", // Leave empty if not in a layer
+            rewards() {
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(1);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(20);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(400);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(8000);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(160000);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(3200000);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(6.4e7);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(1.28e9);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(2.56e10);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(5.12e11);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(1.024e13);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(2.048e14);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(2e16);
+            },
+            rewardEffect() {
+                let rew = new Decimal(this.rewards());
+                return rew;
+            },
+            rewardDisplay() { return "Rubies base requirement divided by " + 
+            format(this.rewardEffect()) },
+            rewardDescription: "Now you can get more rubies and faster",
             onComplete() {} // Called when you complete the challenge
         },
     }, 
