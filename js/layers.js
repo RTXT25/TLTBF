@@ -524,6 +524,7 @@ addLayer("l", {
         mult = new Decimal(1);
         let xpLogMult = player.xp.points.add(1).log10().div(10).add(1).pow(2);
         mult = mult.div(xpLogMult);
+        mult = mult.times((hasUpgrade("l", 31)) ? upgradeEffect("l", 31) : new Decimal(1));
 
         return mult
     },
@@ -663,10 +664,11 @@ addLayer("l", {
             description: "Loot Gain is multiplied by 1/10th power of level",
             cost: new Decimal(500000),
             unlocked() { return (hasUpgrade(this.layer, 25)) },
-            effect() { 
-                return new Decimal(0.1);
+            effect() {
+                let eff = player.points.pow(new Decimal(0.1));
+                return eff;
             },
-            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
