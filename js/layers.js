@@ -37,6 +37,8 @@ function getPointGen() {
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
+    if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
+    if (hasUpgrade("xp", 43)) powPower = new Decimal(1.75);
     if (Decimal.gte(player.points, new Decimal(1000))) {
         powPower.plus(player.points.sub(new Decimal(1000).div(new Decimal(1000))));
     }
@@ -104,7 +106,7 @@ addLayer("xp", {
             },
             12: {
                 title: "XP to level",
-                description: "Level gain is also based on your unspent xp",
+                description: "Level gain is also based on your unspent xp, softcap after x100",
                 cost: new Decimal(50),
                 unlocked() { return (hasUpgrade(this.layer, 11))},
                 effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
@@ -192,12 +194,25 @@ addLayer("xp", {
                 title: "More and More XP",
                 description: "XP to XP effect is powered to (level / 10)",
                 cost: new Decimal(500000),
+                softcap() { return new Decimal(50) },
                 unlocked() { return (hasUpgrade(this.layer, 23))},
                 effect() {
                     let eff = player.points.div(10);
+                    if (eff.gte(this.softcap())) {
+                        eff = eff.sub(this.softcap()).divide(new Decimal(10)).plus(this.softcap())
+                    }
                     return eff;
                 },
-                effectDisplay() { return "^"+format(this.effect()) }, // Add formatting to the effect
+                description() {
+                    if (this.effect().gte(this.softcap())) {
+                        return "XP to XP effect is powered based on your lvl";
+                    }
+                    else {
+                        return "XP to XP effect is powered to (level / 10)";
+                    }
+                },
+                effectDisplay() { return "^"+format(this.effect()) + ((this.effect().gte(this.softcap())) 
+                ? " (softcapped) " : "")}, // Add formatting to the effect
             },
             25: {
                 title() { 
@@ -278,7 +293,19 @@ addLayer("xp", {
                 title: "Level Boost",
                 description: "Base Lvl. Exponent: 2 -> 1.9 (It goes much harder after lv 1000)",
                 cost: new Decimal("e250"),
-                unlocked() { return (hasUpgrade("l", 35))},
+                unlocked() { return (hasUpgrade("xp", 35) && hasUpgrade("l", 35))},
+            },
+            42: {
+                title: "Meta Level Boost",
+                description: "Base Lvl. Exponent: 1.9 -> 1.8 (It goes much harder after lv 1000)",
+                cost: new Decimal("e320"),
+                unlocked() { return (hasUpgrade("xp", 41))},
+            },
+            43: {
+                title: "Extra Level Boost",
+                description: "Base Lvl. Exponent: 1.8 -> 1.75 (It goes much harder after lv 1000)",
+                cost: (new Decimal("e444")).times(new Decimal(4.444444)),
+                unlocked() { return (hasUpgrade("xp", 42))},
             },
         },
 
@@ -585,10 +612,10 @@ addLayer("g", {
     update(diff) {
         generatePoints("g", diff * (buyableEffect("xp", 11) + (hasMilestone("r", 0) ? 1 : 0)));
         if (hasMilestone("r", 1)) {
-            if (layers.g.buyables[11].canAfford()) {
+            if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy();
             }
-            if (layers.xp.buyables[11].canAfford()) {
+            if (layers.xp.buyables[11].unlocked() && layers.xp.buyables[11].canAfford()) {
                 layers.xp.buyables[11].buy();
             }
         }
