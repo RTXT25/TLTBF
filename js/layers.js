@@ -16,6 +16,7 @@ function getPointGen() {
     baseGain = baseGain.times(upgradeEffect("xp", 33));
     baseGain = baseGain.times(upgradeEffect("xp", 34));
     baseGain = baseGain.times(upgradeEffect("g", 21));
+    baseGain = baseGain.times(upgradeEffect("g", 23));
 
     let powPower = new Decimal(2);
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
@@ -285,7 +286,7 @@ addLayer("xp", {
                 },
                 display() { // Everything else displayed in the buyable button after the title
                     let data = tmp[this.layer].buyables[this.id]
-                    return "Cost: " + format(data.cost) + " gold\n\
+                    return "Cost: " + format(data.cost) + " xp\n\
                     Amount: " + player[this.layer].buyables[this.id] + "\n\
                     Generate " + format(data.effect.times(100)) + "% gold per second, lol, it was obvious"
                 },
@@ -432,6 +433,22 @@ addLayer("g", {
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
+        23: {
+            title: "Slow road to 100",
+            description: "Increases a bit level gain until lvl 100",
+            cost: new Decimal(2.5e8),
+            unlocked() { return (hasUpgrade("g", 22)) },
+            effect() { 
+                if (hasUpgrade(this.layer, 23)) {
+                    let maxLv = new Decimal(101);
+                        let eff = Decimal.max(new Decimal(1), maxLv.sub(player.points))
+                        eff = eff.pow(1.75);
+                        return eff;
+                }
+                else return new Decimal(1);
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
     },
 
     buyables: {
@@ -451,7 +468,7 @@ addLayer("g", {
             },
             display() { // Everything else displayed in the buyable button after the title
                 let data = tmp[this.layer].buyables[this.id]
-                return "Cost: " + format(data.cost) + " xp\n\
+                return "Cost: " + format(data.cost) + " gold\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
                 Generate " + format(data.effect.times(100)) + "% XP per second"
             },
