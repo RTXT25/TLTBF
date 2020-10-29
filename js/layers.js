@@ -658,6 +658,16 @@ addLayer("l", {
                 return new Decimal(1.0005);
             },
         },
+        31: {
+            title: "> Level > Loot",
+            description: "Loot Gain is multiplied by 1/10th power of level",
+            cost: new Decimal(500000),
+            unlocked() { return (hasUpgrade(this.layer, 25)) },
+            effect() { 
+                return new Decimal(0.1);
+            },
+            effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
+        },
     },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
