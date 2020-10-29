@@ -58,8 +58,6 @@ function getPointGen() {
         baseGain = baseGain.tetrate(challengeVar("q", 12));
     }
 
-    console.log(baseGain);
-
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
@@ -423,9 +421,9 @@ addLayer("xp", {
             },
         },
 
-        /*update(diff) {
+        update(diff) {
             generatePoints("xp", diff * (buyableEffect("g", 11) + (hasMilestone("r", 0) ? 1 : 0)));
-        },*/
+        },
 
         automate() {
             if (player["xp"].autoBuyXP) {
