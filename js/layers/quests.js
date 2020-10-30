@@ -10,6 +10,8 @@ addLayer("q", {
     }},
     effect() {
         eff = player[this.layer].total.pow(0.6725).plus(1);
+        if (hasMilestone("q", 8)) eff = eff.times(4);
+        if (hasMilestone("q", 9)) eff = eff.times(2);
         return eff
         },
     effectDescription() {
@@ -28,6 +30,7 @@ addLayer("q", {
     }, // Prestige currency exponent
     base: 1e60,
     canBuyMax: true,
+    softcap: new Decimal("1e10000"),
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1.5);
         return mult
@@ -59,6 +62,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return 0.02;
                 if (challengeCompletions(this.layer, this.id) == 10) return 0.01;
                 if (challengeCompletions(this.layer, this.id) == 11) return 0.001;
+                if (challengeCompletions(this.layer, this.id) == 12) return 0.001;
             },
             challengeDescription() {
                 return "Level, Exp and Gold gain are powered to ^" + this.powers() 
@@ -79,6 +83,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(16000000);
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(10000000);
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(1e9);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(1e9);
             },
             currencyDisplayName: "exp", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -138,11 +143,11 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 5) return new Decimal("1.6e308");
                 if (challengeCompletions(this.layer, this.id) == 6) return new Decimal("1e500");
                 if (challengeCompletions(this.layer, this.id) == 7) return new Decimal("1e1000");
-                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(1e99999);
-                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(1e99999);
-                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(1e99999);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(1e99999);
-                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(1e99999);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal("1e1500");
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal("1e2000");
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal("1e1500");
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal("1e1000");
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal("1e100");
             },
             currencyDisplayName: "exp", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -297,12 +302,12 @@ addLayer("q", {
             unlocked() { return (hasMilestone("q", 6) || inChallenge("q", 15)) },
             goal(){
                 if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(27);
-                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(30);
-                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(32);
-                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(40);
-                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(45);
-                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(50);
-                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(60);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(24);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(20);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(25);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(32);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(40);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(55);
                 if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(70);
                 if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(80);
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(90);
@@ -382,6 +387,21 @@ addLayer("q", {
             unlocked() {return hasMilestone("q", 6)},
             done() {return player[this.layer].best.gte(8)}, // Used to determine when to give the milestone
             effectDescription: "Get 50% of loot every second, yeah!",
+        },
+        8: {requirementDescription: "Get 9 guests",
+            unlocked() {return hasMilestone("q", 7)},
+            done() {return player[this.layer].best.gte(9)}, // Used to determine when to give the milestone
+            effectDescription: "Quest bonus exponent to loot multiplied by 4. XP softcap starts e1,000 later. (At e2,000)",
+        },
+        9: {requirementDescription: "Get 10 guests",
+            unlocked() {return hasMilestone("q", 8)},
+            done() {return player[this.layer].best.gte(10)}, // Used to determine when to give the milestone
+            effectDescription: "Quest bonus exponent to loot multiplied by 2. XP softcap starts e1,000 later. (At e3,000)",
+        },
+        10: {requirementDescription: "Get 15 guests",
+            unlocked() {return hasMilestone("q", 9)},
+            done() {return player[this.layer].best.gte(15)}, // Used to determine when to give the milestone
+            effectDescription: "New challenge!",
         },
     },
    

@@ -321,8 +321,8 @@ function gameLoop(diff) {
 
 	if (player.hasNaN&&!NaNalert) {
 		clearInterval(interval);
-		player.hasNaN = false;
-		player.autosave = true;
+		player.hasNaN = true;
+		player.autosave = false;
 		NaNalert = false;
 
 		alert("We have detected a corruption in your save. Please visit one of the discords in the info panel for help.")

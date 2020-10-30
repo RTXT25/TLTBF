@@ -14,6 +14,7 @@ addLayer("g", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 3, // Prestige currency exponent
+    softcap: new Decimal("1e10000"),
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
         mult = mult.times((hasUpgrade("g", 11)) ? upgradeEffect("g", 11) : new Decimal(1));
@@ -23,6 +24,7 @@ addLayer("g", {
         mult = mult.times((hasUpgrade("g", 22)) ? upgradeEffect("g", 22) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 25)) ? upgradeEffect("g", 25) : new Decimal(1));
             
+
         mult = mult.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
         mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
 
@@ -31,6 +33,7 @@ addLayer("g", {
         mult = mult.times((hasUpgrade("g", 31)) ? upgradeEffect("g", 31) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 32)) ? upgradeEffect("g", 32) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 35)) ? upgradeEffect("g", 35) : new Decimal(1));
+
 
         let rubyEff = player.r.points.add(1).log2().add(1).pow(5);
         if (hasUpgrade("r", 13)) {
@@ -50,7 +53,7 @@ addLayer("g", {
         mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
         mult = mult.times((hasUpgrade("xp", 54)) ? upgradeEffect("xp", 54) : new Decimal(1));
 
-
+        mult = mult.times((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
 
 
 
@@ -64,10 +67,10 @@ addLayer("g", {
         
         if (inChallenge("q", 15)) {
             mult = mult.plus(1).log(challengeVar("q", 15));
-            if (isNaN(mult)) mult = new Decimal(0);
+            if (isNaN(mult)) mult = new Decimal(1);
         }
 
-        if (inChallenge("q", 14)) mult = mult.times(new Decimal(0));
+        if (inChallenge("q", 14)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
 
 

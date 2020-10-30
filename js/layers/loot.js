@@ -9,7 +9,11 @@ addLayer("l", {
     }},
     effect() {
         eff = player[this.layer].best.add(1).pow(0.75);
+
         let qEff = player.q.total.pow(0.6725).plus(1);
+        if (hasMilestone("q", 8)) qEff = qEff.times(4);
+        if (hasMilestone("q", 9)) qEff = qEff.times(2);
+
         eff = eff.pow(qEff);
         eff = eff.pow((hasMilestone("q", 1) ? new Decimal(2) : new Decimal(1)));
 
@@ -43,6 +47,7 @@ addLayer("l", {
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     resetsNothing: () => (hasMilestone("q", 3)),
+    softcap: new Decimal("1e10000"),
     exponent() {
         let baseExp = 0.25;
         if (hasUpgrade("g", 33)) baseExp -= 0.05;
@@ -240,6 +245,17 @@ addLayer("l", {
             description: "Upgrade 3,1 power goes from 1/3 to 1/2. Unlocks new rows of xp and gold upgrades.",
             cost: new Decimal(1000000),
             unlocked() { return (hasUpgrade(this.layer, 34)) },
+        },
+        41: {
+            title: "Where it was earlier?",
+            description: "Multiplies your xp, gold and level gain by your loot amount powered to 4",
+            cost: new Decimal("1e50"),
+            unlocked() { return ((hasUpgrade(this.layer, 35) && hasUpgrade("xp", 55)) || hasUpgrade(this.layer, 41)) },
+            effect() {
+                let eff = player.l.points.pow(4);
+                return eff;
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
     },
     update(diff) {

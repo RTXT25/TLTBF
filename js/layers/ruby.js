@@ -15,6 +15,9 @@ addLayer("r", {
         if (hasMilestone("r", 3)) {
             eff = eff.pow(2);
         }
+        if (hasMilestone("r", 5)) {
+            eff = eff.pow(2);
+        }
         eff = eff.pow(layers.q.challenges[13].rewardEffect());
         return eff
         },
@@ -31,6 +34,7 @@ addLayer("r", {
     }, // Can be a function that takes requirement increases into account
     resource: "rubies", // Name of prestige currency
     baseResource: "gold", // Name of resource prestige is based on
+    softcap: new Decimal("1e1000"),
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
@@ -118,6 +122,11 @@ addLayer("r", {
             unlocked() {return hasMilestone("r", 3)},
             done() {return player[this.layer].best.gte(10)}, // Used to determine when to give the milestone
             effectDescription: "Loot base requirement is divided by 5,000",
+        },
+        5: {requirementDescription: "Get 300 max rubies",
+            unlocked() {return hasMilestone("r", 4)},
+            done() {return player[this.layer].best.gte(300)}, // Used to determine when to give the milestone
+            effectDescription: "Ruby effect is squared. Again.",
         },
     },
    

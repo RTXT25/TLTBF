@@ -13,6 +13,16 @@ addLayer("xp", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent: 2, // Prestige currency exponent
+    softcap() {
+        let scap = new Decimal("1e1000");
+        if (hasMilestone('q', 8)) {
+            scap = scap.times(new Decimal("1e1000"));
+        }
+        if (hasMilestone('q', 9)) {
+            scap = scap.times(new Decimal("1e1000"));
+        }
+        return scap;
+    },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
         mult = mult.times((hasUpgrade("xp", 13)) ? upgradeEffect("xp", 13) : new Decimal(1));
@@ -34,6 +44,7 @@ addLayer("xp", {
         
         mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
 
+        mult = mult.times((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
         
         if (inChallenge("q", 11)) mult = mult.pow(challengeVar("q", 11));
         else {
@@ -41,18 +52,18 @@ addLayer("xp", {
         }
         if (inChallenge("q", 12)) mult = mult.tetrate(challengeVar("q", 12));
 
-        
+       
         if (inChallenge("q", 15)) {
             mult = mult.plus(1).log(challengeVar("q", 15));
-            if (isNaN(mult)) mult = new Decimal(0);
+            if (isNaN(mult)) mult = new Decimal(1);
         }
 
-        if (inChallenge("q", 13)) mult = mult.times(new Decimal(0));
-
+        if (inChallenge("q", 13)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
         //soft cap
-        if (mult.gte(new Decimal("e1000"))) {
-            let softCapDivider = mult.log10().sub(999).pow(mult.log10().sub(999).div(250).plus(2));
+        if (mult.gte(layers.xp.softcap())) {
+            let getSCP = layers.xp.softcap();
+            let softCapDivider = mult.log10().sub(getSCP.log10().sub(1)).pow(mult.log10().sub(getSCP.log10().sub(1)).div(250).plus(2));
             mult = mult.div(softCapDivider);
         }
 
@@ -370,7 +381,7 @@ addLayer("xp", {
 
     automate() {
         if (player["q"].autoBuyXP) {
-            for (let x = 10; x <= 40; x += 10){ 
+            for (let x = 10; x <= 50; x += 10){ 
                 for (let y = 1; y <= 5; y++) {
                     let z = x + y;
                     if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && hasMilestone("q", 1) && layers["xp"].upgrades[z].unlocked()===true) {

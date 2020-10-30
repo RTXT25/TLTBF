@@ -1,10 +1,11 @@
 // Calculate points/sec!
+
+
 function getPointGen() {
 	if(!canGenPoints())
         return new Decimal(0)
     
     player.devSpeed = 1;
-
     let baseGain = new Decimal(1);
     if (hasUpgrade("xp", 11)) {
         baseGain = baseGain.plus(new Decimal(1));
@@ -29,6 +30,7 @@ function getPointGen() {
 
     baseGain = baseGain.pow((hasUpgrade("l", 21)) ? upgradeEffect("l", 21) : new Decimal(1));
     baseGain = baseGain.pow((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
+    baseGain = baseGain.pow((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
 
     let lootEff = player.l.best.add(1).pow(0.75);
     let qEff = player.q.total.pow(0.6725).plus(1);
@@ -63,6 +65,7 @@ function getPointGen() {
     if (inChallenge("q", 15)) {
         baseGain = baseGain.plus(1).log(challengeVar("q", 15));
     }
+    if (isNaN(baseGain)) baseGain = new Decimal(0);
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
@@ -76,7 +79,6 @@ function getPointGen() {
     powPower = powPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
 
 
-
     if (Decimal.gte(player.points, new Decimal(3000))) {
         powPower = powPower.plus(player.points.sub(new Decimal(3000)).div(new Decimal(1000)));
     }
@@ -84,10 +86,10 @@ function getPointGen() {
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
     let newPowPower = powPower.add(exponentLevelGainLimitOnce.div(new Decimal(1000)));
     let newExponentLevelGainLimitOnce = baseGain.plus(1).log(newPowPower);
-    gain = Decimal.min(gain1, newExponentLevelGainLimitOnce)
+    gain = Decimal.min(gain1, newExponentLevelGainLimitOnce);
+ 
     if (isNaN(gain)) gain = new Decimal(0);
-    console.log(format(baseGain));
-    
+
     if (Decimal.lte(gain, new Decimal(1e-5).div(player.devSpeed))) {
         if (gain.gte(new Decimal(0))) {
             let decDiff = gain.plus(new Decimal(1e-10)).div(new Decimal(1e-5));
@@ -100,5 +102,7 @@ function getPointGen() {
             }
         }
     }
+
+
 	return gain
 }
