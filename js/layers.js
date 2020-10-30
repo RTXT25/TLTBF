@@ -425,7 +425,7 @@ addLayer("xp", {
         },
 
         automate() {
-            if (player["xp"].autoBuyXP) {
+            if (player["q"].autoBuyXP) {
                 for (let x = 10; x <= 50; x += 10){ 
                     for (let y = 1; y <= 5; y++) {
                         var z = x + y
@@ -734,7 +734,7 @@ addLayer("g", {
     },
 
     automate() {
-        if (player["g"].autoBuyGold) {
+        if (player["q"].autoBuyGold) {
             for (let x = 10; x <= 30; x += 10){ 
                 for (let y = 1; y <= 5; y++) {
                     var z = x + y
@@ -801,7 +801,8 @@ addLayer("l", {
     gainExp() { // Calculate the exponent on main currency from bonuses
         let expon = new Decimal(1);
         expon = expon.times((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
-        expon = expon.tetrate((hasUpgrade("l", 24)) ? upgradeEffect("l", 24) : new Decimal(1));
+        expon = expon.pow((hasUpgrade("l", 24)) ? upgradeEffect("l", 24) : new Decimal(1));
+        expon = expon.pow((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
 
         return expon;
     },
@@ -906,27 +907,27 @@ addLayer("l", {
         },
         24: {
             title: "Loot Loot Loot",
-            description: "Loot gain is powered by 1.1",
+            description: "Loot gain base is powered by 2",
             cost: new Decimal(106),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 23)) },
             effect() { 
-                return new Decimal(1.1);
+                return new Decimal(2);
             },
             effectDisplay() { return "^" + format(this.effect()) }, // Add formatting to the effect
         },
         25: {
             title: "Loot Era",
-            description: "Unlocks two buyable upgrades and loot gain & xp gain is powered by 1.03",
+            description: "Unlocks two buyable upgrades and loot gain base & xp gain is powered by 1.1",
             cost: new Decimal(110),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
             unlocked() { return (hasUpgrade(this.layer, 24)) },
             effect() { 
-                return new Decimal(1.03);
+                return new Decimal(1.1);
             },
         },
         31: {
@@ -1209,7 +1210,7 @@ addLayer("q", {
         },
         1: {requirementDescription: "Get 2 quests",
             toggles: [
-                ["xp", "autoBuyXP"]
+                ["q", "autoBuyXP"]
             ],
             unlocked() {return hasMilestone("q", 0)},
             done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
@@ -1217,7 +1218,7 @@ addLayer("q", {
         },
         2: {requirementDescription: "Get 3 quests",
             toggles: [
-                ["g", "autoBuyGold"]
+                ["q", "autoBuyGold"]
             ],
             unlocked() {return hasMilestone("q", 1)},
             done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
