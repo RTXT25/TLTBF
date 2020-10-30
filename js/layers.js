@@ -1,12 +1,15 @@
 // Calculate points/sec!
 function getPointGen() {
 	if(!canGenPoints())
-		return new Decimal(0)
+        return new Decimal(0)
+    
+    player.devSpeed = 1;
 
     let baseGain = new Decimal(1);
     if (hasUpgrade("xp", 11)) {
         baseGain = baseGain.plus(new Decimal(1));
     }
+    if (isNaN(tmp["xp"].resetGain)) tmp["xp"].resetGain = new Decimal(0);
     baseGain = baseGain.times((hasUpgrade("xp", 12)) ? upgradeEffect("xp", 12) : new Decimal(1));
     baseGain = baseGain.times((hasUpgrade("xp", 14)) ? upgradeEffect("xp", 14) : new Decimal(1));
     baseGain = baseGain.times((hasUpgrade("xp", 21)) ? upgradeEffect("xp", 21) : new Decimal(1));
@@ -26,7 +29,6 @@ function getPointGen() {
 
     baseGain = baseGain.pow((hasUpgrade("l", 21)) ? upgradeEffect("l", 21) : new Decimal(1));
     baseGain = baseGain.pow((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
-
 
     let lootEff = player.l.best.add(1).pow(0.75);
     let qEff = player.q.total.pow(0.6725).plus(1);
@@ -58,6 +60,10 @@ function getPointGen() {
         baseGain = baseGain.tetrate(challengeVar("q", 12));
     }
 
+    if (inChallenge("q", 15)) {
+        baseGain = baseGain.plus(1).log(challengeVar("q", 15));
+    }
+
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
@@ -70,25 +76,28 @@ function getPointGen() {
     powPower = powPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
 
 
+
     if (Decimal.gte(player.points, new Decimal(3000))) {
         powPower = powPower.plus(player.points.sub(new Decimal(3000)).div(new Decimal(1000)));
     }
-
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
     let newPowPower = powPower.add(exponentLevelGainLimitOnce.div(new Decimal(1000)));
     let newExponentLevelGainLimitOnce = baseGain.plus(1).log(newPowPower);
     gain = Decimal.min(gain1, newExponentLevelGainLimitOnce)
-
-    if (Decimal.lte(gain, new Decimal(1e-5))) {
-        let decDiff = gain.div(new Decimal(1e-5));
-        let logBack = Decimal.min(decDiff.log(newPowPower), new Decimal(0));
-        console.log(format(logBack.times(-1)));
-        if (player.points.lte(logBack.times(-1))) {
-            player.points = player.points.div(1.2);
-        }
-        else {
-            gain = logBack;
+    if (isNaN(gain)) gain = new Decimal(0);
+    console.log(format(baseGain));
+    
+    if (Decimal.lte(gain, new Decimal(1e-5).div(player.devSpeed))) {
+        if (gain.gte(new Decimal(0))) {
+            let decDiff = gain.plus(new Decimal(1e-10)).div(new Decimal(1e-5));
+            let logBack = Decimal.min(decDiff.log(newPowPower), new Decimal(0));
+            if (player.points.lte(logBack.times(-1))) {
+                player.points = player.points.div(1.2);
+            }
+            else {
+                gain = logBack;
+            }
         }
     }
 	return gain
@@ -139,7 +148,14 @@ addLayer("xp", {
             }
             if (inChallenge("q", 12)) mult = mult.tetrate(challengeVar("q", 12));
 
+            
+            if (inChallenge("q", 15)) {
+                mult = mult.plus(1).log(challengeVar("q", 15));
+                if (isNaN(mult)) mult = new Decimal(0);
+            }
+
             if (inChallenge("q", 13)) mult = mult.times(new Decimal(0));
+
 
             //soft cap
             if (mult.gte(new Decimal("e1000"))) {
@@ -388,13 +404,13 @@ addLayer("xp", {
             },
             52: {
                 title: "Loot ExtraBoost!",
-                description: "Loot Exponent 5 -> 8",
+                description: "Loot Base Exponent 5 -> 8",
                 cost: (new Decimal("e888")).times(new Decimal(8.88)),
                 unlocked() { return (hasUpgrade("g", 33) && hasUpgrade("xp", 51)) },
             },
             53: {
                 title: "Loot ZetaBoost!",
-                description: "Loot Exponent 8 -> 10",
+                description: "Loot Base Exponent 8 -> 10",
                 cost: (new Decimal("e1111")).times(new Decimal(1.11)),
                 unlocked() { return (hasUpgrade("xp", 52)) },
             },
@@ -515,7 +531,13 @@ addLayer("g", {
         if (inChallenge("q", 12)) mult = mult = mult.tetrate(challengeVar("q", 12));
 
         
+        if (inChallenge("q", 15)) {
+            mult = mult.plus(1).log(challengeVar("q", 15));
+            if (isNaN(mult)) mult = new Decimal(0);
+        }
+
         if (inChallenge("q", 14)) mult = mult.times(new Decimal(0));
+
 
 
         return mult
@@ -678,7 +700,7 @@ addLayer("g", {
         },
         33: {
             title: "Loot MegaBoost!",
-            description: "Loot Exponent 4 -> 5",
+            description: "Loot Base Exponent 4 -> 5",
             cost: new Decimal(1e18),
             unlocked() { return (hasUpgrade("g", 32)) },
         },
@@ -790,15 +812,17 @@ addLayer("l", {
         eff = eff.pow(qEff);
         eff = eff.pow((hasMilestone("q", 1) ? new Decimal(2) : new Decimal(1)));
 
-        let rubyEff = player.r.points.add(1).log2().add(1).pow(5);
-        if (hasUpgrade("r", 13)) {
-            rubyEff = rubyEff.times(Decimal.max(Decimal.times(player.r.best, player.r.best), new Decimal(1)));
+        if (hasUpgrade('r', 14)) {
+            let rubyEff = player.r.points.add(1).log2().add(1).pow(5);
+            if (hasUpgrade("r", 13)) {
+                rubyEff = rubyEff.times(Decimal.max(Decimal.times(player.r.best, player.r.best), new Decimal(1)));
+            }
+            if (hasMilestone("r", 3)) {
+                rubyEff = rubyEff.pow(2);
+            }
+            rubyEff = rubyEff.pow(layers.q.challenges[13].rewardEffect());
+            eff = eff.times(rubyEff.pow(0.5));
         }
-        if (hasMilestone("r", 3)) {
-            rubyEff = rubyEff.pow(2);
-        }
-        rubyEff = rubyEff.pow(layers.q.challenges[13].rewardEffect());
-        eff = eff.times(rubyEff.pow(0.5));
 
         return eff
         },
@@ -823,6 +847,7 @@ addLayer("l", {
         if (hasUpgrade("g", 33)) baseExp -= 0.05;
         if (hasUpgrade("xp", 52)) baseExp -= 0.075;
         if (hasUpgrade("xp", 53)) baseExp -= 0.025;
+        baseExp = baseExp / layers.q.challenges[15].rewardEffect();
         return baseExp;
     }, // Prestige currency exponent
     base: 2.25,
@@ -1253,48 +1278,10 @@ addLayer("q", {
     upgrades: {
     },
 
-    milestones: {
-        0: {requirementDescription: "Get 1 quest",
-            done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
-            effectDescription: "Welcome to the world of quests! First two challenges unlocked!",
-        },
-        1: {requirementDescription: "Get 2 quests",
-            toggles: [
-                ["q", "autoBuyXP"]
-            ],
-            unlocked() {return hasMilestone("q", 0)},
-            done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
-            effectDescription: "Loot effect power is powered to ^2, makes it really powerful. Also, now you can automate buying xp upgrades.",
-        },
-        2: {requirementDescription: "Get 3 quests",
-            toggles: [
-                ["q", "autoBuyGold"]
-            ],
-            unlocked() {return hasMilestone("q", 1)},
-            done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
-            effectDescription: "You can automate buying gold upgrades. Unlocks two next challenges.",
-        },
-        3: {requirementDescription: "Get 4 quests",
-            unlocked() {return hasMilestone("q", 2)},
-            done() {return player[this.layer].best.gte(4)}, // Used to determine when to give the milestone
-            effectDescription: "Loot prestiging resets nothing.",
-        },
-        4: {requirementDescription: "Get 5 quests",
-            unlocked() {return hasMilestone("q", 3)},
-            done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
-            effectDescription: "Unlocks 5 last XP upgrades.",
-        },
-        5: {requirementDescription: "Get 6 quests",
-            unlocked() {return hasMilestone("q", 4)},
-            done() {return player[this.layer].best.gte(6)}, // Used to determine when to give the milestone
-            effectDescription: "Autobuy up to 20 passive upgrades/tick",
-        },
-    },
-
 
     challenges: {
-        rows: 2,
-        cols: 5,
+        rows: 1,
+        cols: 10,
         11: {
             name: "Typical Challenge",
             completionLimit: 12,
@@ -1524,9 +1511,113 @@ addLayer("q", {
             rewardDescription: "Now you can get more rubies and faster",
             onComplete() {} // Called when you complete the challenge
         },
+        15: {
+            name: "Logarithmication",
+            completionLimit: 12,
+            powers() {
+                if (challengeCompletions(this.layer, this.id) == 0) return 1.1;
+                if (challengeCompletions(this.layer, this.id) == 1) return 2;
+                if (challengeCompletions(this.layer, this.id) == 2) return 3;
+                if (challengeCompletions(this.layer, this.id) == 3) return 4;
+                if (challengeCompletions(this.layer, this.id) == 4) return 5;
+                if (challengeCompletions(this.layer, this.id) == 5) return 6;
+                if (challengeCompletions(this.layer, this.id) == 6) return 7;
+                if (challengeCompletions(this.layer, this.id) == 7) return 8;
+                if (challengeCompletions(this.layer, this.id) == 8) return 9;
+                if (challengeCompletions(this.layer, this.id) == 9) return 10;
+                if (challengeCompletions(this.layer, this.id) == 10) return 100;
+                if (challengeCompletions(this.layer, this.id) == 11) return 1000;
+            },
+            challengeDescription() {
+                return "Level, Exp and Gold gain are set to formula of log" + this.powers() 
+                + "(val + 1). <br>"+challengeCompletions(this.layer, this.id)
+                 + "/" + this.completionLimit + " completions";
+            },
+            unlocked() { return (hasMilestone("q", 6) || inChallenge("q", 15)) },
+            goal(){
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(27);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(30);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(32);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(40);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(45);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(50);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(60);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(70);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(80);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(90);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(100);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(1000);
+            },
+            currencyDisplayName: "level", // Use if using a nonstandard currency
+            currencyInternalName: "points", // Use if using a nonstandard currency
+            currencyLayer: "", // Leave empty if not in a layer
+            rewards() {
+                if (challengeCompletions(this.layer, this.id) == 0) return 1;
+                if (challengeCompletions(this.layer, this.id) == 1) return 1.1;
+                if (challengeCompletions(this.layer, this.id) == 2) return 1.2;
+                if (challengeCompletions(this.layer, this.id) == 3) return 1.3;
+                if (challengeCompletions(this.layer, this.id) == 4) return 1.4;
+                if (challengeCompletions(this.layer, this.id) == 5) return 1.5;
+                if (challengeCompletions(this.layer, this.id) == 6) return 1.6;
+                if (challengeCompletions(this.layer, this.id) == 7) return 1.7;
+                if (challengeCompletions(this.layer, this.id) == 8) return 1.8;
+                if (challengeCompletions(this.layer, this.id) == 9) return 1.9;
+                if (challengeCompletions(this.layer, this.id) == 10) return 2;
+                if (challengeCompletions(this.layer, this.id) == 11) return 2.5;
+                if (challengeCompletions(this.layer, this.id) == 12) return 4;
+            },
+            rewardEffect() {
+                let rew = new Decimal(this.rewards());
+                return rew;
+            },
+            rewardDisplay() { return "loot exponent multiplied by " + format(this.rewardEffect())+"." },
+            rewardDescription: "Boosting loot gain again.",
+            onComplete() {} // Called when you complete the challenge
+        },
     }, 
 
-    
+    milestones: {
+        0: {requirementDescription: "Get 1 quest",
+            done() {return player[this.layer].best.gte(1)}, // Used to determine when to give the milestone
+            effectDescription: "Welcome to the world of quests! First two challenges unlocked!",
+        },
+        1: {requirementDescription: "Get 2 quests",
+            toggles: [
+                ["q", "autoBuyXP"]
+            ],
+            unlocked() {return hasMilestone("q", 0)},
+            done() {return player[this.layer].best.gte(2)}, // Used to determine when to give the milestone
+            effectDescription: "Loot effect power is powered to ^2, makes it really powerful. Also, now you can automate buying xp upgrades.",
+        },
+        2: {requirementDescription: "Get 3 quests",
+            toggles: [
+                ["q", "autoBuyGold"]
+            ],
+            unlocked() {return hasMilestone("q", 1)},
+            done() {return player[this.layer].best.gte(3)}, // Used to determine when to give the milestone
+            effectDescription: "You can automate buying gold upgrades. Unlocks two next challenges.",
+        },
+        3: {requirementDescription: "Get 4 quests",
+            unlocked() {return hasMilestone("q", 2)},
+            done() {return player[this.layer].best.gte(4)}, // Used to determine when to give the milestone
+            effectDescription: "Loot prestiging resets nothing.",
+        },
+        4: {requirementDescription: "Get 5 quests",
+            unlocked() {return hasMilestone("q", 3)},
+            done() {return player[this.layer].best.gte(5)}, // Used to determine when to give the milestone
+            effectDescription: "Unlocks 5 last XP upgrades.",
+        },
+        5: {requirementDescription: "Get 6 quests",
+            unlocked() {return hasMilestone("q", 4)},
+            done() {return player[this.layer].best.gte(6)}, // Used to determine when to give the milestone
+            effectDescription: "Autobuy up to 20 passive upgrades/tick",
+        },
+        6: {requirementDescription: "Get 7 quests",
+            unlocked() {return hasMilestone("q", 5)},
+            done() {return player[this.layer].best.gte(7)}, // Used to determine when to give the milestone
+            effectDescription: "Unlocks next challenge",
+        },
+    },
    
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
