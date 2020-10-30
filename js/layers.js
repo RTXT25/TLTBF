@@ -881,7 +881,7 @@ addLayer("l", {
         22: {
             title: "It's more powerful as it seems",
             description: "XP gain is powered by 1.03",
-            cost: new Decimal(105),
+            cost: new Decimal(102),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -894,7 +894,7 @@ addLayer("l", {
         23: {
             title: "Golden Mine",
             description: "Gold gain is powered by 1.05",
-            cost: new Decimal(110),
+            cost: new Decimal(104),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -907,7 +907,7 @@ addLayer("l", {
         24: {
             title: "Loot Loot Loot",
             description: "Loot gain is powered by 1.1",
-            cost: new Decimal(115),
+            cost: new Decimal(106),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -920,7 +920,7 @@ addLayer("l", {
         25: {
             title: "Loot Era",
             description: "Unlocks two buyable upgrades and loot gain & xp gain is powered by 1.03",
-            cost: new Decimal(120),
+            cost: new Decimal(110),
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
