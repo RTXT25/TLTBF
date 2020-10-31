@@ -30,7 +30,7 @@ function getPointGen() {
 
     baseGain = baseGain.pow((hasUpgrade("l", 21)) ? upgradeEffect("l", 21) : new Decimal(1));
     baseGain = baseGain.pow((hasUpgrade("l", 25)) ? upgradeEffect("l", 25) : new Decimal(1));
-    baseGain = baseGain.pow((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
+    baseGain = baseGain.times((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
 
     let lootEff = player.l.best.add(1).pow(0.75);
     let qEff = player.q.total.pow(0.6725).plus(1);
