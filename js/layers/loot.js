@@ -257,6 +257,12 @@ addLayer("l", {
             },
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
+        42: {
+            title: "Another exponents!",
+            description: "Xp base exponent is increased by 1",
+            cost: new Decimal("1e58"),
+            unlocked() { return (hasUpgrade(this.layer, 41)) },
+        },
     },
     update(diff) {
         if (hasMilestone('q', 7)) {

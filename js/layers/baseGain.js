@@ -67,6 +67,12 @@ function getPointGen() {
     }
     if (isNaN(baseGain)) baseGain = new Decimal(0);
 
+    if (inChallenge("q", 16)) {
+        let chavarVal = new Decimal(challengeVar("q", 16));
+        baseGain = baseGain.pow(new Decimal(1).div(player.points.times(chavarVal).plus(1)));
+        if (isNaN(baseGain)) baseGain = new Decimal(1);
+    }
+
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);

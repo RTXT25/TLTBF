@@ -12,7 +12,14 @@ addLayer("xp", {
     baseResource: "levels", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 2, // Prestige currency exponent
+    exponent() {
+        let bExp = 2;
+        if (hasUpgrade('l', 42)) {
+            bExp += 1;
+        }
+        return bExp;
+
+    },
     softcap() {
         let scap = new Decimal("1e1000");
         if (hasMilestone('q', 8)) {
@@ -46,7 +53,6 @@ addLayer("xp", {
 
         mult = mult.times((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
 
-        
         mult = mult.pow(player.points.div(layers.q.challenges[16].rewardEffect()).plus(1));
 
         
@@ -63,7 +69,8 @@ addLayer("xp", {
         }
 
         if (inChallenge("q", 16)) {
-            mult = mult.pow(new Decimal(1).div(player.points.times(challengeVar("q", 16).plus(1))));
+            let chavarVal = new Decimal(challengeVar("q", 16));
+            mult = mult.pow(new Decimal(1).div(player.points.times(chavarVal).plus(1)));
             if (isNaN(mult)) mult = new Decimal(1);
         }
 
@@ -340,7 +347,7 @@ addLayer("xp", {
         },
         55: {
             title: "Is this the end?",
-            description: "Ruby gain exponent is multiplied by 2. Unlocks next 2 rows of loot upgrades.",
+            description: "Ruby exponent is divided by 2. Unlocks next 2 rows of loot upgrades.",
             cost: (new Decimal("e2000")),
             unlocked() { return (hasUpgrade("xp", 54)) },
         },

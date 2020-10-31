@@ -26,6 +26,7 @@ addLayer("q", {
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
         let baseExp = 1.6;
+        if (hasMilestone('q', 11)) baseExp.div(1.1);
         return baseExp;
     }, // Prestige currency exponent
     base: 1e60,
@@ -82,8 +83,8 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(3e7);
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(16000000);
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(10000000);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(1e9);
-                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(1e9);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(1e8);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(1e8);
             },
             currencyDisplayName: "exp", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -128,6 +129,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 10) return 0.1;
                 if (challengeCompletions(this.layer, this.id) == 11) return 0.01;
                 if (challengeCompletions(this.layer, this.id) == 12) return 0.001;
+                if (challengeCompletions(this.layer, this.id) == 13) return 0.001;
             },
             challengeDescription() {
                 return "Level, Exp and Gold gain are tetrated to ^^" + this.powers() + "<br>"+challengeCompletions(this.layer, this.id)
@@ -143,11 +145,12 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 5) return new Decimal("1.6e308");
                 if (challengeCompletions(this.layer, this.id) == 6) return new Decimal("1e500");
                 if (challengeCompletions(this.layer, this.id) == 7) return new Decimal("1e1000");
-                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal("1e1500");
-                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal("1e2000");
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal("1e1200");
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal("1e1600");
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal("1e1500");
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal("1e1000");
                 if (challengeCompletions(this.layer, this.id) == 12) return new Decimal("1e100");
+                if (challengeCompletions(this.layer, this.id) == 13) return new Decimal("1e100");
             },
             currencyDisplayName: "exp", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -198,7 +201,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(2000);
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(3000);
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(5000);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(10000);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(5000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -248,7 +251,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(4000);
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(4500);
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(5000);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(10000);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(5000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -293,6 +296,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return 10;
                 if (challengeCompletions(this.layer, this.id) == 10) return 100;
                 if (challengeCompletions(this.layer, this.id) == 11) return 1000;
+                if (challengeCompletions(this.layer, this.id) == 12) return 1000;
             },
             challengeDescription() {
                 return "Level, Exp and Gold gain are set to formula of log" + this.powers() 
@@ -313,6 +317,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(90);
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(100);
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(1000);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(1000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -356,56 +361,65 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 9) return 64;
                 if (challengeCompletions(this.layer, this.id) == 10) return 128;
                 if (challengeCompletions(this.layer, this.id) == 11) return player.points;
+                if (challengeCompletions(this.layer, this.id) == 12) return player.points;
             },
             challengeDescription() {
                 if (challengeCompletions(this.layer, this.id) < 11) {
-                    return "Exp and Gold gain are powered to 1 / (1 + level*" + this.powers() 
+                    return "Exp, Gold and level gain are powered to 1 / (1 + level*" + this.powers() 
                     + "). <br>"+challengeCompletions(this.layer, this.id)
                     + "/" + this.completionLimit + " completions";
                 }
                 else {
-                    return "Exp and Gold gain are powered to 1 / (1 + level^2). <br>"+challengeCompletions(this.layer, this.id)
+                    return "Exp, Gold and level gain are powered to 1 / (1 + level^2). <br>"+challengeCompletions(this.layer, this.id)
                     + "/" + this.completionLimit + " completions";
                 }
             },
             unlocked() { return (hasMilestone("q", 6) || inChallenge("q", 15)) },
             goal(){
-                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(100000000);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(100000000);
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(1024);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(280);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(250);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(225);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(200);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(180);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(160);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(140);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(120);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(120);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(150);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(200);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(200);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
             currencyLayer: "", // Leave empty if not in a layer
             rewards() {
-                if (challengeCompletions(this.layer, this.id) == 0) return 9e99;
-                if (challengeCompletions(this.layer, this.id) == 1) return 10000;
-                if (challengeCompletions(this.layer, this.id) == 2) return 9000;
-                if (challengeCompletions(this.layer, this.id) == 3) return 8000;
-                if (challengeCompletions(this.layer, this.id) == 4) return 7000;
-                if (challengeCompletions(this.layer, this.id) == 5) return 6000;
-                if (challengeCompletions(this.layer, this.id) == 6) return 5000;
-                if (challengeCompletions(this.layer, this.id) == 7) return 4000;
-                if (challengeCompletions(this.layer, this.id) == 8) return 3000;
-                if (challengeCompletions(this.layer, this.id) == 9) return 2000;
-                if (challengeCompletions(this.layer, this.id) == 10) return 1600;
-                if (challengeCompletions(this.layer, this.id) == 11) return 1200;
-                if (challengeCompletions(this.layer, this.id) == 12) return 1000;
+                if (challengeCompletions(this.layer, this.id) == 0) return 9e199;
+                if (challengeCompletions(this.layer, this.id) == 1) return 100000;
+                if (challengeCompletions(this.layer, this.id) == 2) return 99000;
+                if (challengeCompletions(this.layer, this.id) == 3) return 98000;
+                if (challengeCompletions(this.layer, this.id) == 4) return 97000;
+                if (challengeCompletions(this.layer, this.id) == 5) return 96000;
+                if (challengeCompletions(this.layer, this.id) == 6) return 95000;
+                if (challengeCompletions(this.layer, this.id) == 7) return 94000;
+                if (challengeCompletions(this.layer, this.id) == 8) return 93000;
+                if (challengeCompletions(this.layer, this.id) == 9) return 92000;
+                if (challengeCompletions(this.layer, this.id) == 10) return 91000;
+                if (challengeCompletions(this.layer, this.id) == 11) return 90000;
+                if (challengeCompletions(this.layer, this.id) == 12) return 88000;
             },
             rewardEffect() {
                 let rew = new Decimal(this.rewards());
                 return rew;
             },
-            rewardDisplay() { return "Exp and gold are powered to ^(1 + lvl/" + format(this.rewardEffect())+")." },
+            rewardDisplay() {
+                if ((challengeCompletions(this.layer, this.id) > 0)) {
+                    return "Exp and gold are powered to ^(1 + lvl/" + format(this.rewardEffect())+")." 
+                }
+                else {
+                    return "Exp and gold are powered to ^1)." 
+                }
+            },
             rewardDescription: "Powering your currencies!",
             onComplete() {} // Called when you complete the challenge
         },
@@ -471,6 +485,11 @@ addLayer("q", {
             unlocked() {return hasMilestone("q", 9)},
             done() {return player[this.layer].best.gte(15)}, // Used to determine when to give the milestone
             effectDescription: "New challenge!",
+        },
+        11: {requirementDescription: "Get 20 quests",
+            unlocked() {return hasMilestone("q", 10)},
+            done() {return player[this.layer].best.gte(20)}, // Used to determine when to give the milestone
+            effectDescription: "Quest exponent is divided by 1.1",
         },
     },
    

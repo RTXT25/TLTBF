@@ -72,7 +72,8 @@ addLayer("g", {
         }
 
         if (inChallenge("q", 16)) {
-            mult = mult.pow(new Decimal(1).div(player.points.times(challengeVar("q", 16).plus(1))));
+            let chavarVal = new Decimal(challengeVar("q", 16));
+            mult = mult.pow(new Decimal(1).div(player.points.times(chavarVal).plus(1)));
             if (isNaN(mult)) mult = new Decimal(1);
         }
 
