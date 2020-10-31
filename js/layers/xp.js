@@ -103,8 +103,8 @@ addLayer("xp", {
             cost: new Decimal(1000),
             unlocked() { return (hasUpgrade(this.layer, 12))},
             effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
-                let eff = player[this.layer].points.add(1).ln().div(10).add(1);
-                eff = eff.pow(upgradeEffect("xp", 24));
+                let eff = player[this.layer].points.add(1).ln().div(5).add(1);
+                if (hasUpgrade(this.layer, 24)) eff = eff.pow(upgradeEffect("xp", 24));
                 return eff;
             },
             effectDisplay() { return format(this.effect())+"x" }, // Add formatting to the effect
