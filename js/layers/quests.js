@@ -322,7 +322,7 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(32);
                 if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(37);
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(40);
-                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(45);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(40);
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(50);
                 if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(50);
             },
@@ -439,19 +439,19 @@ addLayer("q", {
             },
             unlocked() { return (hasMilestone("q", 13) || inChallenge("q", 17)) },
             goal(){
-                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(350);
-                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(450);
-                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(750);
-                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(1000);
-                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(1500);
-                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(2000);
-                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(2500);
-                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(3000);
-                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(3500);
-                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(4000);
-                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(4500);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(5000);
-                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(5000);
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(8000);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(10000);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(12000);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(14000);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(16000);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(18000);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(20000);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(22500);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(25000);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(30000);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(35000);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(50000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency

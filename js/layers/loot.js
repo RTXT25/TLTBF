@@ -279,6 +279,12 @@ addLayer("l", {
             cost: new Decimal("1e87"),
             unlocked() { return (hasUpgrade(this.layer, 43)) },
         },
+        45: {
+            title: "Stronk Powers",
+            description: "Loot buyables are 10% more effective.",
+            cost: new Decimal("1e100"),
+            unlocked() { return (hasUpgrade(this.layer, 43)) },
+        },
     },
     update(diff) {
         if (hasMilestone('q', 7)) {
@@ -303,6 +309,7 @@ addLayer("l", {
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                 let eff = x.times(0.01).plus(1);
+                if (hasUpgrade("l", 45)) eff = eff.plus(x.times(0.001));
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -331,6 +338,7 @@ addLayer("l", {
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                 let eff = x.times(0.01).plus(1);
+                if (hasUpgrade("l", 45)) eff = eff.plus(x.times(0.001));
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
