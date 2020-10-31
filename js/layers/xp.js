@@ -17,6 +17,10 @@ addLayer("xp", {
         if (hasUpgrade('l', 42)) {
             bExp += 1;
         }
+        if (hasUpgrade('l', 43)) {
+            bExp += 1;
+        }
+        bExp += layers.q.challenges[17].rewardEffect();
         return bExp;
 
     },
@@ -74,7 +78,7 @@ addLayer("xp", {
             if (isNaN(mult)) mult = new Decimal(1);
         }
 
-        if (inChallenge("q", 13)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
+        if (inChallenge("q", 13) || inChallenge("q", 17)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
         //soft cap
         if (mult.gte(layers.xp.softcap())) {

@@ -263,6 +263,12 @@ addLayer("l", {
             cost: new Decimal("1e58"),
             unlocked() { return (hasUpgrade(this.layer, 41)) },
         },
+        43: {
+            title: "Nice.",
+            description: "Xp and gold base exponent are increased by 1",
+            cost: new Decimal("1e69"),
+            unlocked() { return (hasUpgrade(this.layer, 41)) },
+        },
     },
     update(diff) {
         if (hasMilestone('q', 7)) {

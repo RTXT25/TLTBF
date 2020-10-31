@@ -13,8 +13,18 @@ addLayer("g", {
     baseResource: "levels", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
-    exponent: 3, // Prestige currency exponent
-    softcap: new Decimal("1e10000"),
+    exponent() {
+        let bExp = 3;
+        if (hasUpgrade('l', 43)) {
+            bExp += 1;
+        }
+        bExp += layers.q.challenges[17].rewardEffect();
+        return bExp;
+
+    },
+    softcap() {
+        return new Decimal("1e10000");
+    },
     gainMult() { // Calculate the multiplier for main currency from bonuses
         mult = new Decimal(1);
         mult = mult.times((hasUpgrade("g", 11)) ? upgradeEffect("g", 11) : new Decimal(1));
@@ -77,9 +87,14 @@ addLayer("g", {
             if (isNaN(mult)) mult = new Decimal(1);
         }
 
-        if (inChallenge("q", 14)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
+        if (inChallenge("q", 14) || inChallenge("q", 17)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
-
+        //soft cap
+        if (mult.gte(layers.g.softcap())) {
+            let getSCP = layers.g.softcap();
+            let softCapDivider = mult.log10().sub(getSCP.log10().sub(1)).pow(mult.log10().sub(getSCP.log10().sub(1)).div(250).plus(2));
+            mult = mult.div(softCapDivider);
+        }
 
         return mult
     },

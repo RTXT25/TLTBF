@@ -98,8 +98,8 @@ function getPointGen() {
 
     if (Decimal.lte(gain, new Decimal(1e-3).div(player.devSpeed))) {
         if (gain.gte(new Decimal(0))) {
-            let decDiff = gain.plus(new Decimal(1e-10)).div(new Decimal(1e-3));
-            let logBack = Decimal.min(decDiff.log(newPowPower), new Decimal(0));
+            let decDiff = gain.plus(new Decimal("1e-999999")).div(new Decimal(1e-3));
+            let logBack = Decimal.min(decDiff.log(powPower), new Decimal(0));
             if (player.points.lte(logBack.times(-1))) {
                 player.points = player.points.div(1.2);
             }
