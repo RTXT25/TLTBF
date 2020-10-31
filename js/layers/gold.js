@@ -55,6 +55,7 @@ addLayer("g", {
 
         mult = mult.times((hasUpgrade("l", 41)) ? upgradeEffect("l", 41) : new Decimal(1));
 
+        mult = mult.pow(player.points.div(layers.q.challenges[16].rewardEffect()).plus(1));
 
 
         
@@ -67,6 +68,11 @@ addLayer("g", {
         
         if (inChallenge("q", 15)) {
             mult = mult.plus(1).log(challengeVar("q", 15));
+            if (isNaN(mult)) mult = new Decimal(1);
+        }
+
+        if (inChallenge("q", 16)) {
+            mult = mult.pow(new Decimal(1).div(player.points.times(challengeVar("q", 16).plus(1))));
             if (isNaN(mult)) mult = new Decimal(1);
         }
 
