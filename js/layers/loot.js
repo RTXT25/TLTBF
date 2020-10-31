@@ -13,6 +13,10 @@ addLayer("l", {
         let qEff = player.q.total.pow(0.6725).plus(1);
         if (hasMilestone("q", 8)) qEff = qEff.times(4);
         if (hasMilestone("q", 9)) qEff = qEff.times(2);
+        //softcap
+        if (qEff.gte(100)) {
+            qEff = qEff.sub(98).log2().plus(99);
+        }
 
         eff = eff.pow(qEff);
         eff = eff.pow((hasMilestone("q", 1) ? new Decimal(2) : new Decimal(1)));

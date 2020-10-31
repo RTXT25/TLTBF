@@ -12,11 +12,17 @@ addLayer("q", {
         eff = player[this.layer].total.pow(0.6725).plus(1);
         if (hasMilestone("q", 8)) eff = eff.times(4);
         if (hasMilestone("q", 9)) eff = eff.times(2);
-        return eff
+        //softcap
+        if (eff.gte(100)) {
+            eff = eff.sub(98).log2().plus(99);
+        }
+        return eff;
         },
     effectDescription() {
         eff = this.effect();
-        return "Complete quests and challenges to get more bonuses! Loot Effect Bonus: ^"+format(eff);
+        let str = "Complete quests and challenges to get more bonuses! Loot Effect Bonus: ^"+format(eff);
+        if (eff.gte(100)) str += " (softcapped)";
+        return str;
     },
     color: "#D895FC",
     requires: new Decimal("e240"), // Can be a function that takes requirement increases into account

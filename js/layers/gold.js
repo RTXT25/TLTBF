@@ -128,10 +128,24 @@ addLayer("g", {
                     eff = eff.div(new Decimal("1e125")).pow(0.05).times(new Decimal("1e125"));
                     //softcap
                 }
+                if (eff.gte(new Decimal("1e2500"))) {
+                    eff = eff.div(new Decimal("1e2500")).pow(0.001).times(new Decimal("1e2500"));
+                    //hardcap
+                }
                 return eff;
             },
-            effectDisplay() { 
-                return format(this.effect())+"x " + ((this.effect().gte(new Decimal("1e125"))) ? " (softcapped) " : ""); 
+            effectDisplay() {
+                let eff = this.effect();
+                if (eff.lte(new Decimal("1e125"))) {
+                    return format(this.effect())+"x " ;
+                }
+                else if (eff.lte(new Decimal("1e2500"))) {
+                    return format(this.effect())+"x " + "(softcapped)";
+                }
+                else {
+                    return format(this.effect())+"x " + "(hardcapped)";
+                }
+               
             }, // Add formatting to the effect
         },
         13: {
