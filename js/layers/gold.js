@@ -18,6 +18,9 @@ addLayer("g", {
         if (hasUpgrade('l', 43)) {
             bExp += 1;
         }
+        if (hasUpgrade('l', 44)) {
+            bExp += 100;
+        }
         bExp += layers.q.challenges[17].rewardEffect();
         return bExp;
 

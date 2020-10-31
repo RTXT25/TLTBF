@@ -271,7 +271,13 @@ addLayer("l", {
             title: "Nice.",
             description: "Xp and gold base exponent are increased by 1",
             cost: new Decimal("1e69"),
-            unlocked() { return (hasUpgrade(this.layer, 41)) },
+            unlocked() { return (hasUpgrade(this.layer, 42)) },
+        },
+        44: {
+            title: "Great for quests!",
+            description: "Xp and gold base exponent are increased by 10. Keep 4th layer of xp upgrades.",
+            cost: new Decimal("1e87"),
+            unlocked() { return (hasUpgrade(this.layer, 43)) },
         },
     },
     update(diff) {

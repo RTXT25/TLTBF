@@ -20,6 +20,9 @@ addLayer("xp", {
         if (hasUpgrade('l', 43)) {
             bExp += 1;
         }
+        if (hasUpgrade('l', 44)) {
+            bExp += 10;
+        }
         bExp += layers.q.challenges[17].rewardEffect();
         return bExp;
 
@@ -294,7 +297,7 @@ addLayer("xp", {
             title: "Level Boost",
             description: "Base Lvl. Exponent: 2 -> 1.9 (It goes much harder after lv 3,000)",
             cost: new Decimal("e160"),
-            unlocked() { return (hasUpgrade("xp", 35) && hasUpgrade("l", 35))},
+            unlocked() { return ((hasUpgrade("xp", 35) && hasUpgrade("l", 35)) || hasUpgrade("l", 44)) },
         },
         42: {
             title: "Meta Level Boost",
