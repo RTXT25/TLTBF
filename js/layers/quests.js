@@ -26,7 +26,7 @@ addLayer("q", {
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
         let baseExp = 1.6;
-        if (hasMilestone('q', 11)) baseExp.div(1.1);
+        if (hasMilestone('q', 11)) baseExp /= 1.1;
         return baseExp;
     }, // Prestige currency exponent
     base: 1e60,
