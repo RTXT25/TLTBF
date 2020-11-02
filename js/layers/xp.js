@@ -376,6 +376,7 @@ addLayer("xp", {
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                 if (hasMilestone("r", 1)) eff = eff.times(1.5);
+                if (hasUpgrade("l", 51)) eff = eff.plus(1).pow(3);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title

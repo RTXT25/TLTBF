@@ -283,7 +283,13 @@ addLayer("l", {
             title: "Stronk Powers",
             description: "Loot buyables are 10% more effective.",
             cost: new Decimal("1e100"),
-            unlocked() { return (hasUpgrade(this.layer, 43)) },
+            unlocked() { return (hasUpgrade(this.layer, 44)) },
+        },
+        51: {
+            title: "Automate Automation",
+            description: "Passive buyables effect is powered to ^1,000 and their eff. can't be less than 100%.",
+            cost: new Decimal("1e125"),
+            unlocked() { return (hasUpgrade(this.layer, 45)) },
         },
     },
     update(diff) {

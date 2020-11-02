@@ -312,6 +312,7 @@ addLayer("g", {
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                 if (hasMilestone("r", 1)) eff = eff.times(1.5);
+                if (hasUpgrade("l", 51)) eff = eff.pow(3);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -341,10 +342,10 @@ addLayer("g", {
             if (hasMilestone("q", 5)) ticks = 20;
             for (var p = 0 ; p < ticks ; ++p) {
                 if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
-                    layers.g.buyables[11].buy();
+                    //layers.g.buyables[11].buy();
                 }
                 if (layers.xp.buyables[11].unlocked() && layers.xp.buyables[11].canAfford()) {
-                    layers.xp.buyables[11].buy();
+                    //layers.xp.buyables[11].buy();
                 }
             }
         }
