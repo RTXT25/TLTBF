@@ -130,8 +130,41 @@ addLayer("r", {
             effectDescription: "Ruby effect is squared. Again.",
         },
     },
-   
+    buyables: {
+        rows: 1,
+        cols: 1,
+        showRespec: false,
+        11: {
+            title: "Better Exponents", // Optional, displayed at the top in a larger font
+            cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                let cost = Decimal.pow(new Decimal(1.1), x.pow(2));
+                cost = cost.times("1e12");
+                return cost.floor()
+            },
+            effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
+                let eff = x.times(0.05).plus(1);
+                return eff;
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " loot\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                XP and gold base exponents are powered to ^" + format(data.effect)
+            },
+            unlocked() { return (hasUpgrade("l", 55)) }, 
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+            buy() { 
+                cost = tmp[this.layer].buyables[this.id].cost
+                player[this.layer].points = player[this.layer].points.sub(cost)	
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+            },
+        },
+    },
+
     row: 1, // Row the layer is in on the tree (0 is the first row)
+
     hotkeys: [
     ],
     branches: [["g", 3], ["xp", 3]],

@@ -500,8 +500,8 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(18);
                 if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(19);
                 if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(20);
-                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(30000);
-                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(35000);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(21);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(24);
                 if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(50000);
                 if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(50000);
                 if (challengeCompletions(this.layer, this.id) == 13) return new Decimal(50000);

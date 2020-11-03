@@ -22,10 +22,12 @@ addLayer("g", {
             bExp += 100;
         }
         bExp += layers.q.challenges[17].rewardEffect();
-        
+
         if (hasUpgrade('l', 53)) {
             bExp *= 10;
         }
+
+        bExp = Math.pow(bExp, buyableEffect("r", 11));
 
         if (inChallenge("q", 18)) {
             bExp = Math.log(bExp + 1) / Math.log(1000);

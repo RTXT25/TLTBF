@@ -328,7 +328,13 @@ addLayer("l", {
             title: "Very nice.",
             description: "All XP upgrades costs are powered to ^0.05",
             cost: new Decimal("6.9e420"),
-            unlocked() { return (hasUpgrade(this.layer, 52)) },
+            unlocked() { return (hasUpgrade(this.layer, 53)) },
+        },
+        55: {
+            title: "Time for the ruby",
+            description: "Unlocks 6 new ruby upgrades and ruby buyable",
+            cost: new Decimal("5e625"),
+            unlocked() { return (hasUpgrade(this.layer, 54)) },
         },
     },
     update(diff) {
@@ -361,7 +367,7 @@ addLayer("l", {
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " loot\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                XP Gain is powered to ^" + format(data.effect)
+                XP Gain mult is powered to ^" + format(data.effect)
             },
             unlocked() { return (hasUpgrade(this.layer, 25)) }, 
             canAfford() {
@@ -390,7 +396,7 @@ addLayer("l", {
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " loot\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Gold Gain is powered to ^" + format(data.effect)
+                Gold Gain mult is powered to ^" + format(data.effect)
             },
             unlocked() { return (hasUpgrade(this.layer, 25)) }, 
             canAfford() {
