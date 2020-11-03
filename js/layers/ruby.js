@@ -97,6 +97,18 @@ addLayer("r", {
             cost: new Decimal(6),
             unlocked() { return ((hasUpgrade(this.layer, 13) && player.r.points.gte(6)) || hasUpgrade(this.layer, 14)) },
         },
+        15: {
+            title: "Is it cheating?",
+            description: "Multiplies level/xp/gold gain by 2 AND it does not depend on your current challenge!",
+            cost: new Decimal("1e15"),
+            unlocked() { return ((hasUpgrade(this.layer, 14) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 15)) },
+        },
+        21: {
+            title: "Now for the gold!",
+            description: "All gold upgrades costs are powered to ^0.05",
+            cost: new Decimal("1e22"),
+            unlocked() { return ((hasUpgrade(this.layer, 15) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 21)) },
+        },
     },
 
     milestones: {
@@ -142,14 +154,14 @@ addLayer("r", {
                 return cost.floor()
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
-                let eff = x.times(0.05).plus(1);
+                let eff = x*0.05 + 1;
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
                 let data = tmp[this.layer].buyables[this.id]
-                return "Cost: " + format(data.cost) + " loot\n\
+                return "Cost: " + format(data.cost) + " rubies\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                XP and gold base exponents are powered to ^" + format(data.effect)
+                XP and gold base exponents are powered to ^" + Math.round(data.effect*100)/100;
             },
             unlocked() { return (hasUpgrade("l", 55)) }, 
             canAfford() {

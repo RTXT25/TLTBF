@@ -13,6 +13,14 @@ addLayer("g", {
     baseResource: "levels", // Name of resource prestige is based on
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
+    costDecrement() {
+        if (hasUpgrade('l', 54)) {
+            return 0.05;
+        }
+        else {
+            return 1;
+        }
+    },
     exponent() {
         let bExp = 3;
         if (hasUpgrade('l', 43)) {
@@ -110,6 +118,11 @@ addLayer("g", {
 
         if (inChallenge("q", 14) || inChallenge("q", 17)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
+
+        if (hasUpgrade("r", 15)) {
+            mult = mult.times(2);
+        }
+
         //soft cap
         if (mult.gte(layers.g.softcap())) {
             let getSCP = layers.g.softcap();
@@ -129,7 +142,7 @@ addLayer("g", {
         11: {
             title: "Moneys give levels give moneys",
             description: "Gold and Level gain is multiplied by 10",
-            cost: new Decimal(1),
+            cost() { return new Decimal(1).pow(layers.g.costDecrement()) },
             unlocked() { return player[this.layer].unlocked },
             effect() { 
                 let eff = new Decimal(10);
@@ -140,7 +153,7 @@ addLayer("g", {
         12: {
             title: "Gold -> Exp",
             description: "Total gold boosts exp gain",
-            cost: new Decimal(100),
+            cost() { return new Decimal(100).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 11)) },
             effect() { 
                 let eff = player[this.layer].total.div(10).pow(0.2);
@@ -179,7 +192,7 @@ addLayer("g", {
         13: {
             title: "You still need XP",
             description: "Gold gain is multiplied by log10(xp + 10)",
-            cost: new Decimal(250),
+            cost() { return new Decimal(250).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 12)) },
             effect() { 
                 let eff = player.xp.points.plus(10).log10();
@@ -189,7 +202,7 @@ addLayer("g", {
         },
         14: {
             title: "More XP from gold",
-            cost: new Decimal(1000),
+            cost() { return new Decimal(1000).pow(layers.g.costDecrement()) },
             softcap() { return new Decimal(10) },
             hardcap() { return new Decimal(100) },
             unlocked() { return (hasUpgrade(this.layer, 13)) },
@@ -222,7 +235,7 @@ addLayer("g", {
         15: {
             title: "You can't buy this once",
             description: "Unlocks first buyable upgrade and a new row of xp upgrades",
-            cost: new Decimal(28),
+            cost() { return new Decimal(28).pow(layers.g.costDecrement()) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -231,7 +244,7 @@ addLayer("g", {
         21: {
             title: "Stronk Buff",
             description: "Multiplies XP, gold and lv gain by value of your level + 1",
-            cost: new Decimal(100000),
+            cost() { return new Decimal(100000).pow(layers.g.costDecrement()) },
             unlocked() { return ((hasUpgrade("xp", 35) && hasUpgrade("g", 15)) || inChallenge("q", 13)) },
             effect() { 
                 let eff = player.points.plus(1);
@@ -242,7 +255,7 @@ addLayer("g", {
         22: {
             title: "Even More Gold",
             description: "Multiplies Gold by log10(xp + 10)",
-            cost: new Decimal(1e7),
+            cost() { return new Decimal(1e7).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 21)) },
             effect() { 
                 let eff = player.xp.points.plus(10).log10();
@@ -253,7 +266,7 @@ addLayer("g", {
         23: {
             title: "Slow road to 100",
             description: "Increases a bit level gain until lvl 100",
-            cost: new Decimal(2.5e8),
+            cost() { return new Decimal(2.5e8).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 22)) },
             effect() { 
                 let maxLv = new Decimal(101);
@@ -266,7 +279,7 @@ addLayer("g", {
         24: {
             title: "Better passives",
             description: "Passive upgrades effects are multiplied by log10(lv + 10)",
-            cost: new Decimal(1e9),
+            cost() { return new Decimal(1e9).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 23)) },
             effect() { 
                 let eff = player.points.plus(10).log10();
@@ -277,7 +290,7 @@ addLayer("g", {
         25: {
             title: "What is it?",
             description: "Unlocks new layer and multiplies gold gain by π",
-            cost: new Decimal(3e9),
+            cost() { return new Decimal(3e9).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 24)) },
             effect() { 
                 let eff = new Decimal(3.1415926535);
@@ -288,7 +301,7 @@ addLayer("g", {
         31: {
             title: "Gold was pretty slow",
             description: "Multiplies gold gain by log10(max loot + 100)/2",
-            cost: new Decimal(1e16),
+            cost() { return new Decimal(1e16).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("l", 35) && hasUpgrade("g", 25)) },
             effect() { 
                 let eff = player.l.best.plus(100).log10().div(2);
@@ -299,7 +312,7 @@ addLayer("g", {
         32: {
             title: "More Gold!",
             description: "Multiplies gold gain 10",
-            cost: new Decimal(3e16),
+            cost() { return new Decimal(3e16).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 31)) },
             effect() { 
                 let eff = new Decimal(10);
@@ -309,19 +322,19 @@ addLayer("g", {
         33: {
             title: "Loot MegaBoost!",
             description: "Loot Base Exponent 1/4 -> 1/5",
-            cost: new Decimal(1e18),
+            cost() { return new Decimal(1e18).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 32)) },
         },
         34: {
             title: "Risky but Effective",
             description: "All passive upgrade effects are cubed",
-            cost: new Decimal(1e19),
+            cost() { return new Decimal(1e19).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 33)) },
         },
         35: {
             title: "It will be cool in future",
             description: "Gold gain multiplied by max(1, (lvl^2)/10000). Also unlocks new layer.",
-            cost: new Decimal(1e20),
+            cost() { return new Decimal(1e20).pow(layers.g.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 34)) },
             effect() { 
                 let eff = Decimal.max(new Decimal(1), player.points.times(player.points).div(new Decimal(10000)));

@@ -10,6 +10,14 @@ function exponentialFormat(num, precision) {
 	return m.toStringWithDecimalPlaces(precision)+"e"+e.toStringWithDecimalPlaces(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
+function exponentialFormat2(num, precision) {
+	let e = num.log10();
+	let e2 = e.log10().floor();
+	let m = e.div(Decimal.pow(10, e2));
+
+	return "e"+m.toStringWithDecimalPlaces(precision)+"e"+e2.toStringWithDecimalPlaces(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
 function commaFormat(num, precision) {
 	if (num === null || num === undefined) return "NaN"
 	if (num.mag < 0.001) return (0).toFixed(precision)
@@ -45,7 +53,7 @@ function format(decimal, precision=2) {
 		var slog = decimal.slog()
 		if (slog.gte(1e6)) return "F" + format(slog.floor())
 		else return Decimal.pow(10, slog.sub(slog.floor())).toStringWithDecimalPlaces(3) + "F" + commaFormat(slog.floor(), 0)
-	} else if (decimal.gte("1e1000000")) return exponentialFormat(decimal, 0)
+	} else if (decimal.gte("1e1e12")) return exponentialFormat2(decimal, 3)
 	else if (decimal.gte(1e9)) return exponentialFormat(decimal, precision)
 	else if (decimal.gte(1e3)) return commaFormat(decimal, 0)
 	else return regularFormat(decimal, precision)

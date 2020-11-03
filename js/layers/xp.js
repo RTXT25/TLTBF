@@ -111,6 +111,11 @@ addLayer("xp", {
 
         if (inChallenge("q", 13) || inChallenge("q", 17)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
+
+        if (hasUpgrade("r", 15)) {
+            mult = mult.times(2);
+        }
+        
         //soft cap
         if (mult.gte(layers.xp.softcap())) {
             let getSCP = layers.xp.softcap();

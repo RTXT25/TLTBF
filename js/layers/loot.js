@@ -17,6 +17,10 @@ addLayer("l", {
         if (qEff.gte(100)) {
             qEff = qEff.sub(98).log2().plus(99);
         }
+        //hardcap
+        if (qEff.gte(125)) {
+            qEff = qEff.sub(123).log2().pow(0.1).plus(124);
+        }
 
         eff = eff.pow(qEff);
         eff = eff.pow((hasMilestone("q", 1) ? new Decimal(2) : new Decimal(1)));

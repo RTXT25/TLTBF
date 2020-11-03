@@ -16,6 +16,10 @@ addLayer("q", {
         if (eff.gte(100)) {
             eff = eff.sub(98).log2().plus(99);
         }
+        //hardcap
+        if (eff.gte(125)) {
+            eff = eff.sub(123).log2().pow(0.1).plus(124);
+        }
         return eff;
         },
     effectDescription() {
@@ -502,12 +506,12 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(20);
                 if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(21);
                 if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(24);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 13) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 14) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 15) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 16) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(25);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(26);
+                if (challengeCompletions(this.layer, this.id) == 13) return new Decimal(27);
+                if (challengeCompletions(this.layer, this.id) == 14) return new Decimal(28);
+                if (challengeCompletions(this.layer, this.id) == 15) return new Decimal(29);
+                if (challengeCompletions(this.layer, this.id) == 16) return new Decimal(30);
                 if (challengeCompletions(this.layer, this.id) == 17) return new Decimal(50000);
                 if (challengeCompletions(this.layer, this.id) == 18) return new Decimal(50000);
                 if (challengeCompletions(this.layer, this.id) == 19) return new Decimal(50000);
@@ -616,7 +620,7 @@ addLayer("q", {
             done() {return player[this.layer].best.gte(10000)}, // Used to determine when to give the milestone
             effectDescription: "Autobuy up to 100,000 passive upgrades/tick and unlocks the final challenge here!",
         },
-        16: {requirementDescription: "Finish the last challenge 200 times",
+        16: {requirementDescription: "Finish the last challenge 100 times",
             unlocked() {return hasMilestone("q", 15)},
             done() {return (challengeCompletions("q", 18) == 101)}, // Used to determine when to give the milestone
             effectDescription: "New layer?",
