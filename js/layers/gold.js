@@ -22,6 +22,15 @@ addLayer("g", {
             bExp += 100;
         }
         bExp += layers.q.challenges[17].rewardEffect();
+        
+        if (hasUpgrade('l', 53)) {
+            bExp *= 10;
+        }
+
+        if (inChallenge("q", 18)) {
+            bExp = Math.log(bExp + 1) / Math.log(1000);
+        }
+
         return bExp;
 
     },
@@ -71,6 +80,8 @@ addLayer("g", {
         mult = mult.pow(player.points.div(layers.q.challenges[16].rewardEffect()).plus(1));
 
 
+        mult = mult.times((hasUpgrade("l", 52)) ? upgradeEffect("l", 52) : new Decimal(1));
+
         
         if (inChallenge("q", 11)) mult = mult = mult.pow(challengeVar("q", 11));
         else {
@@ -87,6 +98,11 @@ addLayer("g", {
         if (inChallenge("q", 16)) {
             let chavarVal = new Decimal(challengeVar("q", 16));
             mult = mult.pow(new Decimal(1).div(player.points.times(chavarVal).plus(1)));
+            if (isNaN(mult)) mult = new Decimal(1);
+        }
+        
+        if (inChallenge("q", 18)) {
+            mult = mult.plus(1).log(1000).plus(1).log(1000);
             if (isNaN(mult)) mult = new Decimal(1);
         }
 
@@ -135,6 +151,10 @@ addLayer("g", {
                     eff = eff.div(new Decimal("1e2500")).pow(0.001).times(new Decimal("1e2500"));
                     //hardcap
                 }
+                if (eff.gte(new Decimal("1e10000"))) {
+                    eff = eff.div(new Decimal("1e10000")).pow(0.0001).times(new Decimal("1e10000"));
+                    //very hardcap
+                }
                 return eff;
             },
             effectDisplay() {
@@ -143,10 +163,13 @@ addLayer("g", {
                     return format(this.effect())+"x " ;
                 }
                 else if (eff.lte(new Decimal("1e2500"))) {
-                    return format(this.effect())+"x " + "(softcapped)";
+                    return format(this.effect())+"x (softcapped)";
+                }
+                else if (eff.lte(new Decimal("1e10000"))) {
+                    return format(this.effect())+"x (hardcapped)";
                 }
                 else {
-                    return format(this.effect())+"x " + "(hardcapped)";
+                    return format(this.effect())+"x (very hardcapped)";
                 }
                
             }, // Add formatting to the effect
@@ -166,22 +189,32 @@ addLayer("g", {
             title: "More XP from gold",
             cost: new Decimal(1000),
             softcap() { return new Decimal(10) },
+            hardcap() { return new Decimal(100) },
             unlocked() { return (hasUpgrade(this.layer, 13)) },
             effect() { 
                 let teff = player.g.points.plus(10).log10().pow(0.7);
                 if (teff.gte(this.softcap())) {
                     eff = teff.sub(this.softcap()).div(100).plus(this.softcap());
+                    if (eff.gte(this.hardcap())) {
+                        eff = eff.sub(this.hardcap()).div(1000000).plus(this.hardcap());
+                    }
                 }
                 else {
                     eff = teff;
                 }
+                
                 return eff;
             },
             description() {
                 return (this.effect().gte(this.softcap()) ? "Upgrade 1,2 effect is powered based on gold" : "Upgrade 1,2 effect is powered to log10(gold + 10)^0.7");
             },
             effectDisplay() { 
-                return "^"+format(this.effect()) + (this.effect().gte(this.softcap()) ? " (softcapped)" : "");
+                if (this.effect().gte(this.hardcap())) {
+                    return "^"+format(this.effect()) + " (hardcapped)";
+                }
+                else {
+                    return "^"+format(this.effect()) + (this.effect().gte(this.softcap()) ? " (softcapped)" : "");
+                }
             }, 
         },
         15: {
@@ -312,24 +345,23 @@ addLayer("g", {
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                 if (hasMilestone("r", 1)) eff = eff.times(1.5);
-                if (hasUpgrade("l", 51)) eff = eff.pow(3);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " gold\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Amount: " + format(player[this.layer].buyables[this.id]) + "\n\
                 Generate " + (data.effect.lte(10) ? format(data.effect.times(100)) + "%" : "x" + format(data.effect)) + " XP per second";
             },
             unlocked() { return (hasUpgrade(this.layer, 15)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy() { 
+            buy(ticks) { 
                 cost = tmp[this.layer].buyables[this.id].cost
                 if (!hasMilestone("r", 1)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
         },
@@ -340,13 +372,13 @@ addLayer("g", {
         if (hasMilestone("r", 1)) {
             let ticks = 1;
             if (hasMilestone("q", 5)) ticks = 20;
-            for (var p = 0 ; p < ticks ; ++p) {
-                if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
-                    //layers.g.buyables[11].buy();
-                }
-                if (layers.xp.buyables[11].unlocked() && layers.xp.buyables[11].canAfford()) {
-                    //layers.xp.buyables[11].buy();
-                }
+            if (hasMilestone("q", 14)) ticks = 1000;
+            if (hasMilestone("q", 15)) ticks = 100000;
+            if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
+                layers.g.buyables[11].buy(ticks);
+            }
+            if (layers.xp.buyables[11].unlocked() && layers.xp.buyables[11].canAfford()) {
+                layers.xp.buyables[11].buy(ticks);
             }
         }
     },

@@ -34,6 +34,7 @@ addLayer("q", {
         let baseExp = 1.6;
         if (hasMilestone('q', 11)) baseExp /= 1.1;
         if (hasMilestone('q', 12)) baseExp /= 1.1;
+        baseExp = baseExp / layers.q.challenges[18].rewardEffect();
         return baseExp;
     }, // Prestige currency exponent
     base: 1e60,
@@ -480,6 +481,53 @@ addLayer("q", {
             rewardDescription: "XP and gold exponents. Good for quests.",
             onComplete() {} // Called when you complete the challenge
         },
+        18: {
+            name: "Double LOG",
+            completionLimit: 100,
+            challengeDescription() {
+                return "Exp, Gold and Level gain are set to log1,000(log1,000(gain +1) + 1). " + 
+                "Their base exponents are also set to log1,000(exp + 1)" + "<br>"+challengeCompletions(this.layer, this.id)
+                 + "/" + this.completionLimit + " completions";
+            },
+            unlocked() { return (hasMilestone("q", 15) || inChallenge("q", 18)) },
+            goal(){
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(12);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(13);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(14);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(15);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(16);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(17);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(18);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(19);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(20);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(30000);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(35000);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 13) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 14) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 15) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 16) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 17) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 18) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 19) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 20) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 21) return new Decimal(50000);
+            },
+            currencyDisplayName: "level", // Use if using a nonstandard currency
+            currencyInternalName: "points", // Use if using a nonstandard currency
+            currencyLayer: "", // Leave empty if not in a layer
+            rewards() {
+                return new Decimal(1 + challengeCompletions(this.layer, this.id)*0.05);
+            },
+            rewardEffect() {
+                let rew = new Decimal(this.rewards());
+                return rew;
+            },
+            rewardDisplay() { return  "loot, quest & ruby exponents divided by " + format(this.rewardEffect()) },
+            rewardDescription: "Last Gain!!!",
+            onComplete() {} // Called when you complete the challenge
+        },
     },
 
     milestones: {
@@ -557,6 +605,21 @@ addLayer("q", {
             unlocked() {return hasMilestone("q", 12)},
             done() {return player[this.layer].best.gte(125)}, // Used to determine when to give the milestone
             effectDescription: "New challenge. Again.",
+        },
+        14: {requirementDescription: "Get 500 quests",
+            unlocked() {return hasMilestone("q", 13)},
+            done() {return player[this.layer].best.gte(500)}, // Used to determine when to give the milestone
+            effectDescription: "Autobuy up to 1,000 passive upgrades/tick",
+        },
+        15: {requirementDescription: "Get 10,000 quests",
+            unlocked() {return hasMilestone("q", 14)},
+            done() {return player[this.layer].best.gte(10000)}, // Used to determine when to give the milestone
+            effectDescription: "Autobuy up to 100,000 passive upgrades/tick and unlocks the final challenge here!",
+        },
+        16: {requirementDescription: "Finish the last challenge 200 times",
+            unlocked() {return hasMilestone("q", 15)},
+            done() {return (challengeCompletions("q", 18) == 101)}, // Used to determine when to give the milestone
+            effectDescription: "New layer?",
         },
     },
    

@@ -58,6 +58,7 @@ addLayer("l", {
         if (hasUpgrade("xp", 52)) baseExp -= 0.075;
         if (hasUpgrade("xp", 53)) baseExp -= 0.025;
         baseExp = baseExp / layers.q.challenges[15].rewardEffect();
+        baseExp = baseExp / layers.q.challenges[18].rewardEffect();
         return baseExp;
     }, // Prestige currency exponent
     base: 2.25,
@@ -286,10 +287,48 @@ addLayer("l", {
             unlocked() { return (hasUpgrade(this.layer, 44)) },
         },
         51: {
-            title: "Automate Automation",
-            description: "Passive buyables effect is powered to ^1,000 and their eff. can't be less than 100%.",
+            title: "Automate Automation XP",
+            description: "XP gain is mult. by passive XP buyable effect pow. to ^1,000",
             cost: new Decimal("1e125"),
             unlocked() { return (hasUpgrade(this.layer, 45)) },
+            effect() {
+                let x = player.g.buyables[11];
+                let eff = x.times(0.01);
+                eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
+                eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
+                if (hasMilestone("r", 1)) eff = eff.times(1.5);
+                eff = Decimal.max(1, eff.pow(1000));
+                return eff;
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        52: {
+            title: "Automate Automation Gold",
+            description: "Gold gain is mult. by passive Gold b. eff. pow. to ^250",
+            cost: new Decimal("1e250"),
+            unlocked() { return (hasUpgrade(this.layer, 51)) },
+            effect() {
+                let x = player.xp.buyables[11];
+                let eff = x.times(0.01);
+                eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
+                eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
+                if (hasMilestone("r", 1)) eff = eff.times(1.5);
+                eff = Decimal.max(1, eff.pow(250));
+                return eff;
+            },
+            effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
+        },
+        53: {
+            title: "Make the last challenge easier!",
+            description: "Multiplies xp and gold exponents by 100",
+            cost: new Decimal("1e375"),
+            unlocked() { return (hasUpgrade(this.layer, 52)) },
+        },
+        54: {
+            title: "Very nice.",
+            description: "All XP upgrades costs are powered to ^0.05",
+            cost: new Decimal("6.9e420"),
+            unlocked() { return (hasUpgrade(this.layer, 52)) },
         },
     },
     update(diff) {

@@ -6,6 +6,8 @@ function getPointGen() {
         return new Decimal(0)
     
     player.devSpeed = 1;
+    let maxLevel = new Decimal(1000000);
+
     let baseGain = new Decimal(1);
     if (hasUpgrade("xp", 11)) {
         baseGain = baseGain.plus(new Decimal(1));
@@ -72,6 +74,12 @@ function getPointGen() {
         baseGain = baseGain.pow(new Decimal(1).div(player.points.times(chavarVal).plus(1)));
         if (isNaN(baseGain)) baseGain = new Decimal(1);
     }
+    
+
+    if (inChallenge("q", 18)) {
+        baseGain = baseGain.plus(1).log(1000).plus(1).log(1000);
+        if (isNaN(baseGain)) baseGain = new Decimal(1);
+    }
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
@@ -96,10 +104,14 @@ function getPointGen() {
  
     if (isNaN(gain)) gain = new Decimal(0);
 
+    if (player.points.plus(gain).gte(maxLevel)) {
+        gain = maxLevel.sub(player.points);
+    }
+
     if (Decimal.lte(gain, new Decimal(1e-3).div(player.devSpeed))) {
         if (gain.gte(new Decimal(0))) {
             let decDiff = gain.plus(new Decimal("1e-999999")).div(new Decimal(1e-3));
-            let logBack = Decimal.min(decDiff.log(powPower), new Decimal(0));
+            let logBack = Decimal.min(decDiff.log(newPowPower), new Decimal(0));
             if (player.points.lte(logBack.times(-1))) {
                 player.points = player.points.div(1.2);
             }

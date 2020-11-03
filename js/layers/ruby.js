@@ -48,6 +48,7 @@ addLayer("r", {
         if (hasUpgrade("xp", 55)) {
             baseExp /= 2;
         }
+        baseExp = baseExp / layers.q.challenges[18].rewardEffect();
         return baseExp;
     }, // Prestige currency exponent
     base: 2500,
