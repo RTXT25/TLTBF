@@ -43,6 +43,7 @@ addLayer("xp", {
         if (inChallenge("q", 18)) {
            bExp = Math.log(bExp + 1) / Math.log(1000);
         }
+        
         return bExp;
 
     },

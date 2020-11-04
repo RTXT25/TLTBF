@@ -458,22 +458,22 @@ addLayer("q", {
             currencyInternalName: "points", // Use if using a nonstandard currency
             currencyLayer: "", // Leave empty if not in a layer
             rewards() {
-                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(0);
-                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(1);
-                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(2);
-                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(3);
-                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(4);
-                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(5);
-                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(6);
-                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(7);
-                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(8);
-                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(9);
-                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(10);
-                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(15);
-                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(25);
+                if (challengeCompletions(this.layer, this.id) == 0) return 0;
+                if (challengeCompletions(this.layer, this.id) == 1) return 1;
+                if (challengeCompletions(this.layer, this.id) == 2) return 2;
+                if (challengeCompletions(this.layer, this.id) == 3) return 3;
+                if (challengeCompletions(this.layer, this.id) == 4) return 4;
+                if (challengeCompletions(this.layer, this.id) == 5) return 5;
+                if (challengeCompletions(this.layer, this.id) == 6) return 6;
+                if (challengeCompletions(this.layer, this.id) == 7) return 7;
+                if (challengeCompletions(this.layer, this.id) == 8) return 8;
+                if (challengeCompletions(this.layer, this.id) == 9) return 9;
+                if (challengeCompletions(this.layer, this.id) == 10) return 10;
+                if (challengeCompletions(this.layer, this.id) == 11) return 15;
+                if (challengeCompletions(this.layer, this.id) == 12) return 25;
             },
             rewardEffect() {
-                let rew = new Decimal(this.rewards());
+                let rew = this.rewards();
                 return rew;
             },
             rewardDisplay() { return "+" + 
