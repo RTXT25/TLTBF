@@ -263,12 +263,12 @@ addLayer("xp", {
                 return (!hasMilestone("r", 0) ? "G means Gold" : "Woah, a new upgrade here?");
             },
             description() {
-                return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^cbrt(rubies)");
+                return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^(rubies^(1/10))");
             },
             cost() { return new Decimal(1000000).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 24))},
             effect() {
-                let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.3333333333333333))
+                let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.1))
                 return (hasMilestone("r", 0) ? eff : new Decimal(1));
             },
             effectDisplay() { return (hasMilestone("r", 0) ? format(this.effect()) + "x" : "") }, // Add formatting to the effect

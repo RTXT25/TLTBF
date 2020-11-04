@@ -99,15 +99,24 @@ function getPointGen() {
 
     powPower = powPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
 
+    powPower = powPower.pow((buyableEffect("r", 12)));
 
-    if (Decimal.gte(player.points, new Decimal(3000))) {
-        powPower = powPower.plus(player.points.sub(new Decimal(3000)).div(new Decimal(1000)));
-    }
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
-    let newPowPower = powPower.add(exponentLevelGainLimitOnce.div(new Decimal(1000)));
+    let newPowPower = powPower.add(player.points.div(new Decimal(100))).sub(30);
+
+    newPowPower = newPowPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
+
+    newPowPower = newPowPower.pow((buyableEffect("r", 12)));
+
     let newExponentLevelGainLimitOnce = baseGain.plus(1).log(newPowPower);
-    gain = Decimal.min(gain1, newExponentLevelGainLimitOnce);
+
+    if (player.points.gte(3000)) {
+        gain = Decimal.min(gain1, newExponentLevelGainLimitOnce);
+    }
+    else {
+        gain = Decimal.min(gain1, exponentLevelGainLimitOnce);
+    }
  
     if ((format(tmp["xp"].resetGain) == "NaN")) gain = new Decimal(0);
 
@@ -115,10 +124,11 @@ function getPointGen() {
         gain = maxLevel.sub(player.points);
     }
 
+
     if (Decimal.lte(gain, new Decimal(1e-3).div(player.devSpeed))) {
         if (gain.gte(new Decimal(0))) {
-            let decDiff = gain.plus(new Decimal("1e-999999")).div(new Decimal(1e-3));
-            let logBack = Decimal.min(decDiff.log(newPowPower), new Decimal(0));
+            let decDiff = gain.plus(new Decimal("1e-999999999")).div(new Decimal(1e-3));
+            let logBack = Decimal.min(decDiff.log(powPower), new Decimal(0));
             if (player.points.lte(logBack.times(-1))) {
                 player.points = player.points.div(1.2);
             }

@@ -127,6 +127,12 @@ addLayer("r", {
             cost: new Decimal("1e60"),
             unlocked() { return ((hasUpgrade(this.layer, 23) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 24)) },
         },
+        25: {
+            title: "You are close!!!",
+            description: "Unlocks second ruby buyable",
+            cost: new Decimal("1e75"),
+            unlocked() { return ((hasUpgrade(this.layer, 24) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 25)) },
+        },
     },
 
     milestones: {
@@ -159,10 +165,15 @@ addLayer("r", {
             done() {return player[this.layer].best.gte(300)}, // Used to determine when to give the milestone
             effectDescription: "Ruby effect is squared. Again.",
         },
+        6: {requirementDescription: "Get 1e200 max rubies",
+            unlocked() {return hasMilestone("r", 5)},
+            done() {return player[this.layer].best.gte("1e200")}, // Used to determine when to give the milestone
+            effectDescription: "Ruby buyables cost nothing. Automatically buy 10 of them/tick.",
+        },
     },
     buyables: {
         rows: 1,
-        cols: 1,
+        cols: 2,
         showRespec: false,
         11: {
             title: "Better Exponents", // Optional, displayed at the top in a larger font
@@ -184,13 +195,63 @@ addLayer("r", {
             unlocked() { return (hasUpgrade("l", 55)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy() { 
+            buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                player[this.layer].points = player[this.layer].points.sub(cost)	
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                if (!hasMilestone('r', 6)) {
+                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                }
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
         },
+        12: {
+            title: "Faster Leveling in Challenge", // Optional, displayed at the top in a larger font
+            cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
+                let cost = Decimal.pow(new Decimal(1.05), x.pow(1.25));
+                cost = cost.times("1e75");
+                return cost.floor()
+            },
+            effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
+                let eff = Math.pow(0.99, x);
+                return eff;
+            },
+            display() { // Everything else displayed in the buyable button after the title
+                let data = tmp[this.layer].buyables[this.id]
+                if (data.effect >= 0.000001) {
+                    return "Cost: " + format(data.cost) + " rubies\n\
+                    Amount: " + player[this.layer].buyables[this.id] + "\n\
+                    Base lvl gain exponent is powered to ^" + Math.round(data.effect*1000000)/1000000;
+                }
+                else {
+                    return "Cost: " + format(data.cost) + " rubies\n\
+                    Amount: " + player[this.layer].buyables[this.id] + "\n\
+                    Base lvl gain exponent is powered to ^(1/" + format(new Decimal(1 / data.effect)) + ")";
+                }
+            },
+            unlocked() { return (hasUpgrade("r", 25)) }, 
+            canAfford() {
+                return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+            buy(ticks=1) { 
+                cost = tmp[this.layer].buyables[this.id].cost
+                if (!hasMilestone('r', 6)) {
+                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                }
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
+                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+            },
+        },
+    },
+
+    update() {
+        if (hasMilestone('r', 6)) {
+            let ticks = 10;
+            if (layers.r.buyables[11].unlocked() && layers.r.buyables[11].canAfford()) {
+                layers.r.buyables[11].buy(ticks);
+            }
+            if (layers.r.buyables[12].unlocked() && layers.r.buyables[12].canAfford()) {
+                layers.r.buyables[12].buy(ticks);
+            }
+        }
     },
 
     row: 1, // Row the layer is in on the tree (0 is the first row)
