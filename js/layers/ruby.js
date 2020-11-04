@@ -207,7 +207,7 @@ addLayer("r", {
         12: {
             title: "Faster Leveling in Challenge", // Optional, displayed at the top in a larger font
             cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
-                let cost = Decimal.pow(new Decimal(1.05), x.pow(1.25));
+                let cost = Decimal.pow(new Decimal(1.05), x.pow(1.4));
                 cost = cost.times("1e75");
                 return cost.floor()
             },
