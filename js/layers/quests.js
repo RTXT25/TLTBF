@@ -13,19 +13,15 @@ addLayer("q", {
         if (hasMilestone("q", 8)) eff = eff.times(4);
         if (hasMilestone("q", 9)) eff = eff.times(2);
         //softcap
-        if (eff.gte(100)) {
-            eff = eff.sub(98).log2().plus(99);
-        }
-        //hardcap
-        if (eff.gte(125)) {
-            eff = eff.sub(123).log2().pow(0.1).plus(124);
+        if (eff.gte("1e20")) {
+            eff = eff.div("1e20").plus(1).log2().times("1e20");
         }
         return eff;
         },
     effectDescription() {
         eff = this.effect();
         let str = "Complete quests and challenges to get more bonuses! Loot Effect Bonus: ^"+format(eff);
-        if (eff.gte(100)) str += " (softcapped)";
+        if (eff.gte("1e20")) str += " (softcapped)";
         return str;
     },
     color: "#D895FC",
@@ -512,11 +508,29 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 14) return new Decimal(28);
                 if (challengeCompletions(this.layer, this.id) == 15) return new Decimal(29);
                 if (challengeCompletions(this.layer, this.id) == 16) return new Decimal(30);
-                if (challengeCompletions(this.layer, this.id) == 17) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 18) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 19) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 20) return new Decimal(50000);
-                if (challengeCompletions(this.layer, this.id) == 21) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 17) return new Decimal(31);
+                if (challengeCompletions(this.layer, this.id) == 18) return new Decimal(32);
+                if (challengeCompletions(this.layer, this.id) == 19) return new Decimal(34);
+                if (challengeCompletions(this.layer, this.id) == 20) return new Decimal(36);
+                if (challengeCompletions(this.layer, this.id) == 21) return new Decimal(38);
+                if (challengeCompletions(this.layer, this.id) == 22) return new Decimal(40);
+                if (challengeCompletions(this.layer, this.id) == 23) return new Decimal(42);
+                if (challengeCompletions(this.layer, this.id) == 24) return new Decimal(44);
+                if (challengeCompletions(this.layer, this.id) == 25) return new Decimal(46);
+                if (challengeCompletions(this.layer, this.id) == 26) return new Decimal(48);
+                if (challengeCompletions(this.layer, this.id) == 27) return new Decimal(50);
+                if (challengeCompletions(this.layer, this.id) == 28) return new Decimal(55);
+                if (challengeCompletions(this.layer, this.id) == 29) return new Decimal(60);
+                if (challengeCompletions(this.layer, this.id) == 30) return new Decimal(65);
+                if (challengeCompletions(this.layer, this.id) == 31) return new Decimal(70);
+                if (challengeCompletions(this.layer, this.id) == 32) return new Decimal(75);
+                if (challengeCompletions(this.layer, this.id) == 33) return new Decimal(80);
+                if (challengeCompletions(this.layer, this.id) == 34) return new Decimal(85);
+                if (challengeCompletions(this.layer, this.id) == 35) return new Decimal(90);
+                if (challengeCompletions(this.layer, this.id) == 36) return new Decimal(95);
+                if (challengeCompletions(this.layer, this.id) == 37) return new Decimal(100);
+                if (challengeCompletions(this.layer, this.id) == 38) return new Decimal(50000);
+                if (challengeCompletions(this.layer, this.id) == 39) return new Decimal(50000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -526,6 +540,7 @@ addLayer("q", {
             },
             rewardEffect() {
                 let rew = new Decimal(this.rewards());
+                if (hasUpgrade("r", 24)) rew = rew.pow(1.1);
                 return rew;
             },
             rewardDisplay() { return  "loot, quest & ruby exponents divided by " + format(this.rewardEffect()) },

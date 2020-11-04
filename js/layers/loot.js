@@ -14,12 +14,8 @@ addLayer("l", {
         if (hasMilestone("q", 8)) qEff = qEff.times(4);
         if (hasMilestone("q", 9)) qEff = qEff.times(2);
         //softcap
-        if (qEff.gte(100)) {
-            qEff = qEff.sub(98).log2().plus(99);
-        }
-        //hardcap
-        if (qEff.gte(125)) {
-            qEff = qEff.sub(123).log2().pow(0.1).plus(124);
+        if (qEff.gte("1e20")) {
+            qEff = qEff.div("1e20").plus(1).log2().times("1e20");
         }
 
         eff = eff.pow(qEff);
@@ -341,11 +337,6 @@ addLayer("l", {
             unlocked() { return (hasUpgrade(this.layer, 54)) },
         },
     },
-    update(diff) {
-        if (hasMilestone('q', 7)) {
-            generatePoints("l", diff * 0.5);
-        }
-    },
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],
@@ -365,6 +356,7 @@ addLayer("l", {
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                 let eff = x.times(0.01).plus(1);
                 if (hasUpgrade("l", 45)) eff = eff.plus(x.times(0.001));
+                if (hasUpgrade("r", 22)) eff = eff.pow(2);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -376,10 +368,10 @@ addLayer("l", {
             unlocked() { return (hasUpgrade(this.layer, 25)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy() { 
+            buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
                 player[this.layer].points = player[this.layer].points.sub(cost)	
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
         },
@@ -394,6 +386,7 @@ addLayer("l", {
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
                 let eff = x.times(0.01).plus(1);
                 if (hasUpgrade("l", 45)) eff = eff.plus(x.times(0.001));
+                if (hasUpgrade("r", 22)) eff = eff.pow(2);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -405,13 +398,29 @@ addLayer("l", {
             unlocked() { return (hasUpgrade(this.layer, 25)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy() { 
+            buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
                 player[this.layer].points = player[this.layer].points.sub(cost)	
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(1)
+                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
         },
     },
+
+    update(diff) {
+        if (hasMilestone('q', 7)) {
+            generatePoints("l", diff * 0.5);
+        }
+        if (hasUpgrade("r", 22)) {
+            let ticks = 10;
+            if (layers.l.buyables[11].unlocked() && layers.l.buyables[11].canAfford()) {
+                layers.l.buyables[11].buy(ticks);
+            }
+            if (layers.l.buyables[12].unlocked() && layers.l.buyables[12].canAfford()) {
+                layers.l.buyables[12].buy(ticks);
+            }
+        }
+    },
+
     layerShown(){return (hasUpgrade("g", 25) || player.l.best.gte(1))},
 })

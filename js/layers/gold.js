@@ -205,6 +205,7 @@ addLayer("g", {
             cost() { return new Decimal(1000).pow(layers.g.costDecrement()) },
             softcap() { return new Decimal(10) },
             hardcap() { return new Decimal(100) },
+            very_hardcap() { return new Decimal(100000) },
             unlocked() { return (hasUpgrade(this.layer, 13)) },
             effect() { 
                 let teff = player.g.points.plus(10).log10().pow(0.7);
@@ -212,6 +213,11 @@ addLayer("g", {
                     eff = teff.sub(this.softcap()).div(100).plus(this.softcap());
                     if (eff.gte(this.hardcap())) {
                         eff = eff.sub(this.hardcap()).div(1000000).plus(this.hardcap());
+
+                        if (eff.gte(this.very_hardcap())) {
+                            eff = eff.div(this.very_hardcap()).plus(1000).log(1000).times(this.very_hardcap());
+                        }
+
                     }
                 }
                 else {
@@ -224,7 +230,10 @@ addLayer("g", {
                 return (this.effect().gte(this.softcap()) ? "Upgrade 1,2 effect is powered based on gold" : "Upgrade 1,2 effect is powered to log10(gold + 10)^0.7");
             },
             effectDisplay() { 
-                if (this.effect().gte(this.hardcap())) {
+                if (this.effect().gte(this.very_hardcap())) {
+                    return "^"+format(this.effect()) + " (very hardcapped)";
+                }
+                else if (this.effect().gte(this.hardcap())) {
                     return "^"+format(this.effect()) + " (hardcapped)";
                 }
                 else {
@@ -371,7 +380,7 @@ addLayer("g", {
             unlocked() { return (hasUpgrade(this.layer, 15)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy(ticks) { 
+            buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
                 if (!hasMilestone("r", 1)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	

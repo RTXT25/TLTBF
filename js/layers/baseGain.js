@@ -12,7 +12,7 @@ function getPointGen() {
     if (hasUpgrade("xp", 11)) {
         baseGain = baseGain.plus(new Decimal(1));
     }
-    if (isNaN(tmp["xp"].resetGain)) tmp["xp"].resetGain = new Decimal(0);
+    if ((format(tmp["xp"].resetGain) == "NaN")) tmp["xp"].resetGain = new Decimal(0);
     baseGain = baseGain.times((hasUpgrade("xp", 12)) ? upgradeEffect("xp", 12) : new Decimal(1));
     baseGain = baseGain.times((hasUpgrade("xp", 14)) ? upgradeEffect("xp", 14) : new Decimal(1));
     baseGain = baseGain.times((hasUpgrade("xp", 21)) ? upgradeEffect("xp", 21) : new Decimal(1));
@@ -67,18 +67,18 @@ function getPointGen() {
     if (inChallenge("q", 15)) {
         baseGain = baseGain.plus(1).log(challengeVar("q", 15));
     }
-    if (isNaN(baseGain)) baseGain = new Decimal(0);
+    if ((format(tmp["xp"].resetGain) == "NaN")) baseGain = new Decimal(0);
 
     if (inChallenge("q", 16)) {
         let chavarVal = new Decimal(challengeVar("q", 16));
         baseGain = baseGain.pow(new Decimal(1).div(player.points.times(chavarVal).plus(1)));
-        if (isNaN(baseGain)) baseGain = new Decimal(1);
+        if ((format(tmp["xp"].resetGain) == "NaN")) baseGain = new Decimal(1);
     }
     
 
     if (inChallenge("q", 18)) {
         baseGain = baseGain.plus(1).log(1000).plus(1).log(1000);
-        if (isNaN(baseGain)) baseGain = new Decimal(1);
+        if ((format(tmp["xp"].resetGain) == "NaN")) baseGain = new Decimal(1);
     }
 
     if (hasUpgrade("r", 15)) {
@@ -94,6 +94,9 @@ function getPointGen() {
 
     if (hasMilestone("r", 2)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.9)).plus(new Decimal(1));
     if (hasUpgrade("r", 13)) powPower = powPower.sub(new Decimal(1)).times(new Decimal(0.99)).plus(new Decimal(1));
+
+    if (hasUpgrade("r", 23)) powPower = powPower.pow(0.4);
+
     powPower = powPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
 
 
@@ -106,7 +109,7 @@ function getPointGen() {
     let newExponentLevelGainLimitOnce = baseGain.plus(1).log(newPowPower);
     gain = Decimal.min(gain1, newExponentLevelGainLimitOnce);
  
-    if (isNaN(gain)) gain = new Decimal(0);
+    if ((format(tmp["xp"].resetGain) == "NaN")) gain = new Decimal(0);
 
     if (player.points.plus(gain).gte(maxLevel)) {
         gain = maxLevel.sub(player.points);
@@ -125,6 +128,9 @@ function getPointGen() {
         }
     }
 
+    if (gain.times(-1).gte(player.points)) {
+        gain = player.points.div(2).times(-1);
+    }
 
 	return gain
 }

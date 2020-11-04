@@ -109,6 +109,24 @@ addLayer("r", {
             cost: new Decimal("1e22"),
             unlocked() { return ((hasUpgrade(this.layer, 15) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 21)) },
         },
+        22: {
+            title: "Stop Clicking Loot!",
+            description: "Autobuys 10 loot upgrades/tick. Also it's effect is powered to 2 now.",
+            cost: new Decimal("1e40"),
+            unlocked() { return ((hasUpgrade(this.layer, 21) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 22)) },
+        },
+        23: {
+            title: "Go further!",
+            description: "Base Level Gain exponent is powered to ^0.4",
+            cost: new Decimal("1e45"),
+            unlocked() { return ((hasUpgrade(this.layer, 22) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 23)) },
+        },
+        24: {
+            title: "Better rewards!",
+            description: "Last challenge reward now is powered to 1.1",
+            cost: new Decimal("1e60"),
+            unlocked() { return ((hasUpgrade(this.layer, 23) && hasUpgrade("l", 55)) || hasUpgrade(this.layer, 24)) },
+        },
     },
 
     milestones: {

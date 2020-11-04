@@ -43,7 +43,6 @@ addLayer("xp", {
         if (inChallenge("q", 18)) {
            bExp = Math.log(bExp + 1) / Math.log(1000);
         }
-
         return bExp;
 
     },
@@ -66,6 +65,7 @@ addLayer("xp", {
         mult = mult.times((hasUpgrade("g", 12)) ? upgradeEffect("g", 12) : new Decimal(1));
         mult = mult.times((hasUpgrade("g", 21)) ? upgradeEffect("g", 21) : new Decimal(1));
         
+
         mult = mult.pow((hasUpgrade("l", 13)) ? upgradeEffect("l", 13) : new Decimal(1));
         mult = mult.pow((hasUpgrade("l", 15)) ? upgradeEffect("l", 15) : new Decimal(1));
 
@@ -73,8 +73,12 @@ addLayer("xp", {
         
         let lootEff = player.l.best.add(1).pow(0.75);
         let qEff = player.q.total.pow(0.6725).plus(1);
+        if (qEff.gte("1e20")) {
+            qEff = qEff.div("1e20").plus(1).log2().times("1e20");
+        }
         lootEff = lootEff.pow(qEff);
         mult = mult.times(lootEff);
+
         
         mult = mult.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
 
@@ -123,6 +127,7 @@ addLayer("xp", {
             mult = mult.div(softCapDivider);
         }
 
+        
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -258,12 +263,12 @@ addLayer("xp", {
                 return (!hasMilestone("r", 0) ? "G means Gold" : "Woah, a new upgrade here?");
             },
             description() {
-                return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^sqrt(rubies)");
+                return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^cbrt(rubies)");
             },
             cost() { return new Decimal(1000000).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 24))},
             effect() {
-                let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.5))
+                let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.3333333333333333))
                 return (hasMilestone("r", 0) ? eff : new Decimal(1));
             },
             effectDisplay() { return (hasMilestone("r", 0) ? format(this.effect()) + "x" : "") }, // Add formatting to the effect
@@ -434,7 +439,7 @@ addLayer("xp", {
             unlocked() { return (hasUpgrade(this.layer, 35)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy(ticks) { 
+            buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
                 if (!hasMilestone("r", 1)) {
                     player[this.layer].points = player[this.layer].points.sub(cost);
