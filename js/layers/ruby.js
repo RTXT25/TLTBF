@@ -242,7 +242,7 @@ addLayer("r", {
         },
     },
 
-    update() {
+    update(diff) {
         if (hasMilestone('r', 6) || hasMilestone("s", 3)) {
             let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 3) * 10);;
             if (layers.r.buyables[11].unlocked() && layers.r.buyables[11].canAfford()) {
