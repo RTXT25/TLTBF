@@ -12,7 +12,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.0",
+	num: "0.1.1",
 	name: "Only 2 firts tiers",
 }
 
@@ -40,7 +40,7 @@ var displayThings = [
 
 // Determines when the game "ends"
 function isEndgame() {
-	return hasMilestone("q", 16);
+	return false;
 }
 
 

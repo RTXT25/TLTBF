@@ -120,11 +120,6 @@ function getPointGen() {
  
     if ((format(tmp["xp"].resetGain) == "NaN")) gain = new Decimal(0);
 
-    if (player.points.plus(gain).gte(maxLevel)) {
-        gain = maxLevel.sub(player.points);
-    }
-
-
     if (Decimal.lte(gain, new Decimal(1e-3).div(player.devSpeed))) {
         if (gain.gte(new Decimal(0))) {
             let decDiff = gain.plus(new Decimal("1e-999999999")).div(new Decimal(1e-3));
@@ -136,6 +131,10 @@ function getPointGen() {
                 gain = logBack;
             }
         }
+    }
+    
+    if (player.points.plus(gain).gte(maxLevel)) {
+        gain = maxLevel.sub(player.points);
     }
 
     if (gain.times(-1).gte(player.points)) {
