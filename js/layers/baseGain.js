@@ -85,6 +85,8 @@ function getPointGen() {
         baseGain = baseGain.times(2);
     }
 
+    baseGain = baseGain.times(layers["s"].milestones[0].effect());
+
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
     if (hasUpgrade("xp", 42)) powPower = new Decimal(1.8);
@@ -132,7 +134,7 @@ function getPointGen() {
             }
         }
     }
-    
+
     if (player.points.plus(gain).gte(maxLevel)) {
         gain = maxLevel.sub(player.points);
     }

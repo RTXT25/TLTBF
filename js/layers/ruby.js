@@ -197,7 +197,7 @@ addLayer("r", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone('r', 6)) {
+                if (!hasMilestone('r', 6) && !hasMilestone("s", 3)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -233,7 +233,7 @@ addLayer("r", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone('r', 6)) {
+                if (!hasMilestone('r', 6) && !hasMilestone("s", 3)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -243,8 +243,8 @@ addLayer("r", {
     },
 
     update() {
-        if (hasMilestone('r', 6)) {
-            let ticks = 10;
+        if (hasMilestone('r', 6) || hasMilestone("s", 3)) {
+            let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 3) * 10);;
             if (layers.r.buyables[11].unlocked() && layers.r.buyables[11].canAfford()) {
                 layers.r.buyables[11].buy(ticks);
             }
@@ -252,8 +252,25 @@ addLayer("r", {
                 layers.r.buyables[12].buy(ticks);
             }
         }
+        if (hasMilestone('s', 7)) {
+            generatePoints("r", diff);
+        }
     },
 
+    automate() {
+        if (player["s"].autoBuyAll2) {
+            for (let x = 10; x <= 20; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    let z = x + y;
+                    if (!hasUpgrade("r", z) && canAffordUpgrade("r", z) && (hasMilestone("s", 4))
+                      && layers["r"].upgrades[z].unlocked()===true) {
+                        buyUpg("r", z);
+                    }
+                }
+            }
+        }
+    },
+    
     row: 1, // Row the layer is in on the tree (0 is the first row)
 
     hotkeys: [

@@ -59,6 +59,7 @@ addLayer("l", {
         if (hasUpgrade("xp", 53)) baseExp -= 0.025;
         baseExp = baseExp / layers.q.challenges[15].rewardEffect();
         baseExp = baseExp / layers.q.challenges[18].rewardEffect();
+        baseExp /= layers["s"].effect();
         return baseExp;
     }, // Prestige currency exponent
     base: 2.25,
@@ -70,7 +71,7 @@ addLayer("l", {
         mult = mult.div(xpLogMult);
         mult = mult.div((hasUpgrade("l", 31)) ? upgradeEffect("l", 31) : new Decimal(1));
         mult = mult.div((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
-
+        
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
@@ -144,7 +145,7 @@ addLayer("l", {
         21: {
             title: "Are you ready for 200?",
             description: "level gain is powered by 1.02",
-            cost: new Decimal(100),
+            cost() {return new Decimal(100).times((hasMilestone("s", 5) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -157,7 +158,7 @@ addLayer("l", {
         22: {
             title: "It's more powerful as it seems",
             description: "XP gain is powered by 1.03",
-            cost: new Decimal(102),
+            cost() {return new Decimal(102).times((hasMilestone("s", 5) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -170,7 +171,7 @@ addLayer("l", {
         23: {
             title: "Golden Mine",
             description: "Gold gain is powered by 1.05",
-            cost: new Decimal(104),
+            cost() {return new Decimal(104).times((hasMilestone("s", 5) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -183,7 +184,7 @@ addLayer("l", {
         24: {
             title: "Loot Loot Loot",
             description: "Loot gain base is powered by 2",
-            cost: new Decimal(106),
+            cost(){ return new Decimal(106).times((hasMilestone("s", 5) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -196,7 +197,7 @@ addLayer("l", {
         25: {
             title: "Loot Era",
             description: "Unlocks two buyable upgrades and loot gain base & xp gain is powered by 1.1",
-            cost: new Decimal(110),
+            cost() {return new Decimal(110).times((hasMilestone("s", 5) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -370,7 +371,9 @@ addLayer("l", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                player[this.layer].points = player[this.layer].points.sub(cost)	
+                if (!hasMilestone("s", 3)) {
+                    player[this.layer].points = player[this.layer].points.sub(cost);
+                }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
@@ -400,7 +403,9 @@ addLayer("l", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                player[this.layer].points = player[this.layer].points.sub(cost)	
+                if (!hasMilestone("s", 3)) {
+                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
                 player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
             },
@@ -411,8 +416,11 @@ addLayer("l", {
         if (hasMilestone('q', 7)) {
             generatePoints("l", diff * 0.5);
         }
-        if (hasUpgrade("r", 22)) {
-            let ticks = 10;
+        if (hasMilestone('s', 7)) {
+            generatePoints("l", diff);
+        }
+        if (hasUpgrade("r", 22) || hasMilestone("s", 3)) {
+            let ticks = (hasUpgrade("r", 22) * 10) + (hasMilestone("s", 3) * 10);
             if (layers.l.buyables[11].unlocked() && layers.l.buyables[11].canAfford()) {
                 layers.l.buyables[11].buy(ticks);
             }
@@ -421,6 +429,21 @@ addLayer("l", {
             }
         }
     },
+
+    automate() {
+        if (player["s"].autoBuyAll2) {
+            for (let x = 10; x <= 50; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    let z = x + y;
+                    if (!hasUpgrade("l", z) && canAffordUpgrade("l", z) && (hasMilestone("s", 4))
+                      && layers["l"].upgrades[z].unlocked()===true) {
+                        buyUpg("l", z);
+                    }
+                }
+            }
+        }
+    },
+
 
     layerShown(){return (hasUpgrade("g", 25) || player.l.best.gte(1))},
 })

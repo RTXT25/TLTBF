@@ -711,6 +711,60 @@ addLayer("q", {
         },
     },
    
+    automate() {
+    
+    },
+
+    update(diff) {
+        if (hasMilestone('s', 7)) {
+            generatePoints("q", diff);
+        }
+
+        if (hasMilestone("s", 6)) {
+            if (inChallenge("q", 11)) {
+                if (player.xp.points.gte(layers["q"].challenges[11].goal())) { 
+		            player["q"].challenges[11] += Math.min(1, 12 - challengeCompletions("q", 11));
+                }
+            }
+            if (inChallenge("q", 12)) {
+                if (player.xp.points.gte(layers["q"].challenges[12].goal())) {
+                    player["q"].challenges[12] += Math.min(1, 13 - challengeCompletions("q", 12));
+                }
+            }
+            if (inChallenge("q", 13)) {
+                if (player.points.gte(layers["q"].challenges[13].goal())) {
+                    player["q"].challenges[13] += Math.min(1, 12 - challengeCompletions("q", 13));
+                }
+            }
+            if (inChallenge("q", 14)) {
+                if (player.points.gte(layers["q"].challenges[14].goal())) {
+                    player["q"].challenges[14] += Math.min(1, 12 - challengeCompletions("q", 14));
+                }
+            }
+            if (inChallenge("q", 15)) {
+                if (player.points.gte(layers["q"].challenges[15].goal())) {
+                    player["q"].challenges[15] += Math.min(1, 12 - challengeCompletions("q", 15));
+                }
+            }
+            if (inChallenge("q", 16)) {
+                if (player.points.gte(layers["q"].challenges[16].goal())) {
+                    player["q"].challenges[16] += Math.min(1, 12 - challengeCompletions("q", 16));
+                }
+            }
+            if (inChallenge("q", 17)) {
+                if (player.points.gte(layers["q"].challenges[17].goal())) {
+                    player["q"].challenges[17] += Math.min(1, 12 - challengeCompletions("q", 17));
+                }
+            }
+            if (inChallenge("q", 18)) {
+                if (player.points.gte(layers["q"].challenges[18].goal())) {
+                    player["q"].challenges[18] += Math.min(1, 100 - challengeCompletions("q", 18));
+                }
+            }
+        }
+    },
+
+
     row: 1, // Row the layer is in on the tree (0 is the first row)
     hotkeys: [
     ],

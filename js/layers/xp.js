@@ -40,6 +40,8 @@ addLayer("xp", {
         
         bExp = Math.pow(bExp, buyableEffect("r", 11));
 
+        bExp *= layers["s"].effect2();
+
         if (inChallenge("q", 18)) {
            bExp = Math.log(bExp + 1) / Math.log(1000);
         }
@@ -90,6 +92,7 @@ addLayer("xp", {
         
         mult = mult.times((hasUpgrade("l", 51)) ? upgradeEffect("l", 51) : new Decimal(1));
 
+        mult = mult.times(layers["s"].milestones[0].effect());
         
         if (inChallenge("q", 11)) mult = mult.pow(challengeVar("q", 11));
         else {
@@ -127,7 +130,7 @@ addLayer("xp", {
             let softCapDivider = mult.log10().sub(getSCP.log10().sub(1)).pow(mult.log10().sub(getSCP.log10().sub(1)).div(250).plus(2));
             mult = mult.div(softCapDivider);
         }
-
+        
         
         return mult
     },
@@ -187,7 +190,7 @@ addLayer("xp", {
         15: {
             title: "Level to XP",
             description: "XP gain is multiplied by 1 + (level^2)/100",
-            cost() { return new Decimal(15).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(15).pow(layers.xp.costDecrement()).times((hasMilestone("s", 5) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -212,7 +215,7 @@ addLayer("xp", {
         22: {
             title: "Faster XP I",
             description: "Multiplies XP gain by 10",
-            cost() { return new Decimal(20).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(20).pow(layers.xp.costDecrement()).times((hasMilestone("s", 5) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -290,7 +293,7 @@ addLayer("xp", {
         32: {
             title: "Yeae, you reached 30!",
             description: "Gold gain is multiplied by (lv/10)+1",
-            cost() { return new Decimal(30).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(30).pow(layers.xp.costDecrement()).times((hasMilestone("s", 5) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -328,7 +331,7 @@ addLayer("xp", {
         35: {
             title: "So close",
             description: "Unlocks XP buyable upgrade and a new row of gold upgrades",
-            cost() { return new Decimal(39.9).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(39.9).pow(layers.xp.costDecrement()).times((hasMilestone("s", 5) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -442,7 +445,7 @@ addLayer("xp", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone("r", 1)) {
+                if (!hasMilestone("r", 1) && !hasMilestone("s", 3)) {
                     player[this.layer].points = player[this.layer].points.sub(cost);
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -452,15 +455,16 @@ addLayer("xp", {
     },
 
     update(diff) {
-        generatePoints("xp", diff * (buyableEffect("g", 11) + (hasMilestone("r", 0) ? 1 : 0)));
+        generatePoints("xp", new Decimal(diff).times(buyableEffect("g", 11).plus(hasMilestone("r", 0) ? 1 : 0).plus(hasMilestone("s", 2) ? 10 : 0)));
     },
 
     automate() {
-        if (player["q"].autoBuyXP) {
+        if (player["q"].autoBuyXP || player["s"].autoBuyAll2) {
             for (let x = 10; x <= 50; x += 10){ 
                 for (let y = 1; y <= 5; y++) {
                     let z = x + y;
-                    if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && hasMilestone("q", 1) && layers["xp"].upgrades[z].unlocked()===true) {
+                    if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && 
+                    (hasMilestone("q", 1) || hasMilestone("s", 4)) && layers["xp"].upgrades[z].unlocked()===true) {
                         buyUpg("xp", z);
                     }
                 }

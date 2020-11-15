@@ -36,6 +36,8 @@ addLayer("g", {
         }
 
         bExp = Math.pow(bExp, buyableEffect("r", 11));
+        
+        bExp *= layers["s"].effect2();
 
         if (inChallenge("q", 18)) {
             bExp = Math.log(bExp + 1) / Math.log(1000);
@@ -92,6 +94,7 @@ addLayer("g", {
 
         mult = mult.times((hasUpgrade("l", 52)) ? upgradeEffect("l", 52) : new Decimal(1));
 
+        mult = mult.times(layers["s"].milestones[0].effect());
         
         if (inChallenge("q", 11)) mult = mult = mult.pow(challengeVar("q", 11));
         else {
@@ -129,6 +132,7 @@ addLayer("g", {
             let softCapDivider = mult.log10().sub(getSCP.log10().sub(1)).pow(mult.log10().sub(getSCP.log10().sub(1)).div(250).plus(2));
             mult = mult.div(softCapDivider);
         }
+
 
         return mult
     },
@@ -244,7 +248,7 @@ addLayer("g", {
         15: {
             title: "You can't buy this once",
             description: "Unlocks first buyable upgrade and a new row of xp upgrades",
-            cost() { return new Decimal(28).pow(layers.g.costDecrement()) },
+            cost() { return new Decimal(28).pow(layers.g.costDecrement()).times((hasMilestone("s", 5) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -382,7 +386,7 @@ addLayer("g", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone("r", 1)) {
+                if (!hasMilestone("r", 1) && !hasMilestone("s", 3)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -392,12 +396,12 @@ addLayer("g", {
     },
 
     update(diff) {
-        generatePoints("g", diff * (buyableEffect("xp", 11) + (hasMilestone("r", 0) ? 1 : 0)));
-        if (hasMilestone("r", 1)) {
-            let ticks = 1;
-            if (hasMilestone("q", 5)) ticks = 20;
-            if (hasMilestone("q", 14)) ticks = 1000;
-            if (hasMilestone("q", 15)) ticks = 100000;
+        generatePoints("g", new Decimal(diff).times(buyableEffect("xp", 11).plus(hasMilestone("r", 0) ? 1 : 0).plus(hasMilestone("s", 2) ? 10 : 0)));
+        if (hasMilestone("r", 1) || hasMilestone("s", 3)) {
+            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 3) * 10);
+            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 3) * 10);
+            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 3) * 10);
+            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 3) * 10);
             if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy(ticks);
             }
@@ -408,11 +412,12 @@ addLayer("g", {
     },
 
     automate() {
-        if (player["q"].autoBuyGold) {
+        if (player["q"].autoBuyGold || player["s"].autoBuyAll2) {
             for (let x = 10; x <= 30; x += 10){ 
                 for (let y = 1; y <= 5; y++) {
                     var z = x + y
-                    if (!hasUpgrade("g", z) && canAffordUpgrade("g", z) && hasMilestone("q", 2) && layers["g"].upgrades[z].unlocked()===true) {
+                    if (!hasUpgrade("g", z) && canAffordUpgrade("g", z) && 
+                    (hasMilestone("q", 2) || hasMilestone("s", 4)) && layers["g"].upgrades[z].unlocked()===true) {
                         buyUpg("g", z);
                     }
                 }
