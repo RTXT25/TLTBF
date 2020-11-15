@@ -762,6 +762,33 @@ addLayer("q", {
                 }
             }
         }
+
+        if (player.q.points.lte(1)) {
+            if (inChallenge("q", 11)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 12)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 13)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 14)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 15)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 16)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 17)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 18)) {
+                delete player["q"].activeChallenge;
+            }
+        }
     },
 
 
