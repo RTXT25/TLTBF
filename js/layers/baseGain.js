@@ -10,6 +10,7 @@ function getPointGen() {
     if (hasMilestone("s", 9)) {
         maxLevel = maxLevel.plus(layers["s"].milestones[9].effect());
     }
+    maxLevel = maxLevel.plus(layers.q.challenges[19].rewardEffect());
 
     let baseGain = new Decimal(1);
     if (hasUpgrade("xp", 11)) {
@@ -56,6 +57,9 @@ function getPointGen() {
     
     baseGain = baseGain.times((hasUpgrade("xp", 45)) ? new Decimal(1000) : new Decimal(1));
 
+    
+    baseGain = baseGain.times(layers["s"].milestones[0].effect());
+
     if (inChallenge("q", 11)) {
         baseGain = baseGain.pow(challengeVar("q", 11));
     }
@@ -83,12 +87,19 @@ function getPointGen() {
         baseGain = baseGain.plus(1).log(1000).plus(1).log(1000);
         if ((format(tmp["xp"].resetGain) == "NaN")) baseGain = new Decimal(1);
     }
+    
+    if (inChallenge("q", 19)) {
+        baseGain = baseGain.plus(1).log(1000000).plus(1).log(1000000).plus(1).log(1000000);
+        if ((format(tmp["xp"].resetGain) == "NaN")) baseGain = new Decimal(1);
+    }
+
 
     if (hasUpgrade("r", 15)) {
         baseGain = baseGain.times(2);
     }
 
-    baseGain = baseGain.times(layers["s"].milestones[0].effect());
+
+
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);
@@ -106,9 +117,12 @@ function getPointGen() {
 
     powPower = powPower.pow((buyableEffect("r", 12)));
 
+
     let gain1 = Decimal.div(baseGain , Decimal.pow(powPower, player.points));
     let exponentLevelGainLimitOnce = baseGain.plus(1).log(powPower);
     let newPowPower = powPower.add(player.points.div(new Decimal(100))).sub(30);
+
+
 
     newPowPower = newPowPower.sub(new Decimal(1)).times((new Decimal(1)).sub(layers.q.challenges[12].rewardEffect())).plus(new Decimal(1));
 

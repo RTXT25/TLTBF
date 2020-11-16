@@ -43,6 +43,10 @@ addLayer("g", {
             bExp = Math.log(bExp + 1) / Math.log(1000);
         }
 
+        if (inChallenge("q", 19)) {
+           bExp = Math.log((Math.log(bExp + 1) / Math.log(1000000)) + 1) / Math.log(1000000);
+        }
+
         return bExp;
 
     },
@@ -116,6 +120,11 @@ addLayer("g", {
         
         if (inChallenge("q", 18)) {
             mult = mult.plus(1).log(1000).plus(1).log(1000);
+            if (isNaN(mult)) mult = new Decimal(1);
+        }
+        
+        if (inChallenge("q", 19)) {
+            mult = mult.plus(1).log(1000000).plus(1).log(1000000).plus(1).log(1000000);
             if (isNaN(mult)) mult = new Decimal(1);
         }
 

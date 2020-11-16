@@ -616,6 +616,132 @@ addLayer("q", {
             rewardDescription: "Last Gain!!!",
             onComplete() {} // Called when you complete the challenge
         },
+        19: {
+            name: "Triple LOG",
+            completionLimit: 100,
+            challengeDescription() {
+                return "Exp, Gold and Level gain are set to log1m(log1m(log1m(gain +1) + 1) + 1). " + 
+                "Their base exponents are also set to log1m(log1m(exp + 1) + 1)" + "<br>"+challengeCompletions(this.layer, this.id)
+                 + "/" + this.completionLimit + " completions";
+            },
+            unlocked() { return (hasMilestone("s", 15) || inChallenge("q", 19)) },
+            goal(){
+                if (challengeCompletions(this.layer, this.id) == 0) return new Decimal(12);
+                if (challengeCompletions(this.layer, this.id) == 1) return new Decimal(13);
+                if (challengeCompletions(this.layer, this.id) == 2) return new Decimal(14);
+                if (challengeCompletions(this.layer, this.id) == 3) return new Decimal(15);
+                if (challengeCompletions(this.layer, this.id) == 4) return new Decimal(16);
+                if (challengeCompletions(this.layer, this.id) == 5) return new Decimal(17);
+                if (challengeCompletions(this.layer, this.id) == 6) return new Decimal(18);
+                if (challengeCompletions(this.layer, this.id) == 7) return new Decimal(19);
+                if (challengeCompletions(this.layer, this.id) == 8) return new Decimal(20);
+                if (challengeCompletions(this.layer, this.id) == 9) return new Decimal(21);
+                if (challengeCompletions(this.layer, this.id) == 10) return new Decimal(24);
+                if (challengeCompletions(this.layer, this.id) == 11) return new Decimal(25);
+                if (challengeCompletions(this.layer, this.id) == 12) return new Decimal(26);
+                if (challengeCompletions(this.layer, this.id) == 13) return new Decimal(27);
+                if (challengeCompletions(this.layer, this.id) == 14) return new Decimal(28);
+                if (challengeCompletions(this.layer, this.id) == 15) return new Decimal(29);
+                if (challengeCompletions(this.layer, this.id) == 16) return new Decimal(30);
+                if (challengeCompletions(this.layer, this.id) == 17) return new Decimal(31);
+                if (challengeCompletions(this.layer, this.id) == 18) return new Decimal(32);
+                if (challengeCompletions(this.layer, this.id) == 19) return new Decimal(34);
+                if (challengeCompletions(this.layer, this.id) == 20) return new Decimal(36);
+                if (challengeCompletions(this.layer, this.id) == 21) return new Decimal(38);
+                if (challengeCompletions(this.layer, this.id) == 22) return new Decimal(40);
+                if (challengeCompletions(this.layer, this.id) == 23) return new Decimal(42);
+                if (challengeCompletions(this.layer, this.id) == 24) return new Decimal(44);
+                if (challengeCompletions(this.layer, this.id) == 25) return new Decimal(46);
+                if (challengeCompletions(this.layer, this.id) == 26) return new Decimal(48);
+                if (challengeCompletions(this.layer, this.id) == 27) return new Decimal(50);
+                if (challengeCompletions(this.layer, this.id) == 28) return new Decimal(55);
+                if (challengeCompletions(this.layer, this.id) == 29) return new Decimal(60);
+                if (challengeCompletions(this.layer, this.id) == 30) return new Decimal(65);
+                if (challengeCompletions(this.layer, this.id) == 31) return new Decimal(70);
+                if (challengeCompletions(this.layer, this.id) == 32) return new Decimal(75);
+                if (challengeCompletions(this.layer, this.id) == 33) return new Decimal(80);
+                if (challengeCompletions(this.layer, this.id) == 34) return new Decimal(85);
+                if (challengeCompletions(this.layer, this.id) == 35) return new Decimal(90);
+                if (challengeCompletions(this.layer, this.id) == 36) return new Decimal(95);
+                if (challengeCompletions(this.layer, this.id) == 37) return new Decimal(100);
+                if (challengeCompletions(this.layer, this.id) == 38) return new Decimal(105);
+                if (challengeCompletions(this.layer, this.id) == 39) return new Decimal(110);
+                if (challengeCompletions(this.layer, this.id) == 40) return new Decimal(115);
+                if (challengeCompletions(this.layer, this.id) == 41) return new Decimal(120);
+                if (challengeCompletions(this.layer, this.id) == 42) return new Decimal(125);
+                if (challengeCompletions(this.layer, this.id) == 43) return new Decimal(130);
+                if (challengeCompletions(this.layer, this.id) == 44) return new Decimal(135);
+                if (challengeCompletions(this.layer, this.id) == 45) return new Decimal(140);
+                if (challengeCompletions(this.layer, this.id) == 46) return new Decimal(145);
+                if (challengeCompletions(this.layer, this.id) == 47) return new Decimal(150);
+                if (challengeCompletions(this.layer, this.id) == 48) return new Decimal(155);
+                if (challengeCompletions(this.layer, this.id) == 49) return new Decimal(160);
+                if (challengeCompletions(this.layer, this.id) == 50) return new Decimal(165);
+                if (challengeCompletions(this.layer, this.id) == 51) return new Decimal(170);
+                if (challengeCompletions(this.layer, this.id) == 52) return new Decimal(175);
+                if (challengeCompletions(this.layer, this.id) == 53) return new Decimal(180);
+                if (challengeCompletions(this.layer, this.id) == 54) return new Decimal(185);
+                if (challengeCompletions(this.layer, this.id) == 55) return new Decimal(190);
+                if (challengeCompletions(this.layer, this.id) == 56) return new Decimal(195);
+                if (challengeCompletions(this.layer, this.id) == 57) return new Decimal(200);
+                if (challengeCompletions(this.layer, this.id) == 58) return new Decimal(205);
+                if (challengeCompletions(this.layer, this.id) == 59) return new Decimal(210);
+                if (challengeCompletions(this.layer, this.id) == 60) return new Decimal(215);
+                if (challengeCompletions(this.layer, this.id) == 61) return new Decimal(220);
+                if (challengeCompletions(this.layer, this.id) == 62) return new Decimal(225);
+                if (challengeCompletions(this.layer, this.id) == 63) return new Decimal(230);
+                if (challengeCompletions(this.layer, this.id) == 64) return new Decimal(235);
+                if (challengeCompletions(this.layer, this.id) == 65) return new Decimal(240);
+                if (challengeCompletions(this.layer, this.id) == 66) return new Decimal(245);
+                if (challengeCompletions(this.layer, this.id) == 67) return new Decimal(250);
+                if (challengeCompletions(this.layer, this.id) == 68) return new Decimal(255);
+                if (challengeCompletions(this.layer, this.id) == 69) return new Decimal(260);
+                if (challengeCompletions(this.layer, this.id) == 70) return new Decimal(265);
+                if (challengeCompletions(this.layer, this.id) == 71) return new Decimal(270);
+                if (challengeCompletions(this.layer, this.id) == 72) return new Decimal(275);
+                if (challengeCompletions(this.layer, this.id) == 73) return new Decimal(280);
+                if (challengeCompletions(this.layer, this.id) == 74) return new Decimal(285);
+                if (challengeCompletions(this.layer, this.id) == 75) return new Decimal(290);
+                if (challengeCompletions(this.layer, this.id) == 76) return new Decimal(295);
+                if (challengeCompletions(this.layer, this.id) == 77) return new Decimal(300);
+                if (challengeCompletions(this.layer, this.id) == 78) return new Decimal(350);
+                if (challengeCompletions(this.layer, this.id) == 79) return new Decimal(400);
+                if (challengeCompletions(this.layer, this.id) == 80) return new Decimal(450);
+                if (challengeCompletions(this.layer, this.id) == 81) return new Decimal(500);
+                if (challengeCompletions(this.layer, this.id) == 82) return new Decimal(550);
+                if (challengeCompletions(this.layer, this.id) == 83) return new Decimal(600);
+                if (challengeCompletions(this.layer, this.id) == 84) return new Decimal(650);
+                if (challengeCompletions(this.layer, this.id) == 85) return new Decimal(700);
+                if (challengeCompletions(this.layer, this.id) == 86) return new Decimal(750);
+                if (challengeCompletions(this.layer, this.id) == 87) return new Decimal(800);
+                if (challengeCompletions(this.layer, this.id) == 88) return new Decimal(850);
+                if (challengeCompletions(this.layer, this.id) == 89) return new Decimal(900);
+                if (challengeCompletions(this.layer, this.id) == 90) return new Decimal(950);
+                if (challengeCompletions(this.layer, this.id) == 91) return new Decimal(1000);
+                if (challengeCompletions(this.layer, this.id) == 92) return new Decimal(1050);
+                if (challengeCompletions(this.layer, this.id) == 93) return new Decimal(1100);
+                if (challengeCompletions(this.layer, this.id) == 94) return new Decimal(1200);
+                if (challengeCompletions(this.layer, this.id) == 95) return new Decimal(1300);
+                if (challengeCompletions(this.layer, this.id) == 96) return new Decimal(1500);
+                if (challengeCompletions(this.layer, this.id) == 97) return new Decimal(2000);
+                if (challengeCompletions(this.layer, this.id) == 98) return new Decimal(3000);
+                if (challengeCompletions(this.layer, this.id) == 99) return new Decimal(1000000);
+                if (challengeCompletions(this.layer, this.id) == 100) return new Decimal(1000000);
+            },
+            currencyDisplayName: "level", // Use if using a nonstandard currency
+            currencyInternalName: "points", // Use if using a nonstandard currency
+            currencyLayer: "", // Leave empty if not in a layer
+            rewards() {
+                return (new Decimal(challengeCompletions(this.layer, this.id)).pow(2).times(1000));
+            },
+            rewardEffect() {
+                let rew = new Decimal(this.rewards());
+                return rew;
+            },
+            rewardDisplay() { return  "Max level is increased by " + format(this.rewardEffect()) },
+            rewardDescription: "Now really Last Gain!!! (Or not)",
+            onComplete() {} // Called when you complete the challenge
+        },
     },
 
     milestones: {
@@ -814,6 +940,14 @@ addLayer("q", {
                     delete player["q"].activeChallenge;
                 }
             }
+            if (inChallenge("q", 19)) {
+                if (player.points.gte(layers["q"].challenges[19].goal())) {
+                    player["q"].challenges[19] += Math.min(1, 100 - challengeCompletions("q", 19));
+                }
+                if (challengeCompletions("q", 19) >= 100) {
+                    delete player["q"].activeChallenge;
+                }
+            }
         }
 
         if (player.q.points.lte(1)) {
@@ -839,6 +973,9 @@ addLayer("q", {
                 delete player["q"].activeChallenge;
             }
             if (inChallenge("q", 18)) {
+                delete player["q"].activeChallenge;
+            }
+            if (inChallenge("q", 19)) {
                 delete player["q"].activeChallenge;
             }
         }

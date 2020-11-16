@@ -45,6 +45,10 @@ addLayer("xp", {
         if (inChallenge("q", 18)) {
            bExp = Math.log(bExp + 1) / Math.log(1000);
         }
+
+        if (inChallenge("q", 19)) {
+           bExp = Math.log((Math.log(bExp + 1) / Math.log(1000000)) + 1) / Math.log(1000000);
+        }
         
         return bExp;
 
@@ -116,6 +120,11 @@ addLayer("xp", {
             mult = mult.plus(1).log(1000).plus(1).log(1000).plus(1);
             if (isNaN(mult)) mult = new Decimal(1);
         }
+        
+        if (inChallenge("q", 19)) {
+            mult = mult.plus(1).log(1000000).plus(1).log(1000000).plus(1).log(1000000);
+            if (isNaN(mult)) mult = new Decimal(1);
+        }
 
         if (inChallenge("q", 13) || inChallenge("q", 17)) mult = mult.times(new Decimal("1e-9999999999").pow(new Decimal("1e9999999999")));
 
@@ -131,11 +140,16 @@ addLayer("xp", {
             mult = mult.div(softCapDivider);
         }
         
-        
         return mult
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         let expon = buyableEffect("l", 11);
+
+        if (inChallenge("q", 19)) {
+            expon = expon.plus(1).log(1000000);
+            if (isNaN(expon)) expon = new Decimal(1);
+        }
+        
         return expon;
     },
     row: 0, // Row the layer is in on the tree (0 is the first row)
