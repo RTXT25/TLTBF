@@ -716,49 +716,102 @@ addLayer("q", {
     },
 
     update(diff) {
+        let fast = diff;
+        if (hasMilestone("s", 12)) {
+            fast = fast * 2;
+        }
+        if (hasMilestone("s", 13)) {
+            fast = fast * layers["s"].milestones[8].effect();
+        }
         if (hasMilestone('s', 7)) {
             generatePoints("q", diff);
         }
 
+        if (hasMilestone("s", 11)) {
+            player.qProgress += fast;
+            if (player.qProgress >= 1) {
+                let val = Math.floor(player.qProgress);
+                player.qProgress -= val;
+                player["q"].challenges[18] += Math.min(val, 100 - challengeCompletions("q", 18));
+            }
+        }
+
         if (hasMilestone("s", 6)) {
+            let comps = 1;
+            if (hasMilestone("s", 8)) {
+                comps = layers["s"].milestones[8].effect();
+            }
+            if (hasMilestone("s", 10)) {
+                player["q"].challenges[11] = 12;
+                player["q"].challenges[12] = 13;
+                player["q"].challenges[13] = 12;
+                player["q"].challenges[14] = 12;
+                player["q"].challenges[15] = 12;
+                player["q"].challenges[16] = 12;
+                player["q"].challenges[17] = 12;
+            }
             if (inChallenge("q", 11)) {
                 if (player.xp.points.gte(layers["q"].challenges[11].goal())) { 
-		            player["q"].challenges[11] += Math.min(1, 12 - challengeCompletions("q", 11));
+		            player["q"].challenges[11] += Math.min(comps, 12 - challengeCompletions("q", 11));
+                }
+                if (challengeCompletions("q", 11) >= 12) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 12)) {
                 if (player.xp.points.gte(layers["q"].challenges[12].goal())) {
-                    player["q"].challenges[12] += Math.min(1, 13 - challengeCompletions("q", 12));
+                    player["q"].challenges[12] += Math.min(comps, 13 - challengeCompletions("q", 12));
+                }
+                if (challengeCompletions("q", 12) >= 13) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 13)) {
                 if (player.points.gte(layers["q"].challenges[13].goal())) {
-                    player["q"].challenges[13] += Math.min(1, 12 - challengeCompletions("q", 13));
+                    player["q"].challenges[13] += Math.min(comps, 12 - challengeCompletions("q", 13));
+                }
+                if (challengeCompletions("q", 13) >= 12) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 14)) {
                 if (player.points.gte(layers["q"].challenges[14].goal())) {
-                    player["q"].challenges[14] += Math.min(1, 12 - challengeCompletions("q", 14));
+                    player["q"].challenges[14] += Math.min(comps, 12 - challengeCompletions("q", 14));
+                }
+                if (challengeCompletions("q", 14) >= 12) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 15)) {
                 if (player.points.gte(layers["q"].challenges[15].goal())) {
-                    player["q"].challenges[15] += Math.min(1, 12 - challengeCompletions("q", 15));
+                    player["q"].challenges[15] += Math.min(comps, 12 - challengeCompletions("q", 15));
+                }
+                if (challengeCompletions("q", 15) >= 12) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 16)) {
                 if (player.points.gte(layers["q"].challenges[16].goal())) {
-                    player["q"].challenges[16] += Math.min(1, 12 - challengeCompletions("q", 16));
+                    player["q"].challenges[16] += Math.min(comps, 12 - challengeCompletions("q", 16));
+                }
+                if (challengeCompletions("q", 16) >= 12) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 17)) {
                 if (player.points.gte(layers["q"].challenges[17].goal())) {
-                    player["q"].challenges[17] += Math.min(1, 12 - challengeCompletions("q", 17));
+                    player["q"].challenges[17] += Math.min(comps, 12 - challengeCompletions("q", 17));
+                }
+                if (challengeCompletions("q", 17) >= 12) {
+                    delete player["q"].activeChallenge;
                 }
             }
             if (inChallenge("q", 18)) {
                 if (player.points.gte(layers["q"].challenges[18].goal())) {
-                    player["q"].challenges[18] += Math.min(1, 100 - challengeCompletions("q", 18));
+                    player["q"].challenges[18] += Math.min(comps, 100 - challengeCompletions("q", 18));
+                }
+                if (challengeCompletions("q", 18) >= 100) {
+                    delete player["q"].activeChallenge;
                 }
             }
         }

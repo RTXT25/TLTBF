@@ -7,6 +7,9 @@ function getPointGen() {
     
     player.devSpeed = 1;
     let maxLevel = new Decimal(1000000).plus(0.3);
+    if (hasMilestone("s", 9)) {
+        maxLevel = maxLevel.plus(layers["s"].milestones[9].effect());
+    }
 
     let baseGain = new Decimal(1);
     if (hasUpgrade("xp", 11)) {

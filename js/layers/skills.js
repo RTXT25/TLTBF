@@ -149,7 +149,76 @@ addLayer("s", {
             done() {return player[this.layer].points.gte(10)}, // Used to determine when to give the milestone
             effectDescription: "You get +100% of your loot, quests and rubies / second",
         },
+        8: {requirementDescription: "Faster completions (Get 13 skills)",
+            unlocked() {return hasMilestone("s", 7)},
+            done() {return player[this.layer].points.gte(13)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(1).plus(player[this.layer].total.div(10).pow(2).floor());
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Gain more completions based on your current skills. Up to"+
+            " 1 + floor((skills/10)^2) = "+eff;
+            },
+        },
+        9: {requirementDescription: "Little increase (Get 16 skills)",
+            unlocked() {return hasMilestone("s", 8)},
+            done() {return player[this.layer].points.gte(16)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = player[this.layer].total.pow(2);
+                return eff.round();
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Max level is increased by total skills squared: "+
+            " +"+eff;
+            },
+        },
+        10: {requirementDescription: "No worries about 7 quests (Get 20 skills)",
+            unlocked() {return hasMilestone("s", 9)},
+            done() {return player[this.layer].points.gte(20)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "First seven quest challenge completions are maxed from the beginning.";
+            },
+        },
+        11: {requirementDescription: "Passive quest? (Get 25 skills)",
+            unlocked() {return hasMilestone("s", 10)},
+            done() {return player[this.layer].points.gte(25)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Get 1 quest C8 completion per second (even if you're not in challenge)";
+            },
+        },
+        12: {requirementDescription: "Passive quest 2? (Get 30 skills)",
+            unlocked() {return hasMilestone("s", 11)},
+            done() {return player[this.layer].points.gte(30)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Previous milestone effect is doubled";
+            },
+        },
+        13: {requirementDescription: "Do we need previous layers? (Get 40 skills)",
+            unlocked() {return hasMilestone("s", 12)},
+            done() {return player[this.layer].points.gte(40)}, // Used to determine when to give the milestone
+            effectDescription() {
+                let eff = layers[this.layer].milestones[8].effect().times(2);
+                return "C8/sec is multiplied by 9th milestone effect value: "+eff;
+            },
+        },
+        14: {requirementDescription: "Skill Automation? (Get 50 skills)",
+            unlocked() {return hasMilestone("s", 13)},
+            done() {return player[this.layer].points.gte(50)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Get 1% of skill gain per second. ";
+            },
+        },
     },
+
+    update(diff) {
+        if (hasMilestone("s", 14)) {
+            generatePoints("s", new Decimal(diff).div(100));
+        }
+    },
+
     row: 2, // Row the layer is in on the tree (0 is the first row)
     branches: [["q", 2], ["l", 2], ["r", 2]],
 

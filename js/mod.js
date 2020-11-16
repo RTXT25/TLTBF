@@ -12,8 +12,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1.1",
-	name: "Only 2 firts tiers",
+	num: "0.1.2",
+	name: "Only 2 firts tiers and a bit of third",
 }
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
@@ -32,6 +32,7 @@ function canGenPoints(){
 // You can add non-layer related variables that should to into "player" and be saved here, along with default values
 function addedPlayerData() { return {
 	devSpeed : 1,
+	qProgress : 0,
 }}
 
 // Display extra things at the top of the page
