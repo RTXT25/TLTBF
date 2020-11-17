@@ -145,7 +145,7 @@ addLayer("l", {
         21: {
             title: "Are you ready for 200?",
             description: "level gain is powered by 1.02",
-            cost() {return new Decimal(100).times((hasMilestone("s", 5) ? 0 : 1))},
+            cost() {return new Decimal(100).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -158,7 +158,7 @@ addLayer("l", {
         22: {
             title: "It's more powerful as it seems",
             description: "XP gain is powered by 1.03",
-            cost() {return new Decimal(102).times((hasMilestone("s", 5) ? 0 : 1))},
+            cost() {return new Decimal(102).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -171,7 +171,7 @@ addLayer("l", {
         23: {
             title: "Golden Mine",
             description: "Gold gain is powered by 1.05",
-            cost() {return new Decimal(104).times((hasMilestone("s", 5) ? 0 : 1))},
+            cost() {return new Decimal(104).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -184,7 +184,7 @@ addLayer("l", {
         24: {
             title: "Loot Loot Loot",
             description: "Loot gain base is powered by 2",
-            cost(){ return new Decimal(106).times((hasMilestone("s", 5) ? 0 : 1))},
+            cost(){ return new Decimal(106).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -197,7 +197,7 @@ addLayer("l", {
         25: {
             title: "Loot Era",
             description: "Unlocks two buyable upgrades and loot gain base & xp gain is powered by 1.1",
-            cost() {return new Decimal(110).times((hasMilestone("s", 5) ? 0 : 1))},
+            cost() {return new Decimal(110).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -371,7 +371,7 @@ addLayer("l", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone("s", 3)) {
+                if (!hasMilestone("s", 4)) {
                     player[this.layer].points = player[this.layer].points.sub(cost);
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -403,7 +403,7 @@ addLayer("l", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone("s", 3)) {
+                if (!hasMilestone("s", 4)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -419,8 +419,8 @@ addLayer("l", {
         if (hasMilestone('s', 7)) {
             generatePoints("l", diff);
         }
-        if (hasUpgrade("r", 22) || hasMilestone("s", 3)) {
-            let ticks = (hasUpgrade("r", 22) * 10) + (hasMilestone("s", 3) * 10);
+        if (hasUpgrade("r", 22) || hasMilestone("s", 4)) {
+            let ticks = (hasUpgrade("r", 22) * 10) + (hasMilestone("s", 4) * 10);
             if (layers.l.buyables[11].unlocked() && layers.l.buyables[11].canAfford()) {
                 layers.l.buyables[11].buy(ticks);
             }

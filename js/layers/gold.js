@@ -257,7 +257,7 @@ addLayer("g", {
         15: {
             title: "You can't buy this once",
             description: "Unlocks first buyable upgrade and a new row of xp upgrades",
-            cost() { return new Decimal(28).pow(layers.g.costDecrement()).times((hasMilestone("s", 5) ? 0 : 1)) },
+            cost() { return new Decimal(28).pow(layers.g.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -395,7 +395,7 @@ addLayer("g", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone("r", 1) && !hasMilestone("s", 3)) {
+                if (!hasMilestone("r", 1) && !hasMilestone("s", 4)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -405,12 +405,12 @@ addLayer("g", {
     },
 
     update(diff) {
-        generatePoints("g", new Decimal(diff).times(buyableEffect("xp", 11).plus(hasMilestone("r", 0) ? 1 : 0).plus(hasMilestone("s", 2) ? 10 : 0)));
-        if (hasMilestone("r", 1) || hasMilestone("s", 3)) {
-            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 3) * 10);
-            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 3) * 10);
-            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 3) * 10);
-            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 3) * 10);
+        generatePoints("g", new Decimal(diff).times(buyableEffect("xp", 11).plus(hasMilestone("r", 0) ? 1 : 0).plus(hasMilestone("s", 3) ? 10 : 0)));
+        if (hasMilestone("r", 1) || hasMilestone("s", 4)) {
+            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 4) * 10);
+            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 4) * 10);
+            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10);
+            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10);
             if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy(ticks);
             }

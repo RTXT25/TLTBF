@@ -49,6 +49,7 @@ addLayer("r", {
             baseExp /= 2;
         }
         baseExp = baseExp / layers.q.challenges[18].rewardEffect();
+        baseExp /= layers["s"].effect();
         return baseExp;
     }, // Prestige currency exponent
     base: 2500,
@@ -197,7 +198,7 @@ addLayer("r", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone('r', 6) && !hasMilestone("s", 3)) {
+                if (!hasMilestone('r', 6) && !hasMilestone("s", 4)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -233,7 +234,7 @@ addLayer("r", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone('r', 6) && !hasMilestone("s", 3)) {
+                if (!hasMilestone('r', 6) && !hasMilestone("s", 4)) {
                     player[this.layer].points = player[this.layer].points.sub(cost)	
                 }
                 player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
@@ -243,8 +244,8 @@ addLayer("r", {
     },
 
     update(diff) {
-        if (hasMilestone('r', 6) || hasMilestone("s", 3)) {
-            let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 3) * 10);;
+        if (hasMilestone('r', 6) || hasMilestone("s", 4)) {
+            let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10);;
             if (layers.r.buyables[11].unlocked() && layers.r.buyables[11].canAfford()) {
                 layers.r.buyables[11].buy(ticks);
             }

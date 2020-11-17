@@ -35,6 +35,7 @@ addLayer("q", {
         if (hasMilestone('q', 11)) baseExp /= 1.1;
         if (hasMilestone('q', 12)) baseExp /= 1.1;
         baseExp = baseExp / layers.q.challenges[18].rewardEffect();
+        baseExp /= layers["s"].effect();
         return baseExp;
     }, // Prestige currency exponent
     base: 1e60,
@@ -862,7 +863,7 @@ addLayer("q", {
             }
         }
 
-        if (hasMilestone("s", 6)) {
+        if (hasMilestone("s", 1)) {
             let comps = 1;
             if (hasMilestone("s", 8)) {
                 comps = layers["s"].milestones[8].effect();

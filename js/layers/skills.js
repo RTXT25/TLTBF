@@ -21,7 +21,8 @@ addLayer("s", {
     effectDescription() {
         eff = this.effect();
         eff2 = this.effect2();
-        return "Skills can make you level up and complete first two layers faster. Total S. divides loot exp by "+format(eff)+
+        return "Skills can make you level up and complete first two layers faster. Total S. divides loot,"+
+        " quests and ruby exp by "+format(eff)+
         ". Multiplies XP and gold exponents by "+format(eff2)+". Needs 100 last quest challenge competitions for skill prestige."
     },
     color: "#FFBD4B",
@@ -37,7 +38,7 @@ addLayer("s", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        let baseExp = 4;
+        let baseExp = 1.5;
 
         return baseExp;
     }, // Prestige currency exponent
@@ -64,7 +65,7 @@ addLayer("s", {
                 let eff = new Decimal(1);
                 let base = new Decimal(2);
                 if (hasMilestone("s", 1)) {
-                    base = layers[this.layer].milestones[1].effect();
+                    base = layers[this.layer].milestones[2].effect();
                 }
                 for (var i = 1 ; i <= 5 ; ++i) {
                     for (var j = 1 ; j <= 5 ; ++j) {
@@ -90,9 +91,9 @@ addLayer("s", {
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                if (hasMilestone("s", 1)) {
+                if (hasMilestone("s", 2)) {
                     return "You can progress faster. Multiplies xp, gold and level gain by "+
-                    format(layers[this.layer].milestones[1].effect())+"^(total_upgrades). Now: x"+format(eff);
+                    format(layers[this.layer].milestones[2].effect())+"^(total_upgrades). Now: x"+format(eff);
                 }
                 else {
                     return "You can progress faster. Multiplies xp, gold and level gain by "
@@ -100,49 +101,49 @@ addLayer("s", {
                 }
             },
         },
-        1: {requirementDescription: "Even better boost (Get 2 skills)",
+        1: {requirementDescription: "Yeah. You waited for it (Get 2 skills)",
             unlocked() {return hasMilestone("s", 0)},
             done() {return player[this.layer].points.gte(2)}, // Used to determine when to give the milestone
+            effectDescription: "Autocomplete quest challenges when you reach the goal.",
+        },
+        2: {requirementDescription: "Even better boost (Get 3 skills)",
+            unlocked() {return hasMilestone("s", 1)},
+            done() {return player[this.layer].points.gte(3)}, // Used to determine when to give the milestone
             effect() {
                 let eff = new Decimal(1).plus(player[this.layer].total.pow(0.4));
                 return eff;
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                return "Previous milestone bonus base is now based on your total skills. Now: "+format(eff);
+                return "First milestone bonus base is now based on your total skills. Now: "+format(eff);
             },
         },
-        2: {requirementDescription: "Lol (Get 3 skills)",
-            unlocked() {return hasMilestone("s", 1)},
-            done() {return player[this.layer].points.gte(3)}, // Used to determine when to give the milestone
+        3: {requirementDescription: "Lol (Get 4 skills)",
+            unlocked() {return hasMilestone("s", 2)},
+            done() {return player[this.layer].points.gte(4)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Gain 1000% of xp and gold gain / sec from the beginning";
             },
         },
-        3: {requirementDescription: "No need to buy buyables (Get 4 skills)",
-            unlocked() {return hasMilestone("s", 2)},
-            done() {return player[this.layer].points.gte(4)}, // Used to determine when to give the milestone
+        4: {requirementDescription: "No need to buy buyables (Get 5 skills)",
+            unlocked() {return hasMilestone("s", 3)},
+            done() {return player[this.layer].points.gte(5)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All 1,2nd layers buyables cost nothing and autobuys +10 of them.";
             },
         },
-        4: {requirementDescription: "Era of automation (Get 6 skills)",
+        5: {requirementDescription: "Era of automation (Get 7 skills)",
             toggles: [
                 ["s", "autoBuyAll2"]
             ],
-            unlocked() {return hasMilestone("s", 3)},
-            done() {return player[this.layer].points.gte(6)}, // Used to determine when to give the milestone
-            effectDescription: "Autobuys all prev. layer upgrades now. You don't have to bother about them anymore.",
-        },
-        5: {requirementDescription: "No more challenge corruptions (Get 7 skills)",
             unlocked() {return hasMilestone("s", 4)},
             done() {return player[this.layer].points.gte(7)}, // Used to determine when to give the milestone
-            effectDescription: "All upgrades that cost levels are free now.",
+            effectDescription: "Autobuys all prev. layer upgrades now. You don't have to bother about them anymore.",
         },
-        6: {requirementDescription: "Yeah. You waited for it (Get 8 skills)",
+        6: {requirementDescription: "No more challenge corruptions (Get 8 skills)",
             unlocked() {return hasMilestone("s", 5)},
             done() {return player[this.layer].points.gte(8)}, // Used to determine when to give the milestone
-            effectDescription: "Autocomplete quest challenges when you reach the goal.",
+            effectDescription: "All upgrades that cost levels are free now.",
         },
         7: {requirementDescription: "Why should I even prestige? (Get 10 skills)",
             unlocked() {return hasMilestone("s", 6)},
@@ -171,8 +172,11 @@ addLayer("s", {
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
+                if (eff.gte(10000)) {
+                    eff = eff.div(10000).pow(0.1).times(10000);
+                }
                 return "Max level is increased by total skills squared: "+
-            " +"+eff;
+            " +"+eff+" (Hardcapped at 10,000)";
             },
         },
         10: {requirementDescription: "No worries about 7 quests (Get 20 skills)",
