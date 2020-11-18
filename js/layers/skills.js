@@ -176,7 +176,7 @@ addLayer("s", {
                     eff = eff.div(10000).pow(0.1).times(10000);
                 }
                 return "Max level is increased by total skills squared: "+
-            " +"+eff+" (Hardcapped at 10,000)";
+            " +"+eff+" (Hardcapped at 10,000). +2,000 2nd ruby buyables/tick.";
             },
         },
         10: {requirementDescription: "No worries about 7 quests (Get 20 skills)",
