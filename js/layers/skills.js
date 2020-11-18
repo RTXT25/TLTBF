@@ -169,15 +169,15 @@ addLayer("s", {
             done() {return player[this.layer].points.gte(16)}, // Used to determine when to give the milestone
             effect() {
                 let eff = player[this.layer].total.pow(2);
+                if (eff.gte(10000)) {
+                    eff = eff.div(10000).pow(0.1).times(10000).round();
+                }
                 return eff.round();
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                if (eff.gte(10000)) {
-                    eff = eff.div(10000).pow(0.1).times(10000);
-                }
                 return "Max level is increased by total skills squared: "+
-            " +"+eff+" (Hardcapped at 10,000). +2,000 2nd ruby buyables/tick.";
+            " +"+format(eff)+" (Hardcapped at 10,000). +2,000 2nd ruby buyables/tick.";
             },
         },
         10: {requirementDescription: "No worries about 7 quests (Get 20 skills)",
