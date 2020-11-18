@@ -12,6 +12,7 @@ function getPointGen() {
         maxLevel = maxLevel.plus(layers["s"].milestones[9].effect());
     }
     maxLevel = maxLevel.plus(layers.q.challenges[19].rewardEffect());
+    maxLevel = maxLevel.plus(layers["t"].effect());
 
     let baseGain = new Decimal(1);
     if (hasUpgrade("xp", 11)) {

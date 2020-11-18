@@ -23,7 +23,7 @@ addLayer("s", {
         eff2 = this.effect2();
         return "Skills can make you level up and complete first two layers faster. Total S. divides loot,"+
         " quests and ruby exp by "+format(eff)+
-        ". Multiplies XP and gold exponents by "+format(eff2)+". Needs 100 last quest challenge competitions for skill prestige."
+        ". Multiplies XP and gold exponents by "+format(eff2)+". Needs 100 last (8) quest challenge competitions for skill prestige."
     },
     color: "#FFBD4B",
     requires() {
@@ -38,7 +38,8 @@ addLayer("s", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        let baseExp = 1.5;
+        let baseExp = new Decimal(1.5);
+        baseExp = baseExp.times(layers["t"].effect2());
 
         return baseExp;
     }, // Prestige currency exponent
@@ -220,6 +221,20 @@ addLayer("s", {
             done() {return player[this.layer].points.gte(100)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Unlocks new quest challenge? ";
+            },
+        },
+        16: {requirementDescription: "More exp reduction (Get 120 skills)",
+            unlocked() {return hasMilestone("s", 15)},
+            done() {return player[this.layer].points.gte(120)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "+ Autobuy 1,000 to first and 10,000 to second rubies upgrades.";
+            },
+        },
+        17: {requirementDescription: "New Layer. Kek. (Get 200 skills)",
+            unlocked() {return hasMilestone("s", 16)},
+            done() {return player[this.layer].points.gte(200)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "New layer. Kek.";
             },
         },
     },
