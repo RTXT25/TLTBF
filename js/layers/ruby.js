@@ -247,9 +247,10 @@ addLayer("r", {
 
     update(diff) {
         if (hasMilestone('r', 6) || hasMilestone("s", 4)) {
-            let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 16) * 1000);
+            let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 16) * 1000)
+            + (hasMilestone("s", 18) * 1000);
             let ticks2 = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 6) * 1000)
-             + (hasMilestone("s", 9) * 2000) + (hasMilestone("s", 16) * 10000);
+             + (hasMilestone("s", 9) * 2000) + (hasMilestone("s", 16) * 10000) + (hasMilestone("s", 18) * 100000);
             if (layers.r.buyables[11].unlocked() && layers.r.buyables[11].canAfford()) {
                 layers.r.buyables[11].buy(ticks);
             }

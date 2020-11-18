@@ -8,11 +8,17 @@ addLayer("s", {
         total: new Decimal(0),
     }},
     effect() {
-        eff = player[this.layer].total.div(10).add(1).pow(0.9).times(player[this.layer].total.plus(4).log(4));
+        eff = player[this.layer].total.div(10).add(1).pow(0.9);
+        if (eff.gte(100)) {
+            eff = eff.sub(100).pow(0.01).plus(100);
+        }
+        eff = eff.times(player[this.layer].total.plus(4).log(4));
+        if (hasMilestone("s", 18)) eff = eff.pow(1.25);
         return eff;
     },
     effect2() {
         eff2 = player[this.layer].total.plus(1);
+        if (hasMilestone("s", 18)) eff2 = eff2.pow(1.25);
         return eff2;
     },
     softcap() {
@@ -235,6 +241,13 @@ addLayer("s", {
             done() {return player[this.layer].points.gte(200)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "New layer. Kek.";
+            },
+        },
+        18: {requirementDescription: "Even faster rubies and better effect (Get 500 skills)",
+            unlocked() {return hasMilestone("s", 17)},
+            done() {return player[this.layer].points.gte(500)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "+ Autobuy 1,000 to first and 100,000 to second rubies upgrades. Also powers skill effects to power ^1.25";
             },
         },
     },
