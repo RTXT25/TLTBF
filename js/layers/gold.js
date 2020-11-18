@@ -139,7 +139,13 @@ addLayer("g", {
         if (mult.gte(layers.g.softcap())) {
             let getSCP = layers.g.softcap();
             let softCapDivider = mult.log10().sub(getSCP.log10().sub(1)).pow(mult.log10().sub(getSCP.log10().sub(1)).div(250).plus(2));
-            mult = mult.div(softCapDivider);
+
+            if (softCapDivider.log10().gte(mult.log10().pow(0.2))) {
+                mult = new Decimal(10).pow(mult.log10().tetrate(0.8));
+            }
+            else {
+                mult = mult.div(softCapDivider);
+            }
         }
 
 

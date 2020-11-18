@@ -133,11 +133,18 @@ addLayer("xp", {
             mult = mult.times(2);
         }
         
+
         //soft cap
         if (mult.gte(layers.xp.softcap())) {
             let getSCP = layers.xp.softcap();
             let softCapDivider = mult.log10().sub(getSCP.log10().sub(1)).pow(mult.log10().sub(getSCP.log10().sub(1)).div(250).plus(2));
-            mult = mult.div(softCapDivider);
+            if (softCapDivider.log10().gte(mult.log10().pow(0.4))) {
+                mult = new Decimal(10).pow(mult.log10().tetrate(0.6));
+            }
+            else {
+                mult = mult.div(softCapDivider);
+            }
+        
         }
         
         return mult
