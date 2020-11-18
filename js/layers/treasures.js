@@ -8,11 +8,13 @@ addLayer("t", {
         total: new Decimal(0),
     }},
     effect() {
-        eff = player[this.layer].total.times(100000);
+        eff = player[this.layer].points.times(100000);
+        if (hasUpgrade("t", 11)) eff = eff.times(1.5);
         return eff;
     },
     effect2() {
-        eff2 = player[this.layer].total.div(1000).plus(1);
+        eff2 = player[this.layer].points.div(1000).plus(1);
+        if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(1.5).plus(1);
         return eff2;
     },
     softcap() {
@@ -56,6 +58,17 @@ addLayer("t", {
         let expon = new Decimal(1);
 
         return expon;
+    },
+
+    upgrades: {
+        rows: 5,
+        cols: 5,
+        11: {
+            title: "Reset all but then better",
+            description: "Multiplies treasure effects by 1.5",
+            cost() { return new Decimal(10) },
+            unlocked() { return player[this.layer].unlocked },
+        },
     },
 
     row: 2, // Row the layer is in on the tree (0 is the first row)
