@@ -143,7 +143,7 @@ addLayer("s", {
         6: {requirementDescription: "No more challenge corruptions (Get 8 skills)",
             unlocked() {return hasMilestone("s", 5)},
             done() {return player[this.layer].points.gte(8)}, // Used to determine when to give the milestone
-            effectDescription: "All upgrades that cost levels are free now.",
+            effectDescription: "All upgrades that cost levels are free now. Also buying up to 1,000 more of second ruby buyable / tick.",
         },
         7: {requirementDescription: "Why should I even prestige? (Get 10 skills)",
             unlocked() {return hasMilestone("s", 6)},
