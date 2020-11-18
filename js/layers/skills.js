@@ -8,7 +8,7 @@ addLayer("s", {
         total: new Decimal(0),
     }},
     effect() {
-        eff = player[this.layer].total.div(10).add(1).pow(0.9);
+        eff = player[this.layer].total.div(10).add(1).pow(0.9).times(player[this.layer].total.plus(4).log(4));
         return eff;
     },
     effect2() {
