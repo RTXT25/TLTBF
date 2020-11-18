@@ -38,18 +38,20 @@ addLayer("r", {
     baseAmount() {return player.g.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        let baseExp = 2.7;
+        let baseExp = new Decimal(2.7);
+        baseExp = baseExp.plus(player.g.points.plus(1).log(10).plus(1).log(10).div(10000));
         if (hasMilestone("r", 3)) {
-            baseExp *= 0.8;
+            baseExp = baseExp.times(0.8);
         }
         if (hasUpgrade("r", 13)) {
-            baseExp *= 0.99;
+            baseExp = baseExp.times(0.99);
         }
         if (hasUpgrade("xp", 55)) {
-            baseExp /= 2;
+            baseExp = baseExp.times(0.5);
         }
-        baseExp = baseExp / layers.q.challenges[18].rewardEffect();
-        baseExp /= layers["s"].effect();
+        baseExp = baseExp.div(layers.q.challenges[18].rewardEffect());
+        baseExp = baseExp.div(layers["s"].effect());
+
         return baseExp;
     }, // Prestige currency exponent
     base: 2500,
@@ -213,7 +215,7 @@ addLayer("r", {
                 return cost.floor()
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
-                let eff = Math.pow(0.99, x);
+                let eff = new Decimal(0.99).pow(x);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -221,12 +223,12 @@ addLayer("r", {
                 if (data.effect >= 0.000001) {
                     return "Cost: " + format(data.cost) + " rubies\n\
                     Amount: " + player[this.layer].buyables[this.id] + "\n\
-                    Base lvl gain exponent is powered to ^" + Math.round(data.effect*1000000)/1000000;
+                    Base lvl gain exponent is powered to ^" + format(data.effect.times(1000000).round().div(1000000));
                 }
                 else {
                     return "Cost: " + format(data.cost) + " rubies\n\
                     Amount: " + player[this.layer].buyables[this.id] + "\n\
-                    Base lvl gain exponent is powered to ^(1/" + format(new Decimal(1 / data.effect)) + ")";
+                    Base lvl gain exponent is powered to ^(1/" + format(new Decimal(1).div(data.effect)) + ")";
                 }
             },
             unlocked() { return (hasUpgrade("r", 25)) }, 

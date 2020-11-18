@@ -31,11 +31,12 @@ addLayer("q", {
     baseAmount() {return player.xp.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        let baseExp = 1.6;
-        if (hasMilestone('q', 11)) baseExp /= 1.1;
-        if (hasMilestone('q', 12)) baseExp /= 1.1;
-        baseExp = baseExp / layers.q.challenges[18].rewardEffect();
-        baseExp /= layers["s"].effect();
+        let baseExp = new Decimal(1.6);
+        baseExp = baseExp.plus(player.xp.points.plus(1).log(10).plus(1).log(10).div(10000));
+        if (hasMilestone('q', 11)) baseExp = baseExp.div(1.1);
+        if (hasMilestone('q', 12)) baseExp = baseExp.div(1.1);
+        baseExp = baseExp.div(layers.q.challenges[18].rewardEffect());
+        baseExp = baseExp.div(layers["s"].effect());
         return baseExp;
     }, // Prestige currency exponent
     base: 1e60,

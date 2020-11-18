@@ -22,30 +22,32 @@ addLayer("g", {
         }
     },
     exponent() {
-        let bExp = 3;
+        let bExp = new Decimal(3);
         if (hasUpgrade('l', 43)) {
-            bExp += 1;
+            bExp = bExp.plus(1);
         }
         if (hasUpgrade('l', 44)) {
-            bExp += 100;
+            bExp = bExp.plus(100);
         }
-        bExp += layers.q.challenges[17].rewardEffect();
+        bExp = bExp.plus(layers.q.challenges[17].rewardEffect());
 
         if (hasUpgrade('l', 53)) {
-            bExp *= 10;
+            bExp = bExp.times(10);
         }
 
-        bExp = Math.pow(bExp, buyableEffect("r", 11));
+        bExp = bExp.pow(buyableEffect("r", 11));
         
-        bExp *= layers["s"].effect2();
+        bExp = bExp.times(layers["s"].effect2());
 
         if (inChallenge("q", 18)) {
-            bExp = Math.log(bExp + 1) / Math.log(1000);
+            bExp = bExp.plus(1).log(1000);
         }
 
         if (inChallenge("q", 19)) {
-           bExp = Math.log((Math.log(bExp + 1) / Math.log(1000000)) + 1) / Math.log(1000000);
+            bExp = bExp.plus(1).log(1000000).plus(1).log(1000000);
         }
+
+        console.log(format(bExp));
 
         return bExp;
 
