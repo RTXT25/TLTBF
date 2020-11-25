@@ -612,6 +612,7 @@ addLayer("q", {
             rewardEffect() {
                 let rew = new Decimal(this.rewards());
                 if (hasUpgrade("r", 24)) rew = rew.pow(1.1);
+                if (hasMilestone("s", 20)) rew = rew.pow(1 + (challengeCompletions(this.layer, 19)/10))
                 return rew;
             },
             rewardDisplay() { return  "loot, quest & ruby exponents divided by " + format(this.rewardEffect()) },
