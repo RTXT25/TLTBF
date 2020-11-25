@@ -47,8 +47,6 @@ addLayer("g", {
             bExp = bExp.plus(1).log(1000000).plus(1).log(1000000);
         }
 
-        console.log(format(bExp));
-
         return bExp;
 
     },
@@ -402,13 +400,26 @@ addLayer("g", {
             unlocked() { return (hasUpgrade(this.layer, 15)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
+
             buy(ticks=1) { 
+
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone("r", 1) && !hasMilestone("s", 4)) {
-                    player[this.layer].points = player[this.layer].points.sub(cost)	
+
+                let x = new Decimal(player[this.layer].buyables[this.id].plus(ticks).sub(1));
+                let newCost = Decimal.pow(new Decimal(2), x.pow(1.2));
+                newCost = newCost.times(1000);
+                newCost = newCost.floor();
+
+                if (player[this.layer].points.gte(newCost)) {
+                    if (!hasMilestone("r", 1) && !hasMilestone("s", 4)) {
+                        player[this.layer].points = player[this.layer].points.sub(cost)	
+                    }
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
+                    player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
                 }
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
-                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+                else {
+                    if (ticks > 1) layers.g.buyables[11].buy(Math.floor(ticks/2));
+                }
             },
         },
     },
@@ -416,10 +427,10 @@ addLayer("g", {
     update(diff) {
         generatePoints("g", new Decimal(diff).times(buyableEffect("xp", 11).plus(hasMilestone("r", 0) ? 1 : 0).plus(hasMilestone("s", 3) ? 10 : 0)));
         if (hasMilestone("r", 1) || hasMilestone("s", 4)) {
-            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 4) * 10);
-            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 4) * 10);
-            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10);
-            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10);
+            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
+            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
+            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
+            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
             if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy(ticks);
             }

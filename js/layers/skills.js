@@ -266,11 +266,21 @@ addLayer("s", {
                 return "Double log reward is powered to ^(1 + (triple log compl.s)/10)";
             },
         },
+        21: {requirementDescription: "Extreme Buying (Get 20,000 skills)",
+            unlocked() {return hasMilestone("s", 20)},
+            done() {return player[this.layer].points.gte(20000)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "All buyables are bought up to 1e9 / tick";
+            },
+        },
     },
 
     update(diff) {
         if (hasMilestone("s", 14)) {
-            generatePoints("s", new Decimal(diff).div(100));
+            let tic = 1;
+            if (hasUpgrade("t", 15)) tic += 1;
+
+            generatePoints("s", new Decimal(diff).div(100).times(tic));
         }
     },
 

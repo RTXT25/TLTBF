@@ -95,6 +95,12 @@ addLayer("t", {
                 return format(this.effect())+"x " ;
             }, 
         },
+        15: {
+            title: "Skilly skills",
+            description: "Gives another +1% of skill/sec",
+            cost() { return new Decimal(100) },
+            unlocked() { return (hasUpgrade(this.layer, 14)) },
+        },
     },
 
     row: 2, // Row the layer is in on the tree (0 is the first row)

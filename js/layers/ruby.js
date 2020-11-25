@@ -192,19 +192,32 @@ addLayer("r", {
             display() { // Everything else displayed in the buyable button after the title
                 let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " rubies\n\
-                Amount: " + player[this.layer].buyables[this.id] + "\n\
-                XP and gold base exponents are powered to ^" + Math.round(data.effect*100)/100;
+                Amount: " + format(player[this.layer].buyables[this.id]) + "\n\
+                XP and gold base exponents are powered to ^" + (data.effect < 10 ? Math.round(data.effect*100)/100 : format(data.effect));
             },
             unlocked() { return (hasUpgrade("l", 55)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone('r', 6) && !hasMilestone("s", 4)) {
-                    player[this.layer].points = player[this.layer].points.sub(cost)	
+
+                let x = new Decimal(player[this.layer].buyables[this.id].plus(ticks).sub(1));
+                console.log(format(x));
+                let newCost = Decimal.pow(new Decimal(1.1), x.pow(2));
+                newCost = newCost.times("1e12");
+                newCost = newCost.floor();
+
+
+                if (player[this.layer].points.gte(newCost)) {
+                    if (!hasMilestone('r', 6) && !hasMilestone("s", 4)) {
+                        player[this.layer].points = player[this.layer].points.sub(cost)	
+                    }
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
+                    player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
                 }
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
-                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+                else {
+                    if (ticks > 1) layers.r.buyables[11].buy(Math.floor(ticks/2));
+                }
             },
         },
         12: {
@@ -222,12 +235,12 @@ addLayer("r", {
                 let data = tmp[this.layer].buyables[this.id]
                 if (data.effect >= 0.000001) {
                     return "Cost: " + format(data.cost) + " rubies\n\
-                    Amount: " + player[this.layer].buyables[this.id] + "\n\
+                    Amount: " + format(player[this.layer].buyables[this.id]) + "\n\
                     Base lvl gain exponent is powered to ^" + format(data.effect.times(1000000).round().div(1000000));
                 }
                 else {
                     return "Cost: " + format(data.cost) + " rubies\n\
-                    Amount: " + player[this.layer].buyables[this.id] + "\n\
+                    Amount: " + format(player[this.layer].buyables[this.id]) + "\n\
                     Base lvl gain exponent is powered to ^(1/" + format(new Decimal(1).div(data.effect)) + ")";
                 }
             },
@@ -236,11 +249,21 @@ addLayer("r", {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
             buy(ticks=1) { 
                 cost = tmp[this.layer].buyables[this.id].cost
-                if (!hasMilestone('r', 6) && !hasMilestone("s", 4)) {
-                    player[this.layer].points = player[this.layer].points.sub(cost)	
+                let x = new Decimal(player[this.layer].buyables[this.id].plus(ticks).sub(1));
+                let newCost = Decimal.pow(new Decimal(1.05), x.pow(1.4));
+                newCost = newCost.times("1e75");
+                newCost = newCost.floor();
+
+                if (player[this.layer].points.gte(newCost)) {
+                    if (!hasMilestone('r', 6) && !hasMilestone("s", 4)) {
+                        player[this.layer].points = player[this.layer].points.sub(cost)	
+                    }
+                    player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
+                    player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
                 }
-                player[this.layer].buyables[this.id] = player[this.layer].buyables[this.id].add(ticks)
-                player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
+                else {
+                    if (ticks > 1) layers.r.buyables[12].buy(Math.floor(ticks/2));
+                }
             },
         },
     },
@@ -248,9 +271,12 @@ addLayer("r", {
     update(diff) {
         if (hasMilestone('r', 6) || hasMilestone("s", 4)) {
             let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 16) * 1000)
-            + (hasMilestone("s", 18) * 1000);
+            + (hasMilestone("s", 18) * 1000) + (hasMilestone("s", 21) * 1e9);
+
             let ticks2 = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 6) * 1000)
-             + (hasMilestone("s", 9) * 2000) + (hasMilestone("s", 16) * 10000) + (hasMilestone("s", 18) * 100000);
+             + (hasMilestone("s", 9) * 2000) + (hasMilestone("s", 16) * 10000) + (hasMilestone("s", 18) * 100000)
+             + (hasMilestone("s", 21) * 1e9);
+
             if (layers.r.buyables[11].unlocked() && layers.r.buyables[11].canAfford()) {
                 layers.r.buyables[11].buy(ticks);
             }
