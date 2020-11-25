@@ -51,6 +51,7 @@ addLayer("t", {
         if (challengeCompletions("q", 19) < 60) {
             mult = mult.times(0);
         }
+        if (hasUpgrade("t", 14)) mult = mult.times(upgradeEffect("g", 11));
 
         return mult
     },
@@ -80,6 +81,19 @@ addLayer("t", {
             description: "Triple LOG reward is powered to ^(1+(completions/1,000))",
             cost() { return new Decimal(25) },
             unlocked() { return (hasUpgrade(this.layer, 12)) },
+        },
+        14: {
+            title: "Better Treasures",
+            description: "Treasure gain is multiplied by log1000(skills + 1)+1",
+            cost() { return new Decimal(30) },
+            unlocked() { return (hasUpgrade(this.layer, 13)) },
+            effect() { 
+                let eff = player["s"].points.plus(1).log(1000).plus(1);
+                return eff;
+            },
+            effectDisplay() {
+                return format(this.effect())+"x " ;
+            }, 
         },
     },
 
