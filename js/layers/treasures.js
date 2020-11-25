@@ -61,13 +61,25 @@ addLayer("t", {
     },
 
     upgrades: {
-        rows: 5,
+        rows: 1,
         cols: 5,
         11: {
             title: "Reset all but then better",
             description: "Multiplies treasure effects by 1.5",
             cost() { return new Decimal(10) },
             unlocked() { return player[this.layer].unlocked },
+        },
+        12: {
+            title: "4 Four Faster",
+            description: "Multiplies all skill effects by x100",
+            cost() { return new Decimal(20) },
+            unlocked() { return (hasUpgrade(this.layer, 11)) },
+        },
+        13: {
+            title: "Greater Rewards",
+            description: "Triple LOG reward is powered to ^(1+(completions/1,000))",
+            cost() { return new Decimal(25) },
+            unlocked() { return (hasUpgrade(this.layer, 12)) },
         },
     },
 

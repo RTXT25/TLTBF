@@ -734,7 +734,9 @@ addLayer("q", {
             currencyInternalName: "points", // Use if using a nonstandard currency
             currencyLayer: "", // Leave empty if not in a layer
             rewards() {
-                return (new Decimal(challengeCompletions(this.layer, this.id)).pow(2).times(1000));
+                let det = (new Decimal(challengeCompletions(this.layer, this.id)).pow(2).times(1000));
+                if (hasUpgrade("t", 13)) det = det.pow(1 + (0.001* challengeCompletions(this.layer, this.id)));
+                return det;
             },
             rewardEffect() {
                 let rew = new Decimal(this.rewards());
@@ -942,9 +944,11 @@ addLayer("q", {
                     delete player["q"].activeChallenge;
                 }
             }
+            let comps9 = 1;
+            if (hasMilestone("s", 19)) comps9 = 3;
             if (inChallenge("q", 19)) {
                 if (player.points.gte(layers["q"].challenges[19].goal())) {
-                    player["q"].challenges[19] += Math.min(1, 100 - challengeCompletions("q", 19));
+                    player["q"].challenges[19] += Math.min(comps9, 100 - challengeCompletions("q", 19));
                 }
                 if (challengeCompletions("q", 19) >= 100) {
                     delete player["q"].activeChallenge;

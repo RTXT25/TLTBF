@@ -14,11 +14,13 @@ addLayer("s", {
         }
         eff = eff.times(player[this.layer].total.plus(4).log(4));
         if (hasMilestone("s", 18)) eff = eff.pow(1.25);
+        if (hasUpgrade("t", 12)) eff = eff.times(100);
         return eff;
     },
     effect2() {
         eff2 = player[this.layer].total.plus(1);
         if (hasMilestone("s", 18)) eff2 = eff2.pow(1.25);
+        if (hasUpgrade("t", 12)) eff2 = eff2.times(100);
         return eff2;
     },
     softcap() {
@@ -248,6 +250,13 @@ addLayer("s", {
             done() {return player[this.layer].points.gte(500)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "+ Autobuy 1,000 to first and 100,000 to second rubies upgrades. Also powers skill effects to power ^1.25";
+            },
+        },
+        19: {requirementDescription: "3xLog*3 (Get 10,000 skills)",
+            unlocked() {return hasMilestone("s", 18)},
+            done() {return player[this.layer].points.gte(10000)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Get up to 3 triple log completions / once";
             },
         },
     },
