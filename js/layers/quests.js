@@ -599,20 +599,23 @@ addLayer("q", {
             currencyInternalName: "points", // Use if using a nonstandard currency
             currencyLayer: "", // Leave empty if not in a layer
             rewards() {
+                let R = 1;
                 if (challengeCompletions(this.layer, this.id) <= 98) {
-                    return new Decimal(1 + challengeCompletions(this.layer, this.id)*0.05);
+                    R =  new Decimal(1 + challengeCompletions(this.layer, this.id)*0.05);
                 }
                 else if (challengeCompletions(this.layer, this.id) <= 99) {
-                    return new Decimal(1 + challengeCompletions(this.layer, this.id)*0.075);
+                    R =  new Decimal(1 + challengeCompletions(this.layer, this.id)*0.075);
                 }
                 else {
-                    return new Decimal(1 + challengeCompletions(this.layer, this.id)*0.1);
+                    R =  new Decimal(1 + challengeCompletions(this.layer, this.id)*0.1);
                 }
+                if (hasUpgrade("r", 24)) R = R.pow(1.1);
+                if (hasMilestone("s", 20)) R = R.pow(1 + (challengeCompletions(this.layer, 19)/10))
+                if (hasUpgrade("t", 21)) R = R.pow(10);
+                return R;
             },
             rewardEffect() {
                 let rew = new Decimal(this.rewards());
-                if (hasUpgrade("r", 24)) rew = rew.pow(1.1);
-                if (hasMilestone("s", 20)) rew = rew.pow(1 + (challengeCompletions(this.layer, 19)/10))
                 return rew;
             },
             rewardDisplay() { return  "loot, quest & ruby exponents divided by " + format(this.rewardEffect()) },
@@ -737,6 +740,7 @@ addLayer("q", {
             rewards() {
                 let det = (new Decimal(challengeCompletions(this.layer, this.id)).pow(2).times(1000));
                 if (hasUpgrade("t", 13)) det = det.pow(1 + (0.001* challengeCompletions(this.layer, this.id)));
+                if (hasUpgrade("t", 21)) det = det.pow(1.025);
                 return det;
             },
             rewardEffect() {

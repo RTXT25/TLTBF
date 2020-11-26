@@ -10,11 +10,20 @@ addLayer("t", {
     effect() {
         eff = player[this.layer].points.times(100000);
         if (hasUpgrade("t", 11)) eff = eff.times(1.5);
+
+        if (eff.gte(100000000)) {
+            eff = eff.div(100000000).pow(0.1).times(100000000);
+        }
         return eff;
     },
     effect2() {
         eff2 = player[this.layer].points.div(1000).plus(1);
         if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(1.5).plus(1);
+
+        if (eff2.gte(10)) {
+            eff = eff.sub(9).log(10).add(9);
+        }
+
         return eff2;
     },
     softcap() {
@@ -62,7 +71,7 @@ addLayer("t", {
     },
 
     upgrades: {
-        rows: 1,
+        rows: 5,
         cols: 5,
         11: {
             title: "Reset all but then better",
@@ -100,6 +109,12 @@ addLayer("t", {
             description: "Gives another +1% of skill/sec",
             cost() { return new Decimal(100) },
             unlocked() { return (hasUpgrade(this.layer, 14)) },
+        },
+        21: {
+            title: "Fun",
+            description: "Double log reward is powered to ^10, triple log reward is powered to ^1.025",
+            cost() { return new Decimal(1000) },
+            unlocked() { return (hasUpgrade(this.layer, 15)) },
         },
     },
 
