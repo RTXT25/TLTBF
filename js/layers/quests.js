@@ -612,6 +612,7 @@ addLayer("q", {
                 if (hasUpgrade("r", 24)) R = R.pow(1.1);
                 if (hasMilestone("s", 20)) R = R.pow(1 + (challengeCompletions(this.layer, 19)/10))
                 if (hasUpgrade("t", 21)) R = R.pow(10);
+                if (hasUpgrade("t", 22)) R = R.times(upgradeEffect("t", 22));
                 return R;
             },
             rewardEffect() {

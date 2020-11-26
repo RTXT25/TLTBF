@@ -12,7 +12,7 @@ addLayer("t", {
         if (hasUpgrade("t", 11)) eff = eff.times(1.5);
 
         if (eff.gte(100000000)) {
-            eff = eff.div(100000000).pow(0.1).times(100000000);
+            eff = eff.div(100000000).log(27).plus(1).times(100000000);
         }
         return eff;
     },
@@ -60,7 +60,7 @@ addLayer("t", {
         if (challengeCompletions("q", 19) < 60) {
             mult = mult.times(0);
         }
-        if (hasUpgrade("t", 14)) mult = mult.times(upgradeEffect("g", 11));
+        if (hasUpgrade("t", 14)) mult = mult.times(upgradeEffect("t", 14));
 
         return mult
     },
@@ -113,8 +113,21 @@ addLayer("t", {
         21: {
             title: "Fun",
             description: "Double log reward is powered to ^10, triple log reward is powered to ^1.025",
-            cost() { return new Decimal(1000) },
+            cost() { return new Decimal(150) },
             unlocked() { return (hasUpgrade(this.layer, 15)) },
+        },
+        22: {
+            title: "Double Fun",
+            description: "Double log reward is powered to ^(1 + log10(cur. treasures + 1))",
+            cost() { return new Decimal(250) },
+            unlocked() { return (hasUpgrade(this.layer, 21)) },
+            effect() { 
+                let eff = player["t"].points.plus(1).log(10).plus(1);
+                return eff;
+            },
+            effectDisplay() {
+                return "^"+format(this.effect());
+            },
         },
     },
 
