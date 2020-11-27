@@ -437,6 +437,11 @@ addLayer("g", {
             if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
+            
+            if (hasMilestone("s", 23)) {
+                let ticks = new Decilal(ticks).plus("1e900");
+            }
+            
             if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy(ticks);
             }
