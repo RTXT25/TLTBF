@@ -12,7 +12,7 @@ addLayer("t", {
         if (hasUpgrade("t", 11)) eff = eff.times(1.5);
 
         if (eff.gte(100000000)) {
-            eff = eff.div(100000000).log(27).plus(1).times(100000000);
+            eff = eff.div(100000000).pow(0.1).log(27).plus(1).times(100000000);
         }
         return eff;
     },
@@ -21,7 +21,7 @@ addLayer("t", {
         if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(1.5).plus(1);
 
         if (eff2.gte(10)) {
-            eff = eff.sub(9).log(10).add(9);
+            eff = eff.sub(9).log(10).plus(1).log(10).add(10);
         }
 
         return eff2;
@@ -197,7 +197,8 @@ addLayer("t", {
                  return hasMilestone("s", 26) ? "You are gaining " + 
                  format(new Decimal(tmp["t"].resetGain).div(10)) + " treasures per second" : "" 
                 },
-                {"font-size": "20px"}],
+                {"font-size": "20px"}], "blank", 
+            ["display-text", function() {return "Total treasures: "+format(player.t.total)},{"font-size": "14px"}],
             ["prestige-button", "", function (){ return hasMilestone("s", 26) ? {'display': 'none'} : {}}]
             , "blank", "upgrades"],
 

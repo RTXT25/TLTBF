@@ -180,6 +180,9 @@ addLayer("s", {
                 if (eff.gte(10000)) {
                     eff = eff.div(10000).pow(0.1).times(10000).round();
                 }
+                if (eff.gte(1000000)) {
+                    eff = eff.div(1000000).log(69).plus(1).times(1000000).round();
+                }
                 return eff.round();
             },
             effectDescription() {
