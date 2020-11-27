@@ -454,6 +454,7 @@ addLayer("xp", {
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                 if (hasMilestone("r", 1)) eff = eff.times(1.5);
+                if (hasMilestone("s", 23)) eff = eff.pow(2);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -465,7 +466,7 @@ addLayer("xp", {
             unlocked() { return (hasUpgrade(this.layer, 35)) }, 
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
-            buy(ticks=1) { 
+            buy(ticks=new Decimal(1)) { 
    
                 cost = tmp[this.layer].buyables[this.id].cost
                 let x = new Decimal(player[this.layer].buyables[this.id].plus(ticks).sub(1));
@@ -473,7 +474,7 @@ addLayer("xp", {
                 newCost = newCost.times(1e11);
                 newCost = newCost.floor();
 
-                if (player[this.layer].points.gte(newCost)) {
+                if (player[this.layer].points.gte(newCost) && ticks.gte(1)) {
                     if (!hasMilestone("r", 1) && !hasMilestone("s", 4)) {
                         player[this.layer].points = player[this.layer].points.sub(cost)	
                     }
@@ -481,7 +482,7 @@ addLayer("xp", {
                     player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
                 }
                 else {
-                    if (ticks > 1) layers.xp.buyables[11].buy(Math.floor(ticks/2));
+                    if (ticks.gte(new Decimal(1))) layers.xp.buyables[11].buy(ticks.div(2));
                 }
             },
         },

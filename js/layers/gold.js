@@ -395,6 +395,7 @@ addLayer("g", {
                 eff = eff.times(hasUpgrade('g', 24) ? upgradeEffect("g", 24) : new Decimal(1));
                 eff = eff.pow(hasUpgrade('g', 34) ? new Decimal(3) : new Decimal(1));
                 if (hasMilestone("r", 1)) eff = eff.times(1.5);
+                if (hasMilestone("s", 23)) eff = eff.pow(2);
                 return eff;
             },
             display() { // Everything else displayed in the buyable button after the title
@@ -407,7 +408,7 @@ addLayer("g", {
             canAfford() {
                 return player[this.layer].points.gte(tmp[this.layer].buyables[this.id].cost)},
 
-            buy(ticks=1) { 
+            buy(ticks=new Decimal(1)) { 
 
                 cost = tmp[this.layer].buyables[this.id].cost
 
@@ -416,7 +417,7 @@ addLayer("g", {
                 newCost = newCost.times(1000);
                 newCost = newCost.floor();
 
-                if (player[this.layer].points.gte(newCost)) {
+                if (player[this.layer].points.gte(newCost) && ticks.gte(1)) {
                     if (!hasMilestone("r", 1) && !hasMilestone("s", 4)) {
                         player[this.layer].points = player[this.layer].points.sub(cost)	
                     }
@@ -424,7 +425,7 @@ addLayer("g", {
                     player[this.layer].spentOnBuyables = player[this.layer].spentOnBuyables.add(cost) // This is a built-in system that you can use for respeccing but it only works with a single Decimal value
                 }
                 else {
-                    if (ticks > 1) layers.g.buyables[11].buy(Math.floor(ticks/2));
+                    if (ticks.gte(new Decimal(1))) layers.g.buyables[11].buy(ticks.div(2));
                 }
             },
         },
@@ -439,9 +440,9 @@ addLayer("g", {
             if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             
             if (hasMilestone("s", 23)) {
-                let ticks = new Decilal(ticks).plus("1e900");
+                ticks = new Decimal(ticks).plus("1e100");
             }
-            
+
             if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy(ticks);
             }

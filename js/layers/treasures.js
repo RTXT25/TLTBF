@@ -29,6 +29,9 @@ addLayer("t", {
     softcap() {
         return new Decimal(1000000);
     },
+    canReset(){ 
+        return !hasMilestone("s", 26);
+    },
     effectDescription() {
         eff = this.effect();
         eff2 = this.effect2();
@@ -50,7 +53,15 @@ addLayer("t", {
     baseAmount() {return player.points}, // Get the current amount of baseResource
     type: "normal", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        let baseExp = 0.5;
+        let baseExp = new Decimal(0.5);
+        
+        if (hasUpgrade('s', 24)) {
+            baseExp = baseExp.plus(0.025);
+        }
+
+        if (hasUpgrade('s', 25)) {
+            baseExp = baseExp.plus(0.025);
+        }
 
         return baseExp;
     }, // Prestige currency exponent
@@ -61,6 +72,7 @@ addLayer("t", {
             mult = mult.times(0);
         }
         if (hasUpgrade("t", 14)) mult = mult.times(upgradeEffect("t", 14));
+        if (hasUpgrade("t", 24)) mult = mult.times(upgradeEffect("t", 24));
 
         return mult
     },
@@ -133,7 +145,7 @@ addLayer("t", {
             title: "Triple Fun",
             description: "Level gain is multiplied by log10(level+1)+1 NOT DEPENDED ON CURRENT CHALLENGE",
             cost() { return new Decimal(400) },
-            unlocked() { return (hasUpgrade(this.layer, 21)) },
+            unlocked() { return (hasUpgrade(this.layer, 22)) },
             effect() { 
                 let eff = player.points.plus(1).log(10).plus(1);
                 return eff;
@@ -142,10 +154,52 @@ addLayer("t", {
                 return format(this.effect())+"x";
             },
         },
+        24: {
+            title: "Treasure Fun",
+            description: "Treasure gain is multiplied by log69(treasures + 1)+1",
+            cost() { return new Decimal(500) },
+            unlocked() { return (hasUpgrade(this.layer, 23)) },
+            effect() { 
+                let eff = player["t"].points.plus(1).log(69).plus(1);
+                return eff;
+            },
+            effectDisplay() {
+                return format(this.effect())+"x " ;
+            }, 
+        },
+        25: {
+            title: "Autoskill Fun",
+            description: "Adds +N% of skill/sec, where N = log[6.18](total treasures + 1)",
+            cost() { return new Decimal(618) },
+            unlocked() { return (hasUpgrade(this.layer, 24)) },
+            effect() { 
+                let eff = player["t"].total.plus(1).log(6.18);
+                return eff;
+            },
+            effectDisplay() {
+                return "+" + format(this.effect())+"% " ;
+            }, 
+        },
     },
 
     row: 2, // Row the layer is in on the tree (0 is the first row)
     branches: [["q", 2], ["l", 2], ["r", 2], ["s", 2]],
+
+
+
+    update(diff) {
+        if (hasMilestone("s", 26)) player.t.points = player.t.points.plus(layers.a.getResetGain().times(diff).times(0.1))
+    },
+
+    tabFormat: ["main-display", 
+            ["display-text",
+             function() { 
+                 return hasMilestone("s", 26) ? "You are gaining " + 
+                 format(layers.a.getResetGain().div(10)) + " treasures per second" : "" 
+                },
+                {"font-size": "20px"}],
+            ["prestige-button", "", function (){ return hasMilestone("s", 26) ? {'display': 'none'} : {}}]
+            , "blank", "upgrades"],
 
     layerShown(){return (hasMilestone("s", 17) || player.t.total.gte(1))},
 })

@@ -280,19 +280,41 @@ addLayer("s", {
                 return "All buyables are bought up to 1e90 / tick";
             },
         },
-        23: {requirementDescription: "EXTREME Buying (Get 1,000,000 skills)",
+        23: {requirementDescription: "EXTREME BUYING (Get 1,000,000 skills)",
             unlocked() {return hasMilestone("s", 22)},
             done() {return player[this.layer].points.gte(1000000)}, // Used to determine when to give the milestone
             effectDescription() {
-                return "All buyables are bought up to 1e900 / tick";
+                return "All buyables are bought up to 1e100 / tick and their effects are powered to ^2";
+            },
+        },
+        24: {requirementDescription: "Small Increase (Get 20,000,000 skills)",
+            unlocked() {return hasMilestone("s", 23)},
+            done() {return player[this.layer].points.gte(20000000)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Treasure exponent is increased by 0.025";
+            },
+        },
+        25: {requirementDescription: "Small Increase II (Get 400,000,000 skills)",
+            unlocked() {return hasMilestone("s", 24)},
+            done() {return player[this.layer].points.gte(400000000)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Treasure exponent is increased by another 0.025";
+            },
+        },
+        26: {requirementDescription: "No need to repeat the challenge (Get 1,000,000,000 skills)",
+            unlocked() {return hasMilestone("s", 25)},
+            done() {return player[this.layer].points.gte(1000000000)}, // Used to determine when to give the milestone
+            effectDescription() {
+                return "Removes ability to treasure prestige, but gain 10% of treasure value / sec";
             },
         },
     },
 
     update(diff) {
         if (hasMilestone("s", 14)) {
-            let tic = 1;
-            if (hasUpgrade("t", 15)) tic += 1;
+            let tic = new Decimal(1);
+            if (hasUpgrade("t", 15)) tic = tic.plus(1);
+            if (hasUpgrade("t", 25)) tic = tic.plus(upgradeEffect("t", 25));
 
             generatePoints("s", new Decimal(diff).div(100).times(tic));
         }

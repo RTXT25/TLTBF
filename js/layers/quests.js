@@ -999,5 +999,9 @@ addLayer("q", {
     ],
     branches: [["xp", 3], ["g", 3]],
 
+    tabFormat: ["main-display", 
+    ["prestige-button", "", function (){ return hasMilestone("s", 26) ? {'display': 'none'} : {}}]
+    , "challenges", "milestones"],
+
     layerShown(){return (hasUpgrade("r", 13) || player.q.best.gte(1))},
 })
