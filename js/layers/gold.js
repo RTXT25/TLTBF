@@ -439,6 +439,7 @@ addLayer("g", {
             if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             
+            ticks = new Decimal(ticks);
             if (hasMilestone("s", 23)) {
                 ticks = new Decimal(ticks).plus("1e100");
             }

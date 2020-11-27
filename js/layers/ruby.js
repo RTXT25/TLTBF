@@ -275,6 +275,7 @@ addLayer("r", {
             let ticks = (hasMilestone('r', 6) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 16) * 1000)
             + (hasMilestone("s", 18) * 1000) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
 
+            ticks = new Decimal(ticks);
             if (hasMilestone("s", 23)) {
                 ticks = new Decimal(ticks).plus("1e100");
             }
@@ -283,6 +284,7 @@ addLayer("r", {
              + (hasMilestone("s", 9) * 2000) + (hasMilestone("s", 16) * 10000) + (hasMilestone("s", 18) * 100000)
              + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
 
+             ticks2 = new Decimal(ticks2);
              if (hasMilestone("s", 23)) {
                  ticks2 = new Decimal(ticks2).plus("1e100");
              }

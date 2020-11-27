@@ -443,6 +443,7 @@ addLayer("l", {
         }
         if (hasUpgrade("r", 22) || hasMilestone("s", 4)) {
             let ticks = (hasUpgrade("r", 22) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
+            ticks = new Decimal(ticks);
             if (hasMilestone("s", 23)) {
                 ticks = new Decimal(ticks).plus("1e100");
             }
