@@ -188,14 +188,14 @@ addLayer("t", {
 
 
     update(diff) {
-        if (hasMilestone("s", 26)) player.t.points = player.t.points.plus(layers.a.getResetGain().times(diff).times(0.1))
+        if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).div(10));
     },
 
     tabFormat: ["main-display", 
             ["display-text",
              function() { 
                  return hasMilestone("s", 26) ? "You are gaining " + 
-                 format(layers.a.getResetGain().div(10)) + " treasures per second" : "" 
+                 format(new Decimal(tmp["t"].resetGain).div(10)) + " treasures per second" : "" 
                 },
                 {"font-size": "20px"}],
             ["prestige-button", "", function (){ return hasMilestone("s", 26) ? {'display': 'none'} : {}}]
