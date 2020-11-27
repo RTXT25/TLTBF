@@ -129,6 +129,19 @@ addLayer("t", {
                 return "^"+format(this.effect());
             },
         },
+        23: {
+            title: "Triple Fun",
+            description: "Level gain is multiplied by log10(level+1)+1 NOT DEPENDED ON CURRENT CHALLENGE",
+            cost() { return new Decimal(400) },
+            unlocked() { return (hasUpgrade(this.layer, 21)) },
+            effect() { 
+                let eff = player.points.plus(1).log(10).plus(1);
+                return eff;
+            },
+            effectDisplay() {
+                return format(this.effect())+"x";
+            },
+        },
     },
 
     row: 2, // Row the layer is in on the tree (0 is the first row)

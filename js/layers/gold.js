@@ -154,6 +154,12 @@ addLayer("g", {
     },
     gainExp() { // Calculate the exponent on main currency from bonuses
         let expon = buyableEffect("l", 12);
+
+        if (inChallenge("q", 19)) {
+            expon = expon.plus(1).log(1000000);
+            if (isNaN(expon)) expon = new Decimal(1);
+        }
+
         return expon
     },
     upgrades: {
@@ -427,10 +433,10 @@ addLayer("g", {
     update(diff) {
         generatePoints("g", new Decimal(diff).times(buyableEffect("xp", 11).plus(hasMilestone("r", 0) ? 1 : 0).plus(hasMilestone("s", 3) ? 10 : 0)));
         if (hasMilestone("r", 1) || hasMilestone("s", 4)) {
-            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
-            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
-            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
-            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
+            let ticks = hasMilestone("r", 1) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
+            if (hasMilestone("q", 5)) ticks = 20 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
+            if (hasMilestone("q", 14)) ticks = 1000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
+            if (hasMilestone("q", 15)) ticks = 100000 + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             if (layers.g.buyables[11].unlocked() && layers.g.buyables[11].canAfford()) {
                 layers.g.buyables[11].buy(ticks);
             }

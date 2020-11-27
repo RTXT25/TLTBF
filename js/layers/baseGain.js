@@ -100,7 +100,9 @@ function getPointGen() {
         baseGain = baseGain.times(2);
     }
 
-
+    if (hasUpgrade("t", 23)) {
+        baseGain = baseGain.times(upgradeEffect("t", 23));
+    }
 
 
     let powPower = new Decimal(2);

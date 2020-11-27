@@ -440,7 +440,7 @@ addLayer("l", {
             generatePoints("l", diff);
         }
         if (hasUpgrade("r", 22) || hasMilestone("s", 4)) {
-            let ticks = (hasUpgrade("r", 22) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9);
+            let ticks = (hasUpgrade("r", 22) * 10) + (hasMilestone("s", 4) * 10) + (hasMilestone("s", 21) * 1e9) + (hasMilestone("s", 22) * 1e90);
             if (layers.l.buyables[11].unlocked() && layers.l.buyables[11].canAfford()) {
                 layers.l.buyables[11].buy(ticks);
             }
