@@ -20,8 +20,12 @@ addLayer("t", {
         eff2 = player[this.layer].points.div(1000).plus(1);
         if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(1.5).plus(1);
 
-        if (eff2.gte(10)) {
-            eff = eff.sub(9).log(10).plus(1).log(10).add(10);
+        if (eff2.gte(2)) {
+            eff2 = eff2.sub(1).pow(0.5).plus(1);
+        }
+
+        if (eff2.gte(4)) {
+            eff2 = eff2.log(4).log(10).div(10).plus(4);
         }
 
         return eff2;
