@@ -41,7 +41,7 @@ addLayer("t", {
         eff2 = this.effect2();
         return "Treasures help you get more skills. Lol."+
         " Increases your max level by "+format(eff)+
-        ". Increases your skill gain by "+format(eff2.sub(1).times(100))+"%. Needs 60 really last" 
+        ". Increases your skill powered gain by "+format(eff2.sub(1).times(100))+"%. Needs 60 really last" 
         + " (9) quest challenge competitions for treasure prestige."
     },
     color: "#FFFFFF",
