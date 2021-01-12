@@ -732,8 +732,8 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 96) return new Decimal(1500);
                 if (challengeCompletions(this.layer, this.id) == 97) return new Decimal(2000);
                 if (challengeCompletions(this.layer, this.id) == 98) return new Decimal(3000);
-                if (challengeCompletions(this.layer, this.id) == 99) return new Decimal(1000000);
-                if (challengeCompletions(this.layer, this.id) == 100) return new Decimal(1000000);
+                if (challengeCompletions(this.layer, this.id) == 99) return new Decimal(1000000000);
+                if (challengeCompletions(this.layer, this.id) == 100) return new Decimal(1000000000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
