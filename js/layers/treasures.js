@@ -9,7 +9,7 @@ addLayer("t", {
     }},
     effect() {
         eff = player[this.layer].points.times(100000);
-        if (hasUpgrade("t", 11)) eff = eff.times(1.5);
+        if (hasUpgrade("t", 11)) eff = eff.times(2.5);
 
         if (eff.gte(100000000)) {
             eff = eff.div(100000000).pow(0.1).log(27).plus(1).times(100000000);
@@ -17,11 +17,11 @@ addLayer("t", {
         return eff;
     },
     effect2() {
-        eff2 = player[this.layer].points.div(1000).plus(1);
-        if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(1.5).plus(1);
+        eff2 = player[this.layer].points.div(100).plus(1);
+        if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(2.5).plus(1);
 
-        if (eff2.gte(2)) {
-            eff2 = eff2.sub(1).pow(0.5).plus(1);
+        if (eff2.gte(2.5)) {
+            eff2 = eff2.sub(1.5).pow(0.5).plus(1.5);
         }
 
         if (eff2.gte(4)) {
@@ -91,7 +91,7 @@ addLayer("t", {
         cols: 5,
         11: {
             title: "Reset all but then better",
-            description: "Multiplies treasure effects by 1.5",
+            description: "Multiplies treasure effects by 2.5",
             cost() { return new Decimal(10) },
             unlocked() { return player[this.layer].unlocked },
         },
