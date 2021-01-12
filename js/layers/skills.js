@@ -58,8 +58,8 @@ addLayer("s", {
             mult = mult.times(0);
         }
 
-        if (player[this.layer].points.gte("1e6")) {
-            mult = new Decimal(1).div(player[this.layer].points.div("1e6").log(10).plus(1).times("1e6"));
+        if (player[this.layer].points.gte("1e9")) {
+            mult = new Decimal(1).div(player[this.layer].points.div("1e9").log(10).plus(1).times("1e9"));
         }
 
         return mult
