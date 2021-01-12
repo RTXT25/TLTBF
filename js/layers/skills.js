@@ -14,13 +14,13 @@ addLayer("s", {
         }
         eff = eff.times(player[this.layer].total.plus(4).log(4));
         if (hasMilestone("s", 18)) eff = eff.pow(1.25);
-        if (hasUpgrade("t", 12)) eff = eff.times(100);
+        if (hasUpgrade("t", 12)) eff = eff.times(1000000);
         return eff;
     },
     effect2() {
         eff2 = player[this.layer].total.plus(1);
         if (hasMilestone("s", 18)) eff2 = eff2.pow(1.25);
-        if (hasUpgrade("t", 12)) eff2 = eff2.times(100);
+        if (hasUpgrade("t", 12)) eff2 = eff2.times(1000000);
         return eff2;
     },
     softcap() {

@@ -97,7 +97,7 @@ addLayer("t", {
         },
         12: {
             title: "4 Four Faster",
-            description: "Multiplies all skill effects by x100",
+            description: "Multiplies all skill effects by x1,000,000",
             cost() { return new Decimal(20) },
             unlocked() { return (hasUpgrade(this.layer, 11)) },
         },
