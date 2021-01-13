@@ -244,7 +244,7 @@ addLayer("t", {
 
 
     update(diff) {
-        if (hasUpgrade("t", 31)) {
+        if (!hasUpgrade("t", 31)) {
             if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).div(10));
         }
         else {
