@@ -10,6 +10,9 @@ addLayer("t", {
     effect() {
         eff = player[this.layer].points.times(100000);
         if (hasUpgrade("t", 11)) eff = eff.times(2.5);
+        if (hasUpgrade("t", 33)) eff = eff.times(10);
+        if (hasUpgrade("t", 34)) eff = eff.times(1000);
+        if (hasUpgrade("t", 35)) eff = eff.times(1000000);
 
         if (eff.gte(100000000)) {
             eff = eff.div(100000000).pow(0.1).log(27).plus(1).times(100000000);
@@ -19,7 +22,9 @@ addLayer("t", {
     effect2() {
         eff2 = player[this.layer].points.div(100).plus(1);
         if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(2.5).plus(1);
-
+        if (hasUpgrade("t", 33)) eff2 = eff2.sub(1).times(10).plus(1);
+        if (hasUpgrade("t", 34)) eff2 = eff2.sub(1).times(1000).plus(1);
+        if (hasUpgrade("t", 35)) eff2 = eff2.sub(1).times(1000000).plus(1);
         if (eff2.gte(2.5)) {
             eff2 = eff2.sub(1.5).pow(0.5).plus(1.5);
         }
@@ -173,16 +178,63 @@ addLayer("t", {
         },
         25: {
             title: "Autoskill Fun",
-            description: "Adds +N% of skill/sec, where N = log[6.18](total treasures + 1)",
+            description() {
+                if (hasUpgrade("t", 32)) {
+                    return "Adds +N% of skill/sec, where N = log[6.18](total treasures + 1)*10";
+                }
+                else {
+                    return "Adds +N% of skill/sec, where N = log[6.18](total treasures + 1)";
+                }
+            },
             cost() { return new Decimal(618) },
             unlocked() { return (hasUpgrade(this.layer, 24)) },
             effect() { 
                 let eff = player["t"].total.plus(1).log(6.18);
+                if (hasUpgrade("t", 32)) {
+                    eff = eff.times(10);
+                }
                 return eff;
             },
             effectDisplay() {
                 return "+" + format(this.effect())+"% " ;
             }, 
+        },
+        31: {
+            title: "More and more treasures",
+            description: "Last skill milestone is also based on your skill log10",
+            cost() { return new Decimal(2000) },
+            unlocked() { return (hasUpgrade(this.layer, 25)) },
+            effect() { 
+                let eff = player["s"].points.plus(1).log(10);
+                return eff;
+            },
+            effectDisplay() {
+                return "+" + format(this.effect())+"% " ;
+            }, 
+        },
+        32: {
+            title: "More fun of autoskill",
+            description: "Removes ability to prestige skill, but Autoskill fun is 10 times effective",
+            cost() { return new Decimal(5000) },
+            unlocked() { return (hasUpgrade(this.layer, 31)) },
+        },
+        33: {
+            title: "Try to break the softcap",
+            description: "Treasure effects are 10 times more effective but still affected by the softcap",
+            cost() { return new Decimal(12500) },
+            unlocked() { return (hasUpgrade(this.layer, 32)) },
+        },
+        34: {
+            title: "Try to break the softcap II",
+            description: "Treasure effects are 1,000 times more effective but still affected by the softcap",
+            cost() { return new Decimal(15000) },
+            unlocked() { return (hasUpgrade(this.layer, 33)) },
+        },
+        35: {
+            title: "Try to break the softcap III",
+            description: "Treasure effects are 1,000,000 times more effective but still affected by the softcap",
+            cost() { return new Decimal(20000) },
+            unlocked() { return (hasUpgrade(this.layer, 34)) },
         },
     },
 
@@ -192,14 +244,27 @@ addLayer("t", {
 
 
     update(diff) {
-        if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).div(10));
+        if (hasUpgrade("t", 31)) {
+            if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).div(10));
+        }
+        else {
+            if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))));
+        }
     },
 
     tabFormat: ["main-display", 
             ["display-text",
              function() { 
+                 if (hasUpgrade("t", 31)) {
                  return hasMilestone("s", 26) ? "You are gaining " + 
-                 format(new Decimal(tmp["t"].resetGain).div(10)) + " treasures per second" : "" 
+                 format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))))
+                  + " treasures per second" : ""
+                 }
+                 else {
+                    return hasMilestone("s", 26) ? "You are gaining " + 
+                    format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1)))
+                     + " treasures per second" : ""
+                 } 
                 },
                 {"font-size": "20px"}], "blank", 
             ["display-text", function() {return "Total treasures: "+format(player.t.total)},{"font-size": "14px"}],

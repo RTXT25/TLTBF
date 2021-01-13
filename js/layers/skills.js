@@ -312,7 +312,13 @@ addLayer("s", {
             unlocked() {return hasMilestone("s", 25)},
             done() {return player[this.layer].points.gte(1000000000)}, // Used to determine when to give the milestone
             effectDescription() {
-                return "Removes ability to treasure prestige, but gain 10% of treasure value / sec";
+                if (hasUpgrade("t", 31)) {
+                    return "Removes ability to treasure prestige, but gain "+ 
+                    format(new Decimal(10).plus(upgradeEffect("t", 31))) +"% of treasure value / sec";
+                }
+                else {
+                    return "Removes ability to treasure prestige, but gain 10% of treasure value / sec";
+                }
             },
         },
     },
@@ -326,6 +332,23 @@ addLayer("s", {
             generatePoints("s", new Decimal(diff).div(100).times(tic));
         }
     },
+
+
+    tabFormat: ["main-display", 
+            ["display-text",
+             function() { 
+                let tic = new Decimal(1);
+                if (hasUpgrade("t", 15)) tic = tic.plus(1);
+                if (hasUpgrade("t", 25)) tic = tic.plus(upgradeEffect("t", 25));
+
+                 return hasUpgrade("t", 32) ? "You are gaining " + 
+                 format(new Decimal(tmp["s"].resetGain).times(tic.div(100)))
+                  + " skills per second" : ""
+                },
+                {"font-size": "20px"}], "blank", 
+            ["prestige-button", "", function (){ return hasUpgrade("t", 32) ? {'display': 'none'} : {}}], "blank",
+            ["display-text", function() {return "You have made a total of "+format(player.s.total)+ " skills"},{"font-size": "16px"}]
+            , "blank", "milestones"],
 
     row: 2, // Row the layer is in on the tree (0 is the first row)
     branches: [["q", 2], ["l", 2], ["r", 2]],

@@ -732,8 +732,8 @@ addLayer("q", {
                 if (challengeCompletions(this.layer, this.id) == 96) return new Decimal(1500);
                 if (challengeCompletions(this.layer, this.id) == 97) return new Decimal(2000);
                 if (challengeCompletions(this.layer, this.id) == 98) return new Decimal(3000);
-                if (challengeCompletions(this.layer, this.id) == 99) return new Decimal(1000000000);
-                if (challengeCompletions(this.layer, this.id) == 100) return new Decimal(1000000000);
+                if (challengeCompletions(this.layer, this.id) == 99) return new Decimal(100000000);
+                if (challengeCompletions(this.layer, this.id) == 100) return new Decimal(100000000);
             },
             currencyDisplayName: "level", // Use if using a nonstandard currency
             currencyInternalName: "points", // Use if using a nonstandard currency
@@ -953,7 +953,10 @@ addLayer("q", {
             let comps9 = 1;
             if (hasMilestone("s", 19)) comps9 = 3;
             if (inChallenge("q", 19)) {
-                if (player.points.gte(layers["q"].challenges[19].goal())) {
+                if (player.points.gte(layers["q"].challenges[19].goal()) && challengeCompletions("q", 19) < 99) {
+                    player["q"].challenges[19] += Math.min(comps9, 99 - challengeCompletions("q", 19));
+                }
+                else if (player.points.gte(layers["q"].challenges[19].goal())) {
                     player["q"].challenges[19] += Math.min(comps9, 100 - challengeCompletions("q", 19));
                 }
                 if (challengeCompletions("q", 19) >= 100) {
