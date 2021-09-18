@@ -42,7 +42,7 @@ addLayer("l", {
     },
     color: "#33D8FF",
     requires() {
-        let req = new Decimal(5e9);
+        let req = new Decimal(5e18);
         if (hasMilestone("r", 4)) req = req.div(5000);
         return req;
     },
@@ -145,7 +145,7 @@ addLayer("l", {
         21: {
             title: "Are you ready for 200?",
             description: "level gain is powered by 1.02",
-            cost() {return new Decimal(100).times((hasMilestone("s", 6) ? 0 : 1))},
+            cost() {return new Decimal(166).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -158,7 +158,7 @@ addLayer("l", {
         22: {
             title: "It's more powerful as it seems",
             description: "XP gain is powered by 1.03",
-            cost() {return new Decimal(102).times((hasMilestone("s", 6) ? 0 : 1))},
+            cost() {return new Decimal(170).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -171,7 +171,7 @@ addLayer("l", {
         23: {
             title: "Golden Mine",
             description: "Gold gain is powered by 1.05",
-            cost() {return new Decimal(104).times((hasMilestone("s", 6) ? 0 : 1))},
+            cost() {return new Decimal(177).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -184,7 +184,7 @@ addLayer("l", {
         24: {
             title: "Loot Loot Loot",
             description: "Loot gain base is powered by 2",
-            cost(){ return new Decimal(106).times((hasMilestone("s", 6) ? 0 : 1))},
+            cost(){ return new Decimal(184).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -197,7 +197,7 @@ addLayer("l", {
         25: {
             title: "Loot Era",
             description: "Unlocks two buyable upgrades and loot gain base & xp gain is powered by 1.1",
-            cost() {return new Decimal(110).times((hasMilestone("s", 6) ? 0 : 1))},
+            cost() {return new Decimal(190).times((hasMilestone("s", 6) ? 0 : 1))},
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
