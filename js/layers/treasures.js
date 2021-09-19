@@ -8,7 +8,7 @@ addLayer("t", {
         total: new Decimal(0),
     }},
     effect() {
-        eff = player[this.layer].points.times(100000);
+        eff = player[this.layer].total.times(100000);
         if (hasUpgrade("t", 11)) eff = eff.times(2.5);
         if (hasUpgrade("t", 33)) eff = eff.times(10);
         if (hasUpgrade("t", 34)) eff = eff.times(1000);
@@ -20,7 +20,7 @@ addLayer("t", {
         return eff;
     },
     effect2() {
-        eff2 = player[this.layer].points.div(100).plus(1);
+        eff2 = player[this.layer].total.div(100).plus(1);
         if (hasUpgrade("t", 11)) eff2 = eff2.sub(1).times(2.5).plus(1);
         if (hasUpgrade("t", 33)) eff2 = eff2.sub(1).times(10).plus(1);
         if (hasUpgrade("t", 34)) eff2 = eff2.sub(1).times(1000).plus(1);
