@@ -104,6 +104,7 @@ function getPointGen() {
         baseGain = baseGain.times(upgradeEffect("t", 23));
     }
 
+    baseGain = baseGain.times(layers["d"].effect());
 
     let powPower = new Decimal(2);
     if (hasUpgrade("xp", 41)) powPower = new Decimal(1.9);

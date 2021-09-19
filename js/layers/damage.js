@@ -8,7 +8,7 @@ addLayer("d", {
         total: new Decimal(0),
     }},
     effect() {
-        eff = player[this.layer].total.plus(1);
+        eff = player[this.layer].total.times(2).plus(1);
         return eff;
     },
     softcap() {
