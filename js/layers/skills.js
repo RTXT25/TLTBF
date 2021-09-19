@@ -313,12 +313,25 @@ addLayer("s", {
             done() {return player[this.layer].points.gte(1000000000)}, // Used to determine when to give the milestone
             effectDescription() {
                 if (hasUpgrade("t", 31)) {
-                    return "Removes ability to treasure prestige, but gain "+ 
-                    format(new Decimal(10).plus(upgradeEffect("t", 31))) +"% of treasure value / sec";
+                    if (!hasMilestone("s", 27)) {
+                        return "Removes ability to treasure prestige, but gain "+ 
+                        format(new Decimal(10).plus(upgradeEffect("t", 31))) +"% of treasure value / sec";
+                    }
+                    else {
+                        return "Removes ability to treasure prestige, but gain "+ 
+                        format(new Decimal(10).plus(upgradeEffect("t", 31).times(3))) +"% of treasure value / sec";
+                    }
                 }
                 else {
                     return "Removes ability to treasure prestige, but gain 10% of treasure value / sec";
                 }
+            },
+        },
+        27: {requirementDescription: "Get faster treasures (Get 1e18 skills)",
+            unlocked() {return hasMilestone("s", 26)},
+            done() {return player[this.layer].points.gte(1e18)}, // Used to determine when to give the milestone
+            effectDescription() {
+                    return "Previous milestone effect is multiplied by 3";
             },
         },
     },

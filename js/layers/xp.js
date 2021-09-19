@@ -493,13 +493,23 @@ addLayer("xp", {
     },
 
     automate() {
-        if (player["q"].autoBuyXP || player["s"].autoBuyAll2) {
+        if (player["q"].autoBuyXP || player["s"].autoBuyAll2 || player["d"].autoBuyAll3) {
             for (let x = 10; x <= 50; x += 10){ 
                 for (let y = 1; y <= 5; y++) {
                     let z = x + y;
                     if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && 
                     (hasMilestone("q", 1) || hasMilestone("s", 4)) && layers["xp"].upgrades[z].unlocked()===true) {
                         buyUpg("xp", z);
+                    }
+                }
+            }
+        }
+        if (player["d"].autoBuyAll3) {
+            for (let x = 10; x <= 50; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    let z = x + y;
+                    if (!hasUpgrade("t", z) && canAffordUpgrade("t", z) && layers["t"].upgrades[z].unlocked()===true) {
+                        buyUpg("t", z);
                     }
                 }
             }

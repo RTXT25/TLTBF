@@ -19,8 +19,8 @@ addLayer("d", {
     },
     effectDescription() {
         eff = this.effect();
-        return "Damage helps you get more levels not based on your challenge: "+
-        format(eff)
+        return "Damage helps you get more levels not based on your challenge: x"+
+        format(eff) + ". Treasure gain: x" + format(eff);
     },
     color: "#841527",
     requires() {
@@ -57,13 +57,16 @@ addLayer("d", {
     milestones: {
         0: {requirementDescription: "Save automation",
             done() {return player[this.layer].points.gte(1)}, // Used to determine when to give the milestone
+            toggles: [
+                ["d", "autoBuyAll3"]
+            ],
             effect() {
                 let eff = new Decimal(1);
                 return eff;
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                 return "Keeps 5 and 6th skill milestones on reset";
+                 return "Keeps 5 and 6th skill milestones on reset, also autobuys treasure upgrades";
             },
         },
     },
@@ -74,12 +77,6 @@ addLayer("d", {
 
 
     update(diff) {
-        if (!hasUpgrade("t", 31)) {
-            if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).div(10));
-        }
-        else {
-            if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))));
-        }
     },
 
     tabFormat: ["main-display", 

@@ -13,6 +13,11 @@ addLayer("t", {
         if (hasUpgrade("t", 33)) eff = eff.times(10);
         if (hasUpgrade("t", 34)) eff = eff.times(1000);
         if (hasUpgrade("t", 35)) eff = eff.times(1000000);
+        if (hasUpgrade("t", 41)) eff = eff.times(1000000000);
+        if (hasUpgrade("t", 42)) eff = eff.times(1e10);
+        if (hasUpgrade("t", 43)) eff = eff.times(1e20);
+        if (hasUpgrade("t", 44)) eff = eff.times(1e50);
+        if (hasUpgrade("t", 45)) eff = eff.times(1e100);
 
         if (eff.gte(100000000)) {
             eff = eff.div(100000000).pow(0.1).log(27).plus(1).times(100000000);
@@ -25,6 +30,11 @@ addLayer("t", {
         if (hasUpgrade("t", 33)) eff2 = eff2.sub(1).times(10).plus(1);
         if (hasUpgrade("t", 34)) eff2 = eff2.sub(1).times(1000).plus(1);
         if (hasUpgrade("t", 35)) eff2 = eff2.sub(1).times(1000000).plus(1);
+        if (hasUpgrade("t", 41)) eff2 = eff2.sub(1).times(1000000000).plus(1);
+        if (hasUpgrade("t", 42)) eff2 = eff2.sub(1).times(1e10).plus(1);
+        if (hasUpgrade("t", 43)) eff2 = eff2.sub(1).times(1e20).plus(1);
+        if (hasUpgrade("t", 44)) eff2 = eff2.sub(1).times(1e50).plus(1);
+        if (hasUpgrade("t", 45)) eff2 = eff2.sub(1).times(1e100).plus(1);
         if (eff2.gte(2.5)) {
             eff2 = eff2.sub(1.5).pow(0.5).plus(1.5);
         }
@@ -47,7 +57,7 @@ addLayer("t", {
         return "Total treasures help you get more skills. Lol."+
         " Increases your max level by "+format(eff)+
         ". Increases your skill powered gain by "+format(eff2.sub(1).times(100))+"%. Needs 60 really last" 
-        + " (9) quest challenge competitions for treasure prestige."
+        + " (9) quest challenge completions for treasure prestige."
     },
     color: "#FFFFFF",
     requires() {
@@ -82,6 +92,25 @@ addLayer("t", {
         }
         if (hasUpgrade("t", 14)) mult = mult.times(upgradeEffect("t", 14));
         if (hasUpgrade("t", 24)) mult = mult.times(upgradeEffect("t", 24));
+
+        if (hasUpgrade("t", 51)) {  
+            mult = mult.pow(1.1);
+        }
+        if (hasUpgrade("t", 52)) {  
+            mult = mult.pow(1.1);
+        }
+        if (hasUpgrade("t", 53)) {  
+            mult = mult.pow(1.1);
+        }
+        if (hasUpgrade("t", 54)) {  
+            mult = mult.pow(1.1);
+        }
+        if (hasUpgrade("t", 55)) {  
+            mult = mult.pow(1.2);
+        }
+
+        
+        mult = mult.times(layers["d"].effect());
 
         return mult
     },
@@ -233,8 +262,68 @@ addLayer("t", {
         35: {
             title: "Try to break the softcap III",
             description: "Treasure effects are 1,000,000 times more effective but still affected by the softcap",
-            cost() { return new Decimal(20000) },
+            cost() { return new Decimal(16000) },
             unlocked() { return (hasUpgrade(this.layer, 34)) },
+        },
+        41: {
+            title: "Try to break the softcap IV",
+            description: "Treasure effects are 1 Bil times more effective but still affected by the softcap",
+            cost() { return new Decimal(20000) },
+            unlocked() { return (hasUpgrade(this.layer, 35)) },
+        },
+        42: {
+            title: "Try to break the softcap V",
+            description: "Treasure effects are 1e10 times more effective but still affected by the softcap",
+            cost() { return new Decimal(50000) },
+            unlocked() { return (hasUpgrade(this.layer, 41)) },
+        },
+        43: {
+            title: "Try to break the softcap VI",
+            description: "Treasure effects are 1e20 times more effective but still affected by the softcap",
+            cost() { return new Decimal(60000) },
+            unlocked() { return (hasUpgrade(this.layer, 42)) },
+        },
+        44: {
+            title: "Try to break the softcap VII",
+            description: "Treasure effects are 1e50 times more effective but still affected by the softcap",
+            cost() { return new Decimal(70000) },
+            unlocked() { return (hasUpgrade(this.layer, 43)) },
+        },
+        45: {
+            title: "Try to break the softcap VIII",
+            description: "Treasure effects are 1e100 times more effective but still affected by the softcap",
+            cost() { return new Decimal(80000) },
+            unlocked() { return (hasUpgrade(this.layer, 44)) },
+        },
+        51: {
+            title: "Going further",
+            description: "Treasure gain is powered to ^1.1",
+            cost() { return new Decimal(100000) },
+            unlocked() { return (hasUpgrade(this.layer, 45)) },
+        },
+        52: {
+            title: "Going further II",
+            description: "Treasure gain is powered to ^1.1",
+            cost() { return new Decimal(110000) },
+            unlocked() { return (hasUpgrade(this.layer, 51)) },
+        },
+        53: {
+            title: "Going further III",
+            description: "Treasure gain is powered to ^1.1",
+            cost() { return new Decimal(120000) },
+            unlocked() { return (hasUpgrade(this.layer, 52)) },
+        },
+        54: {
+            title: "Going further IV",
+            description: "Treasure gain is powered to ^1.1",
+            cost() { return new Decimal(150000) },
+            unlocked() { return (hasUpgrade(this.layer, 53)) },
+        },
+        55: {
+            title: "Ready for damage?",
+            description: "Treasure gain is powered to ^1.2",
+            cost() { return new Decimal(200000) },
+            unlocked() { return (hasUpgrade(this.layer, 54)) },
         },
     },
 
@@ -245,10 +334,24 @@ addLayer("t", {
 
     update(diff) {
         if (!hasUpgrade("t", 31)) {
-            if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).div(10));
+            if (hasMilestone("s", 26)) {
+                if (!hasMilestone("s", 27)) {
+                    generatePoints("t", new Decimal(diff).div(10));
+                }
+                else {
+                    generatePoints("t", new Decimal(diff).div(10).times(3));
+                }
+            }
         }
         else {
-            if (hasMilestone("s", 26)) generatePoints("t", new Decimal(diff).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))));
+            if (hasMilestone("s", 26)) {
+                if (!hasMilestone("s", 27)) {
+                    generatePoints("t", new Decimal(diff).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))));
+                }
+                else {
+                    generatePoints("t", new Decimal(diff).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))).times(3));
+                }
+            }
         }
     },
 
@@ -256,14 +359,28 @@ addLayer("t", {
             ["display-text",
              function() { 
                  if (hasUpgrade("t", 31)) {
-                 return hasMilestone("s", 26) ? "You are gaining " + 
-                 format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))))
-                  + " treasures per second" : ""
+                    if (!hasMilestone("s", 27)) {
+                        return hasMilestone("s", 26) ? "You are gaining " + 
+                        format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100))))
+                        + " treasures per second" : ""
+                    }
+                    else {
+                        return hasMilestone("s", 26) ? "You are gaining " + 
+                        format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1).plus(upgradeEffect("t", 31).div(100).times(3))))
+                        + " treasures per second" : ""
+                    }
                  }
                  else {
-                    return hasMilestone("s", 26) ? "You are gaining " + 
-                    format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1)))
-                     + " treasures per second" : ""
+                    if (!hasMilestone("s", 27)) {
+                        return hasMilestone("s", 26) ? "You are gaining " + 
+                        format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1)))
+                        + " treasures per second" : ""
+                    }
+                    else {
+                        return hasMilestone("s", 26) ? "You are gaining " + 
+                        format(new Decimal(tmp["t"].resetGain).times(new Decimal(0.1)).times(3))
+                        + " treasures per second" : ""
+                    }
                  } 
                 },
                 {"font-size": "20px"}], "blank", 
