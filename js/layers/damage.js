@@ -55,7 +55,7 @@ addLayer("d", {
 
 
     milestones: {
-        0: {requirementDescription: "Save automation",
+        0: {requirementDescription: "Save automation (1 damage)",
             unlocked() {return hasMilestone("d", 0)},
             done() {return player[this.layer].points.gte(1)}, // Used to determine when to give the milestone
             toggles: [
@@ -68,6 +68,30 @@ addLayer("d", {
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
                  return "Keeps 2, 5 and 6th skill milestones on reset, also autobuys treasure upgrades";
+            },
+        }, 
+        1: {requirementDescription: "Faster Start (2 damage)",
+            unlocked() {return hasMilestone("d", 0)},
+            done() {return player[this.layer].points.gte(2)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(1000000);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Multiplies base Lv. gain by 1,000,000";
+            },
+        },
+        2: {requirementDescription: "Speedrun (3 damage)",
+            unlocked() {return hasMilestone("d", 1)},
+            done() {return player[this.layer].points.gte(3)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(1e100);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Multiplies base Lv. gain by 1e100";
             },
         },
     },

@@ -96,7 +96,9 @@ addLayer("xp", {
         
         mult = mult.times((hasUpgrade("l", 51)) ? upgradeEffect("l", 51) : new Decimal(1));
 
-        mult = mult.times(layers["s"].milestones[0].effect());
+        if (hasMilestone("s", 0)) {
+            mult = mult.times(layers["s"].milestones[0].effect());
+        }
         
         if (inChallenge("q", 11)) mult = mult.pow(challengeVar("q", 11));
         else {
