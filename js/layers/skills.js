@@ -139,8 +139,8 @@ addLayer("s", {
             },
         },
         4: {requirementDescription: "No need to buy buyables (Get 5 skills)",
-            unlocked() {return hasMilestone("s", 3)},
-            done() {return player[this.layer].points.gte(5)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 3) || hasMilestone("d", 1)},
+            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 1)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All 1,2nd layers buyables cost nothing and autobuys +10 of them.";
             },
@@ -149,8 +149,8 @@ addLayer("s", {
             toggles: [
                 ["s", "autoBuyAll2"]
             ],
-            unlocked() {return hasMilestone("s", 4)},
-            done() {return player[this.layer].points.gte(7)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 4) || hasMilestone("d", 1)},
+            done() {return player[this.layer].points.gte(7) || hasMilestone("d", 1)}, // Used to determine when to give the milestone
             effectDescription: "Autobuys all prev. layer upgrades now. You don't have to bother about them anymore.",
         },
         6: {requirementDescription: "No more challenge corruptions (Get 8 skills)",
@@ -353,5 +353,5 @@ addLayer("s", {
     row: 2, // Row the layer is in on the tree (0 is the first row)
     branches: [["q", 2], ["l", 2], ["r", 2]],
 
-    layerShown(){return (challengeCompletions("q", 18) >= 100 || player.s.total.gte(1))},
+    layerShown(){return (challengeCompletions("q", 18) >= 100 || player.s.total.gte(1) || player.d.total.gte(1))},
 })
