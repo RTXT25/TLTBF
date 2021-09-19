@@ -42,7 +42,7 @@ addLayer("l", {
     },
     color: "#33D8FF",
     requires() {
-        let req = new Decimal(5e18);
+        let req = new Decimal(5e9);
         if (hasMilestone("r", 4)) req = req.div(5000);
         return req;
     },

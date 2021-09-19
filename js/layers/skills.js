@@ -115,8 +115,8 @@ addLayer("s", {
             },
         },
         1: {requirementDescription: "Yeah. You waited for it (Get 2 skills)",
-            unlocked() {return hasMilestone("s", 0)},
-            done() {return player[this.layer].points.gte(2)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 0) || hasMilestone("d", 0)},
+            done() {return player[this.layer].points.gte(2) || hasMilestone("d", 0)}, // Used to determine when to give the milestone
             effectDescription: "Autocomplete quest challenges when you reach the goal.",
         },
         2: {requirementDescription: "Even better boost (Get 3 skills)",
@@ -139,8 +139,8 @@ addLayer("s", {
             },
         },
         4: {requirementDescription: "No need to buy buyables (Get 5 skills)",
-            unlocked() {return hasMilestone("s", 3) || hasMilestone("d", 1)},
-            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 1)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 3) || hasMilestone("d", 0)},
+            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 0)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All 1,2nd layers buyables cost nothing and autobuys +10 of them.";
             },
@@ -149,8 +149,8 @@ addLayer("s", {
             toggles: [
                 ["s", "autoBuyAll2"]
             ],
-            unlocked() {return hasMilestone("s", 4) || hasMilestone("d", 1)},
-            done() {return player[this.layer].points.gte(7) || hasMilestone("d", 1)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 4) || hasMilestone("d", 0)},
+            done() {return player[this.layer].points.gte(7) || hasMilestone("d", 0)}, // Used to determine when to give the milestone
             effectDescription: "Autobuys all prev. layer upgrades now. You don't have to bother about them anymore.",
         },
         6: {requirementDescription: "No more challenge corruptions (Get 8 skills)",

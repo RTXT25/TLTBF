@@ -251,7 +251,7 @@ addLayer("xp", {
         23: {
             title: "Longer Runs",
             description: "Level gain in multiplied by XP gain",
-            cost() { return new Decimal(100000000).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(500000).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 22))},
             effect() {
                 let gainGet = tmp[this.layer].resetGain;
@@ -263,7 +263,7 @@ addLayer("xp", {
         24: {
             title: "More and More XP",
             description: "XP to XP effect is powered to (level / 10)",
-            cost() { return new Decimal(1e9).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e6).pow(layers.xp.costDecrement()) },
             softcap() { return new Decimal(50) },
             unlocked() { return (hasUpgrade(this.layer, 23))},
             effect() {
@@ -291,7 +291,7 @@ addLayer("xp", {
             description() {
                 return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^(rubies^(1/10))");
             },
-            cost() { return new Decimal(1e10).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(2e6).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 24))},
             effect() {
                 let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.1))
@@ -302,7 +302,7 @@ addLayer("xp", {
         31: {
             title: "Fast Start",
             description: "Level UP much faster before Lv.50",
-            cost() { return new Decimal(1e19).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e7).pow(layers.xp.costDecrement()) },
             unlocked() { return ((hasUpgrade("g", 15) && hasUpgrade("xp", 25)) || inChallenge("q", 14)) },
             effect() {
                 let maxLv = new Decimal(51);
@@ -313,9 +313,9 @@ addLayer("xp", {
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
         32: {
-            title: "Yeae, you reached 50!",
+            title: "Yeae, you reached 40!",
             description: "Gold gain is multiplied by (lv/10)+1",
-            cost() { return new Decimal(50).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
+            cost() { return new Decimal(40).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -329,7 +329,7 @@ addLayer("xp", {
         33: {
             title: "Faster Levels II",
             description: "Multiplies level gain by 100",
-            cost() { return new Decimal(1e21).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e9).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 32))},
             effect() {
                 let eff = new Decimal(100);
@@ -340,7 +340,7 @@ addLayer("xp", {
         34: {
             title: "To Level 70!",
             description: "Level UP much too faster before Lv.60",
-            cost() { return new Decimal(1e22).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e11).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 33))},
             effect() {
                 let maxLv = new Decimal(71);
@@ -351,9 +351,9 @@ addLayer("xp", {
             effectDisplay() { return format(this.effect()) + "x" }, // Add formatting to the effect
         },
         35: {
-            title: "So close nice",
+            title: "So close",
             description: "Unlocks XP buyable upgrade and a new row of gold upgrades",
-            cost() { return new Decimal(68.9).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
+            cost() { return new Decimal(54.9).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -508,8 +508,19 @@ addLayer("xp", {
             for (let x = 10; x <= 50; x += 10){ 
                 for (let y = 1; y <= 5; y++) {
                     let z = x + y;
-                    if (!hasUpgrade("t", z) && canAffordUpgrade("t", z) && layers["t"].upgrades[z].unlocked()===true) {
+                    if (!hasUpgrade("t", z) && canAffordUpgrade("t", z) && layers["t"].upgrades[z].unlocked()===true)  {
                         buyUpg("t", z);
+                    }
+                    if (!hasUpgrade("xp", z) && canAffordUpgrade("xp", z) && layers["xp"].upgrades[z].unlocked()===true)  {
+                        buyUpg("xp", z);
+                    }
+                }
+            }
+            for (let x = 10; x <= 30; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    var z = x + y
+                    if (!hasUpgrade("g", z) && canAffordUpgrade("g", z) && layers["g"].upgrades[z].unlocked()===true)  {
+                        buyUpg("g", z);
                     }
                 }
             }

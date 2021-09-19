@@ -29,7 +29,7 @@ addLayer("d", {
     },
     resource: "damage", // Name of prestige currency
     baseResource: "treasures", // Name of resource prestige is based on
-    baseAmount() {return player.points}, // Get the current amount of baseResource
+    baseAmount() {return player.t.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
         let baseExp = new Decimal(0.25);
@@ -56,6 +56,7 @@ addLayer("d", {
 
     milestones: {
         0: {requirementDescription: "Save automation",
+            unlocked() {return hasMilestone("d", 0)},
             done() {return player[this.layer].points.gte(1)}, // Used to determine when to give the milestone
             toggles: [
                 ["d", "autoBuyAll3"]
@@ -66,7 +67,7 @@ addLayer("d", {
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                 return "Keeps 5 and 6th skill milestones on reset, also autobuys treasure upgrades";
+                 return "Keeps 2, 5 and 6th skill milestones on reset, also autobuys treasure upgrades";
             },
         },
     },
@@ -82,8 +83,8 @@ addLayer("d", {
     tabFormat: ["main-display", 
             , "blank", 
             ["display-text", function() {return "Total damage: "+format(player.d.total)},{"font-size": "14px"}],
-            ["prestige-button", "", function (){ return true ? {'display': 'none'} : {}}]
-            , "blank", "upgrades"],
+            ["prestige-button", "", function (){ return false ? {'display': 'none'} : {}}]
+            , "blank", "upgrades", "milestones"],
 
     layerShown(){return (player.t.total.gte(1000000) || player.d.total.gte(1))},
 })
