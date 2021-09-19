@@ -94,6 +94,18 @@ addLayer("d", {
                 return "Multiplies base Lv. gain by 1e100";
             },
         },
+        3: {requirementDescription: "It'll be fun (4 damage)",
+            unlocked() {return hasMilestone("d", 2)},
+            done() {return player[this.layer].points.gte(4)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(1e100);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Keeps all skills milestones";
+            },
+        },
     },
 
     row: 3, // Row the layer is in on the tree (0 is the first row)
