@@ -10,7 +10,7 @@ addLayer("d", {
     effect() {
         eff = player[this.layer].total.times(2).plus(1);
         if (hasMilestone("d", 5)) {
-            eff = eff.pow(1.1);
+            eff = eff.pow(1.5);
         }
         return eff;
     },
@@ -135,7 +135,7 @@ addLayer("d", {
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                return "Damage effects are powered to ^1.1";
+                return "Damage effects are powered to ^1.5";
             },
         },
         6: {requirementDescription: "Ultimate damage (10 damage)",
