@@ -288,8 +288,8 @@ addLayer("s", {
             },
         },
         23: {requirementDescription: "EXTREME BUYING (Get 1,000,000 skills)",
-            unlocked() {return hasMilestone("s", 22)},
-            done() {return player[this.layer].points.gte(1000000)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 22) || hasMilestone("d", 3)},
+            done() {return player[this.layer].points.gte(1000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All buyables are bought up to 1e100 / tick and their effects are powered to ^2";
             },
