@@ -12,6 +12,9 @@ addLayer("d", {
         if (hasMilestone("d", 5)) {
             eff = eff.pow(1.5);
         }
+        if (hasMilestone("d", 7)) {
+            eff = eff.pow(1.1);
+        }
         return eff;
     },
     softcap() {
@@ -148,6 +151,18 @@ addLayer("d", {
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
                 return "You can max damage prestige";
+            },
+        },
+        7: {requirementDescription: "Little increase (12 damage)",
+            unlocked() {return hasMilestone("d", 6)},
+            done() {return player[this.layer].points.gte(12)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Damage effects are powered to ^1.1";
             },
         },
     },
