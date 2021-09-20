@@ -526,6 +526,22 @@ addLayer("xp", {
                     }
                 }
             }
+            for (let x = 10; x <= 20; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    let z = x + y;
+                    if (!hasUpgrade("r", z) && canAffordUpgrade("r", z) && layers["r"].upgrades[z].unlocked()===true) {
+                        buyUpg("r", z);
+                    }
+                }
+            }
+            for (let x = 10; x <= 50; x += 10){ 
+                for (let y = 1; y <= 5; y++) {
+                    let z = x + y;
+                    if (!hasUpgrade("l", z) && canAffordUpgrade("l", z) && layers["l"].upgrades[z].unlocked()===true) {
+                        buyUpg("l", z);
+                    }
+                }
+            }
         }
     },
 
