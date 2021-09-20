@@ -9,6 +9,9 @@ addLayer("d", {
     }},
     effect() {
         eff = player[this.layer].total.times(2).plus(1);
+        if (hasMilestone("d", 5)) {
+            eff = eff.pow(1.1);
+        }
         return eff;
     },
     softcap() {
@@ -32,7 +35,7 @@ addLayer("d", {
     baseAmount() {return player.t.points}, // Get the current amount of baseResource
     type: "static", // normal: cost to gain currency depends on amount gained. static: cost depends on how much you already have
     exponent() {
-        let baseExp = new Decimal(0.25);
+        let baseExp = new Decimal(0.8);
 
         return baseExp;
     }, // Prestige currency exponent
@@ -46,6 +49,11 @@ addLayer("d", {
         let expon = new Decimal(1);
 
         return expon;
+    },
+
+    
+    canBuyMax() {
+        return hasMilestone("d", 6);
     },
 
     upgrades: {
@@ -116,6 +124,30 @@ addLayer("d", {
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
                 return "Max Level is doubled";
+            },
+        },
+        5: {requirementDescription: "Treasure damager (7 damage)",
+            unlocked() {return hasMilestone("d", 4)},
+            done() {return player[this.layer].points.gte(7)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Damage effects are powered to ^1.1";
+            },
+        },
+        6: {requirementDescription: "Ultimate damage (10 damage)",
+            unlocked() {return hasMilestone("d", 5)},
+            done() {return player[this.layer].points.gte(10)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "You can max damage prestige";
             },
         },
     },
