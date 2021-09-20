@@ -159,8 +159,8 @@ addLayer("s", {
             effectDescription: "All upgrades that cost levels are free now. Also buying up to 1,000 more of second ruby buyable / tick.",
         },
         7: {requirementDescription: "Why should I even prestige? (Get 10 skills)",
-            unlocked() {return hasMilestone("s", 6) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(10) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            unlocked() {return hasMilestone("s", 6) || hasMilestone("d", 0) || hasMilestone("d", 3)},
+            done() {return player[this.layer].points.gte(10) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription: "You get +100% of your loot, quests and rubies / second",
         },
         8: {requirementDescription: "Faster completions (Get 13 skills)",

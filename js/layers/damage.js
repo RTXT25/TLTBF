@@ -67,7 +67,7 @@ addLayer("d", {
             },
             effectDescription() {
                 let eff = layers[this.layer].milestones[this.id].effect();
-                 return "Keeps 2, 5 and 6th skill milestones on reset, also autobuys treasure upgrades";
+                 return "Keeps 2, 5, 6 and 8th skill milestones on reset, also autobuys treasure upgrades";
             },
         }, 
         1: {requirementDescription: "Faster Start (2 damage)",
