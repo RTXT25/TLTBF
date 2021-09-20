@@ -231,9 +231,9 @@ addLayer("s", {
                 return "Get 1% of skill gain per second. ";
             },
         },
-        15: {requirementDescription: "Guess what? (Get 100 skills)",
+        15: {requirementDescription: "Guess what? (Get 60 skills)",
             unlocked() {return hasMilestone("s", 14) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(100) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(60) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Unlocks new quest challenge? ";
             },
