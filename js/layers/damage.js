@@ -106,6 +106,18 @@ addLayer("d", {
                 return "Keeps all skills milestones";
             },
         },
+        4: {requirementDescription: "Double Level (5 damage)",
+            unlocked() {return hasMilestone("d", 3)},
+            done() {return player[this.layer].points.gte(5)}, // Used to determine when to give the milestone
+            effect() {
+                let eff = new Decimal(2);
+                return eff;
+            },
+            effectDescription() {
+                let eff = layers[this.layer].milestones[this.id].effect();
+                return "Max Level is doubled";
+            },
+        },
     },
 
     row: 3, // Row the layer is in on the tree (0 is the first row)
