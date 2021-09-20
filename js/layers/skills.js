@@ -238,16 +238,16 @@ addLayer("s", {
                 return "Unlocks new quest challenge? ";
             },
         },
-        16: {requirementDescription: "More exp reduction (Get 120 skills)",
+        16: {requirementDescription: "More exp reduction (Get 80 skills)",
             unlocked() {return hasMilestone("s", 15) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(120) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(80) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "+ Autobuy 1,000 to first and 10,000 to second rubies upgrades.";
             },
         },
-        17: {requirementDescription: "New Layer. Kek. (Get 200 skills)",
+        17: {requirementDescription: "New Layer. Kek. (Get 100 skills)",
             unlocked() {return hasMilestone("s", 16) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(200) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(100) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "New layer. Kek.";
             },
