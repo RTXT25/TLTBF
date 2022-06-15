@@ -172,14 +172,14 @@ addLayer("xp", {
             title: "Bonus level gain",
             description: "+ 1 base lv gain / sec",
             cost() { 
-                return new Decimal(10).pow(layers.xp.costDecrement());
+                return new Decimal(1).pow(layers.xp.costDecrement());
             },
             unlocked() { return player[this.layer].unlocked },
         },
         12: {
             title: "XP to level",
             description: "Level gain is also based on your unspent xp, softcap after x100",
-            cost() { return new Decimal(50).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(5).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 11))},
             effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
                 let eff = player[this.layer].points.div(10).add(1);
@@ -191,7 +191,7 @@ addLayer("xp", {
         13: {
             title: "XP to XP",
             description: "XP gain is also based on your unspent xp",
-            cost() { return new Decimal(1000).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(100).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 12))},
             effect() { // Calculate bonuses from the upgrade. Can return a single value or an object with multiple values
                 let eff = player[this.layer].points.add(1).ln().div(5).add(1);
@@ -203,7 +203,7 @@ addLayer("xp", {
         14: {
             title: "Level to Level",
             description: "Level gain is multiplied by your level + 1",
-            cost() { return new Decimal(3000).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(300).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 13))},
             effect() {
                 let eff = player.points.plus(1);
@@ -214,7 +214,7 @@ addLayer("xp", {
         15: {
             title: "Level to XP",
             description: "XP gain is multiplied by 1 + (level^2)/100",
-            cost() { return new Decimal(15).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
+            cost() { return new Decimal(1).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -228,7 +228,7 @@ addLayer("xp", {
         21: {
             title: "Faster levels I",
             description: "Multiplies level gain by 10",
-            cost() { return new Decimal(15000).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1500).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 15))},
             effect() {
                 let eff = new Decimal(10);
@@ -239,7 +239,7 @@ addLayer("xp", {
         22: {
             title: "Faster XP I",
             description: "Multiplies XP gain by 10",
-            cost() { return new Decimal(20).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
+            cost() { return new Decimal(2).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -253,7 +253,7 @@ addLayer("xp", {
         23: {
             title: "Longer Runs",
             description: "Level gain in multiplied by XP gain",
-            cost() { return new Decimal(500000).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(50000).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 22))},
             effect() {
                 let gainGet = tmp[this.layer].resetGain;
@@ -265,7 +265,7 @@ addLayer("xp", {
         24: {
             title: "More and More XP",
             description: "XP to XP effect is powered to (level / 10)",
-            cost() { return new Decimal(1e6).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e4).pow(layers.xp.costDecrement()) },
             softcap() { return new Decimal(50) },
             unlocked() { return (hasUpgrade(this.layer, 23))},
             effect() {
@@ -293,7 +293,7 @@ addLayer("xp", {
             description() {
                 return (!hasMilestone("r", 0) ? "Unlocks Gold Layer" : "Multiplies XP gain by 2^(rubies^(1/10))");
             },
-            cost() { return new Decimal(2e6).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(2e4).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade(this.layer, 24))},
             effect() {
                 let eff = Decimal.pow(new Decimal(2), player.r.points.pow(0.1))
@@ -304,7 +304,7 @@ addLayer("xp", {
         31: {
             title: "Fast Start",
             description: "Level UP much faster before Lv.50",
-            cost() { return new Decimal(1e7).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e4).pow(layers.xp.costDecrement()) },
             unlocked() { return ((hasUpgrade("g", 15) && hasUpgrade("xp", 25)) || inChallenge("q", 14)) },
             effect() {
                 let maxLv = new Decimal(51);
@@ -317,7 +317,7 @@ addLayer("xp", {
         32: {
             title: "Yeae, you reached 40!",
             description: "Gold gain is multiplied by (lv/10)+1",
-            cost() { return new Decimal(40).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
+            cost() { return new Decimal(4).pow(layers.xp.costDecrement()).times((hasMilestone("s", 6) ? 0 : 1)) },
             currencyDisplayName: "levels",
             currencyInternalName: "points",
             currencyLayer: "",
@@ -331,7 +331,7 @@ addLayer("xp", {
         33: {
             title: "Faster Levels II",
             description: "Multiplies level gain by 100",
-            cost() { return new Decimal(1e9).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e3).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 32))},
             effect() {
                 let eff = new Decimal(100);
@@ -342,7 +342,7 @@ addLayer("xp", {
         34: {
             title: "To Level 70!",
             description: "Level UP much too faster before Lv.60",
-            cost() { return new Decimal(1e11).pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal(1e1).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 33))},
             effect() {
                 let maxLv = new Decimal(71);
@@ -364,55 +364,55 @@ addLayer("xp", {
         41: {
             title: "Level Boost",
             description: "Base Lvl. Exponent: 2 -> 1.9 (It goes much harder after lv 3,000)",
-            cost() { return new Decimal("e160").pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal("e16").pow(layers.xp.costDecrement()) },
             unlocked() { return ((hasUpgrade("xp", 35) && hasUpgrade("l", 35)) || hasUpgrade("l", 44)) },
         },
         42: {
             title: "Meta Level Boost",
             description: "Base Lvl. Exponent: 1.9 -> 1.8",
-            cost() { return new Decimal("e170").pow(layers.xp.costDecrement()) },
+            cost() { return new Decimal("e10").pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 41))},
         },
         43: {
             title: "Extra Level Boost",
             description: "Base Lvl. Exponent: 1.8 -> 1.75",
-            cost() { return (new Decimal("e175")).times(new Decimal(4.444444)).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("e15")).times(new Decimal(4.444444)).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 42))},
         },
         44: {
             title: "Super Level Boost",
             description: "Base Lvl. Exponent: 1.75 -> 1.7",
-            cost() { return (new Decimal("1e181")).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("1e11")).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 43))},
         },
         45: {
             title: "How fast do you level up?",
             description: "Base Lvl. Exponent: 1.7 -> 1.666. Multiplies xp, gold, level and loot gain eff. value by 1,000",
-            cost() { return (new Decimal("1e188")).times(new Decimal(1)).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("1e18")).times(new Decimal(1)).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 44))},
         },
         51: {
             title: "Get more loot from XP",
             description: "XP multiplier to loot gain is powered to ^2",
-            cost() { return (new Decimal("e777")).times(new Decimal(7.77)).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("e77")).times(new Decimal(7.77)).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 45) && hasMilestone("q", 4))},
         },
         52: {
             title: "Loot ExtraBoost!",
             description: "Loot Base Exponent 1/5 -> 1/8",
-            cost() { return (new Decimal("e869")).times(new Decimal(8.69)).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("e89")).times(new Decimal(8.69)).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("g", 33) && hasUpgrade("xp", 51)) },
         },
         53: {
             title: "Loot ZetaBoost!",
             description: "Loot Base Exponent 1/8 -> 1/10",
-            cost() { return (new Decimal("e1010")).times(new Decimal(1.11)).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("e100")).times(new Decimal(1.11)).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 52)) },
         },
         54: {
             title: "Good for Gold",
             description: "Boosts gold gain by ^0.1 of your current xp",
-            cost() { return (new Decimal("e1100")).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("e110")).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 53)) },
             effect() {
                 let eff = player.xp.points.pow(0.1);
@@ -435,7 +435,7 @@ addLayer("xp", {
         55: {
             title: "Is this the end?",
             description: "Ruby exponent is divided by 2. Unlocks next 2 rows of loot upgrades.",
-            cost() { return (new Decimal("e1172")).pow(layers.xp.costDecrement()) },
+            cost() { return (new Decimal("e1170")).pow(layers.xp.costDecrement()) },
             unlocked() { return (hasUpgrade("xp", 54)) },
         },
     },
@@ -448,7 +448,7 @@ addLayer("xp", {
             title: "Passive Gold", // Optional, displayed at the top in a larger font
             cost(x=player[this.layer].buyables[this.id]) { // cost for buying xth buyable, can be an object if there are multiple currencies
                 let cost = Decimal.pow(new Decimal(2.5), x.pow(1.25));
-                cost = cost.times(1e11);
+                cost = cost.times(1e10);
                 return cost.floor()
             },
             effect(x=player[this.layer].buyables[this.id]) { // Effects of owning x of the items, x is a decimal
