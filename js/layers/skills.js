@@ -116,12 +116,12 @@ addLayer("s", {
         },
         1: {requirementDescription: "Yeah. You waited for it (Get 2 skills)",
             unlocked() {return hasMilestone("s", 0) || hasMilestone("d", 0) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(2) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(1) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription: "Autocomplete quest challenges when you reach the goal.",
         },
         2: {requirementDescription: "Even better boost (Get 3 skills)",
             unlocked() {return hasMilestone("s", 1) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(3) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(1) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effect() {
                 let eff = new Decimal(1).plus(player[this.layer].total.pow(0.4));
                 return eff;
@@ -133,14 +133,14 @@ addLayer("s", {
         },
         3: {requirementDescription: "Lol (Get 4 skills)",
             unlocked() {return hasMilestone("s", 2) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(4) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(2) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Gain 1000% of xp and gold gain / sec from the beginning";
             },
         },
         4: {requirementDescription: "No need to buy buyables (Get 5 skills)",
             unlocked() {return hasMilestone("s", 3) || hasMilestone("d", 0) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(2) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All 1,2nd layers buyables cost nothing and autobuys +10 of them.";
             },
@@ -150,22 +150,22 @@ addLayer("s", {
                 ["s", "autoBuyAll2"]
             ],
             unlocked() {return hasMilestone("s", 4) || hasMilestone("d", 0) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(7) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(2) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription: "Autobuys all prev. layer upgrades now. You don't have to bother about them anymore.",
         },
         6: {requirementDescription: "No more challenge corruptions (Get 8 skills)",
             unlocked() {return hasMilestone("s", 5) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(8) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(3) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription: "All upgrades that cost levels are free now. Also buying up to 1,000 more of second ruby buyable / tick.",
         },
         7: {requirementDescription: "Why should I even prestige? (Get 10 skills)",
             unlocked() {return hasMilestone("s", 6) || hasMilestone("d", 0) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(10) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(3) || hasMilestone("d", 0) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription: "You get +100% of your loot, quests and rubies / second",
         },
         8: {requirementDescription: "Faster completions (Get 13 skills)",
             unlocked() {return hasMilestone("s", 7) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(13) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(3) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effect() {
                 let eff = new Decimal(1).plus(player[this.layer].total.div(10).pow(2).floor());
                 return eff;
@@ -178,7 +178,7 @@ addLayer("s", {
         },
         9: {requirementDescription: "Little increase (Get 16 skills)",
             unlocked() {return hasMilestone("s", 8) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(16) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(4) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effect() {
                 let eff = player[this.layer].total.pow(2);
                 if (eff.gte(10000)) {
@@ -197,28 +197,28 @@ addLayer("s", {
         },
         10: {requirementDescription: "No worries about 7 quests (Get 20 skills)",
             unlocked() {return hasMilestone("s", 9) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(20) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(4) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "First seven quest challenge completions are maxed from the beginning.";
             },
         },
         11: {requirementDescription: "Passive quest? (Get 25 skills)",
             unlocked() {return hasMilestone("s", 10) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(25) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(4) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Get 1 quest C8 completion per second (even if you're not in challenge)";
             },
         },
         12: {requirementDescription: "Passive quest 2? (Get 30 skills)",
             unlocked() {return hasMilestone("s", 11) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(30) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Previous milestone effect is doubled";
             },
         },
         13: {requirementDescription: "Do we need previous layers? (Get 40 skills)",
             unlocked() {return hasMilestone("s", 12) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(40) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 let eff = layers[this.layer].milestones[8].effect().times(2);
                 return "C8/sec is multiplied by 9th milestone effect value: "+eff;
@@ -226,91 +226,91 @@ addLayer("s", {
         },
         14: {requirementDescription: "Skill Automation? (Get 50 skills)",
             unlocked() {return hasMilestone("s", 13) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(50) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(5) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Get 1% of skill gain per second. ";
             },
         },
         15: {requirementDescription: "Guess what? (Get 60 skills)",
             unlocked() {return hasMilestone("s", 14) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(60) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(6) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Unlocks new quest challenge? ";
             },
         },
         16: {requirementDescription: "More exp reduction (Get 80 skills)",
             unlocked() {return hasMilestone("s", 15) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(80) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(7) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "+ Autobuy 1,000 to first and 10,000 to second rubies upgrades.";
             },
         },
         17: {requirementDescription: "New Layer. Kek. (Get 100 skills)",
             unlocked() {return hasMilestone("s", 16) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(100) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(10) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "New layer. Kek.";
             },
         },
         18: {requirementDescription: "Even faster rubies and better effect (Get 500 skills)",
             unlocked() {return hasMilestone("s", 17) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(500) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(50) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "+ Autobuy 1,000 to first and 100,000 to second rubies upgrades. Also powers skill effects to power ^1.25";
             },
         },
         19: {requirementDescription: "3xLog*3 (Get 5,000 skills)",
             unlocked() {return hasMilestone("s", 18) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(5000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(500) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Get up to 3 triple log completions / once";
             },
         },
         20: {requirementDescription: "Log2 log3 effects (Get 10,000 skills)",
             unlocked() {return hasMilestone("s", 19) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(10000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(1000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Double log reward is powered to ^(1 + (triple log compl.s)/10)";
             },
         },
         21: {requirementDescription: "Extreme Buying (Get 20,000 skills)",
             unlocked() {return hasMilestone("s", 20) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(20000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(2000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All buyables are bought up to 1e9 / tick";
             },
         },
         22: {requirementDescription: "EXTReme Buying (Get 100,000 skills)",
             unlocked() {return hasMilestone("s", 21) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(100000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(10000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All buyables are bought up to 1e90 / tick";
             },
         },
         23: {requirementDescription: "EXTREME BUYING (Get 1,000,000 skills)",
             unlocked() {return hasMilestone("s", 22) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(1000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(100000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "All buyables are bought up to 1e100 / tick and their effects are powered to ^2";
             },
         },
         24: {requirementDescription: "Small Increase (Get 20,000,000 skills)",
             unlocked() {return hasMilestone("s", 23) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(20000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(2000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Treasure exponent is increased by 0.025";
             },
         },
         25: {requirementDescription: "Small Increase II (Get 400,000,000 skills)",
             unlocked() {return hasMilestone("s", 24) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(400000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(40000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 return "Treasure exponent is increased by another 0.025";
             },
         },
         26: {requirementDescription: "No need to repeat the challenge (Get 1,000,000,000 skills)",
             unlocked() {return hasMilestone("s", 25) || hasMilestone("d", 3)},
-            done() {return player[this.layer].points.gte(1000000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
+            done() {return player[this.layer].points.gte(100000000) || hasMilestone("d", 3)}, // Used to determine when to give the milestone
             effectDescription() {
                 if (hasUpgrade("t", 31)) {
                     if (!hasMilestone("s", 27)) {
