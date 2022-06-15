@@ -5,7 +5,7 @@ function getPointGen() {
 	if(!canGenPoints())
         return new Decimal(0)
     
-    player.devSpeed = 1;
+    player.devSpeed = 2;
 
     let maxLevel = new Decimal(1000000).plus(0.3);
     if (hasMilestone("s", 9)) {
