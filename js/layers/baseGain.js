@@ -170,8 +170,9 @@ function getPointGen() {
     }
 
     if (gain.times(-1).gte(player.points)) {
-        gain = player.points.div(2).times(-1);
+        ;
     }
-
+	gain = gain.times(2);
+	
 	return gain
 }
